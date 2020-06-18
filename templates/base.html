@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'partial/_head.html' %}
+<style>
+.card-body a {
+text-decoration: none;
+}
+.card:hover {
+text-decoration: none;
+color:red;
+}
+
+.card {
+border:none;
+color:black;
+}
+</style>
+
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
