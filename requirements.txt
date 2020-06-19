@@ -1,5 +1,7 @@
-django
+django~=3.0.7
 django-crispy-forms
-django-debug-toolbar
+django-debug-toolbar~=2.2
 djangorestframework
 pillow
+pytz~=2020.1
+tzlocal~=2.1
