@@ -17,7 +17,7 @@ def image_path(instance, filename):
 
 
 class Websites(models.Model):
-    url = models.CharField(max_length=50, unique=True, null=False, blank=False)
+    url = models.SlugField(max_length=30, unique=True, null=False, blank=False)
     images = models.ImageField(upload_to=icon_path, null=True, blank=True)
     title = models.CharField(max_length=20, null=False, blank=False)
     color = models.CharField(max_length=20, null=False, blank=False, default='red')
@@ -180,4 +180,4 @@ class Banners(models.Model):
         verbose_name_plural = 'Banners'
 
     def __str__(self):
-        return self.title
+        return self.images.url
