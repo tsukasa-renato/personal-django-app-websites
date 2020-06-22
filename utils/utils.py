@@ -8,3 +8,8 @@ def custom_datetime(datetime, tz=str(get_localzone())):
     timezone.activate(pytz.timezone(tz))
     current_tz = timezone.get_current_timezone()
     return current_tz.normalize(datetime)
+
+
+def money_format(money):
+    money = float(money)
+    return f'R$ {money:.2f}'.replace('.', ',')

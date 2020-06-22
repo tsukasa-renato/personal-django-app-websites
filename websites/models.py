@@ -26,6 +26,7 @@ class Websites(models.Model):
     facebook = models.CharField(max_length=50, null=True, blank=True)
     instagram = models.CharField(max_length=50, null=True, blank=True)
     twitter = models.CharField(max_length=50, null=True, blank=True)
+    linkedin = models.CharField(max_length=50, null=True, blank=True)
     youtube = models.CharField(max_length=50, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
     is_active = models.BooleanField(default=False)

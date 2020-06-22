@@ -1,4 +1,5 @@
 from django import template
+from utils import utils
 
 register = template.Library()
 
@@ -8,5 +9,6 @@ def mine_less(number):
     return number - 1
 
 
+@register.filter
 def money_format(money):
-    return
+    return utils.money_format(money)
