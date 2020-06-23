@@ -152,46 +152,46 @@
         </div>
         <div class="row mt-3 bg-danger text-white" style="padding:10px;">
             <div class="col text-left">
-                <h6>Dá um follow ai 😁🤙</h6>
+                <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
                 <p>
                     {% if social_media.instagram %}
                     <a href="https://www.instagram.com/{{ social_media.instagram }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/instagram.png' %}" class="rounded" alt="instagram">
+                        <img src="{% static 'media/instagram.png' %}" class="rounded mt-1" alt="instagram">
                     </a>
                     {% endif %}
                     {% if social_media.pinterest %}
                     <a href="https://www.pinterest.com/{{ social_media.pinterest }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/pinterest.png' %}" class="rounded" alt="pinterest">
+                        <img src="{% static 'media/pinterest.png' %}" class="rounded mt-1" alt="pinterest">
                     </a>
                     {% endif %}
                     {% if social_media.facebook %}
                     <a href="https://www.facebook.com/{{ social_media.facebook }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/facebook.png' %}" class="rounded" alt="facebook">
+                        <img src="{% static 'media/facebook.png' %}" class="rounded mt-1" alt="facebook">
                     </a>
                     {% endif %}
                     {% if social_media.twitter %}
                     <a href="https://www.twitter.com/{{ social_media.twitter }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/twitter.png' %}" class="rounded" alt="twitter">
+                        <img src="{% static 'media/twitter.png' %}" class="rounded mt-1" alt="twitter">
                     </a>
                     {% endif %}
                     {% if social_media.linkedin %}
                     <a href="https://www.linkedin.com/in/{{ social_media.linkedin }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/linkedin.png' %}" class="rounded" alt="linkedin">
+                        <img src="{% static 'media/linkedin.png' %}" class="rounded mt-1" alt="linkedin">
                     </a>
                     {% endif %}
                     {% if social_media.youtube %}
                     <a href="https://www.youtube.com/channel/{{ social_media.youtube }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/youtube.png' %}" class="rounded" alt="youtube">
+                        <img src="{% static 'media/youtube.png' %}" class="rounded mt-1" alt="youtube">
                     </a>
                     {% endif %}
                     {% if social_media.twitch %}
                     <a href="https://www.twitch.tv/{{ social_media.twitch }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/twitch.png' %}" class="rounded" alt="twitch">
+                        <img src="{% static 'media/twitch.png' %}" class="rounded mt-1" alt="twitch">
                     </a>
                     {% endif %}
                     {% if social_media.discord %}
                     <a href="{{ social_media.discord }}" target="_blank" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/discord.png' %}" class="rounded" alt="discord">
+                        <img src="{% static 'media/discord.png' %}" class="rounded mt-1" alt="discord">
                     </a>
                     {% endif %}
                 </p>
@@ -206,9 +206,10 @@
             </div>
             <div class="col text-right">
                 {% if social_media.whatsapp %}
-                <h6> Faça seu pedido pelo whats 😍😋 </h6>
-                <h6><a href="" target="_blank" class="mr-3 text-white" style="text-decoration: none">
-                    <img src="{% static 'media/whatsapp.png' %}" class="rounded" alt="whatsapp">
+                <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
+                <h6><a href="https://api.whatsapp.com/send?phone={{ social_media.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
+                       target="_blank" class="mr-3 text-white" style="text-decoration: none">
+                    <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
                     {{ social_media.whatsapp }}
                 </a></h6>
                 {% endif %}
