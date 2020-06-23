@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import datetime
 from utils import utils
 
 
@@ -23,16 +22,10 @@ class Websites(models.Model):
     color = models.CharField(max_length=20, null=False, blank=False, default='red')
     telephone = models.CharField(max_length=30, null=True, blank=True)
     email = models.CharField(max_length=200, null=True, blank=True)
-    facebook = models.CharField(max_length=50, null=True, blank=True)
-    instagram = models.CharField(max_length=50, null=True, blank=True)
-    twitter = models.CharField(max_length=50, null=True, blank=True)
-    linkedin = models.CharField(max_length=50, null=True, blank=True)
-    youtube = models.CharField(max_length=50, null=True, blank=True)
-    whatsapp = models.CharField(max_length=20, null=True, blank=True)
     is_active = models.BooleanField(default=False)
     reason = models.CharField(max_length=100, null=True, blank=True)
     local_timezone = models.CharField(max_length=50, null=False, blank=False, default='America/Sao_Paulo')
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -63,7 +56,7 @@ class Categories(models.Model):
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
     color = models.CharField(max_length=20, null=True, blank=True)
     position = models.PositiveIntegerField(null=False, blank=False)
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -172,6 +165,7 @@ class Banners(models.Model):
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=False, blank=False)
+    link = models.SlugField(max_length=30, null=True, blank=True)
     position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -182,3 +176,25 @@ class Banners(models.Model):
 
     def __str__(self):
         return self.images.url
+
+
+class SocialMedia(models.Model):
+    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    facebook = models.CharField(max_length=50, null=True, blank=True)
+    instagram = models.CharField(max_length=50, null=True, blank=True)
+    pinterest = models.CharField(max_length=50, null=True, blank=True)
+    twitter = models.CharField(max_length=50, null=True, blank=True)
+    linkedin = models.CharField(max_length=50, null=True, blank=True)
+    youtube = models.CharField(max_length=100, null=True, blank=True)
+    twitch = models.CharField(max_length=100, null=True, blank=True)
+    discord = models.CharField(max_length=200, null=True, blank=True)
+    whatsapp = models.CharField(max_length=20, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Social Media'
+        verbose_name_plural = 'Social Media'
+
+    def __str__(self):
+        return 'Social Media'
