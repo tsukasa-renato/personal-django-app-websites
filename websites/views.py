@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
+from django.core.paginator import Paginator
 from . import models
 
 
@@ -13,13 +14,17 @@ class Home(View):
         social_media = models.SocialMedia.objects.filter(websites=websites)[:1][0]
         categories = models.Categories.objects.filter(websites=websites)
         products = models.Products.objects.filter(websites=websites, is_highlight=True)
+        # https://docs.djangoproject.com/en/3.0/topics/pagination/
+        paginator = Paginator(products, 8)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
         context = {
             'websites': websites,
             'banners': banners or '',
             'social_media': social_media or '',
             'categories': categories or '',
-            'products': products or '',
+            'products': page_obj or '',
 
         }
 

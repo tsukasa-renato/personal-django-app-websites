@@ -12,28 +12,37 @@
 {% block content %}
 {% if websites.is_active %}
 <div class="container-fluid">
-<!--First NavBar (title, search bar, cart, account) -->
     <div class="row">
-        <nav class="navbar navbar-expand-sm fixed-top bg-primary">
-            <div class="col">
-                <a class="navbar-brand text-white" href="#">{{ websites.title }}</a>
-            </div>
-            <div class="col text-right">
-                <form class="form-inline navbar-brand">
-                    <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-light" type="submit">Search</button>
-                </form>
-
-                <a href="" class="navbar-brand">
-                    <img src="{% static 'media/cart.png' %}">
-                </a>
-
-                <a href="" class="navbar-brand">
-                    <img src="{% static 'media/account.png' %}">
-                </a>
+        <nav class="navbar navbar-expand-sm fixed-top navbar-light bg-primary" style="opacity: 0.2;">
+            <a class="navbar-brand text-white" href="#">{{ websites.title }}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <form class="form-inline navbar-brand">
+                            <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-light" type="submit">Search</button>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            <img src="{% static 'media/cart.png' %}">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            <img src="{% static 'media/account.png' %}">
+                        </a>
+                    </li>
+                </ul>
             </div>
         </nav>
     </div>
+    <!--First NavBar (title, search bar, cart, account) -->
     <!-- Banners -->
     {% if banners %}
     <div class="row justify-content-md-center">
@@ -54,32 +63,36 @@
             </ol>
             <div class="carousel-inner" style="max-height:450px;width:100%">
                 {% for banner in banners %}
-                    {% if forloop.counter == 1 %}
-                        {% if banner.link %}
-                        <a href="#" class="carousel-item active">
-                        {% else %}
-                        <div class="carousel-item active">
-                        {% endif %}
+                {% if forloop.counter == 1 %}
+                {% if banner.link %}
+                <a href="#" class="carousel-item active">
                     {% else %}
+                    <div class="carousel-item active">
+                        {% endif %}
+                        {% else %}
                         {% if banner.link %}
                         <a href="#" class="carousel-item">
-                        {% else %}
-                        <div class="carousel-item">
-                        {% endif %}
-                    {% endif %}
+                            {% else %}
+                            <div class="carousel-item">
+                                {% endif %}
+                                {% endif %}
 
-                        <img src="{{ banner.images.url }}" class="img-fluid mx-auto"
-                             alt="{{ banner.images.name }}"
-                             style="min-height:450px;">
-                        <li data-target="#carouselExampleIndicators"
-                            data-slide-to="{{ forloop.counter|mine_less }}">
-                        </li>
+                                <img src="{{ banner.images.url }}" class="img-fluid mx-auto"
+                                     alt="{{ banner.images.name }}"
+                                     style="min-height:450px;">
+                                <li data-target="#carouselExampleIndicators"
+                                    data-slide-to="{{ forloop.counter|mine_less }}">
+                                </li>
 
-                        {% if not banner.link %}
-                        </div>
-                        {% else %}
+                                {% if not banner.link %}
+                            </div>
+                            {% else %}
                         </a>
                         {% endif %}
+                        {% if '' %}
+                    </div>
+                </a>
+                {% endif %}
                 {% endfor %}
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -92,131 +105,191 @@
             </a>
         </div>
     </div>
-        {% endif %}
-        <!-- Categories -->
-        <div class="row justify-content-center bg-danger">
-            <nav class="nav justify-content-center bg-danger">
+    {% endif %}
+    <!-- Categories -->
+    <div class="row justify-content-center bg-danger">
+        <nav class="nav justify-content-center bg-danger">
 
-                <a class="nav-link active btn btn-danger mr-1" href="#">
-                    <figure class="figure" style="width:80px;height:60px;">
-                        <img src="{% static 'media/star.png' %}" class="figure-img img-fluid rounded"
-                             alt="Highlight"
-                             style="height:50px;width:50px;">
-                        <figcaption class="text-center">Highlight</figcaption>
-                    </figure>
-                </a>
-
-                {% if categories %}
-                {% for category in categories %}
-                <a class="nav-link btn btn-danger mr-1" href="#">
-                    {% if category.images %}
-                    <figure class="figure" style="width:80px;height:60px;">
-                        <img src="{{ category.images.url }}" class="figure-img img-fluid rounded"
-                             alt="{{ category.images.name }}" style="height:50px;width:50px;">
-                        <figcaption class="text-center">{{ category.title }}</figcaption>
-                    </figure>
-                    {% else %}
-                    <p>{{ category.title }}</p>
-                    {% endif %}
-                </a>
-                {% endfor %}
-                {% endif %}
-
-            </nav>
-        </div>
-        <!-- Products -->
-        <div class="row justify-content-center mt-3">
-            {% if products %}
-            {% for product in products %}
-            {% if product.is_active %}
-            <a href="" class="card mb-3 mr-2" style="width: 268px; padding:10px">
-                {% if product.images %}
-                <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
-                     style="height:200px;width:268px;">
-                {% endif %}
-                <div class="card-body">
-                    <h6 class="card-title">{{ product.title }}
-                        {% if product.promotional_price %}
-                        <strike>{{ product.price|money_format }}</strike> por
-                        <strong>{{ product.promotional_price|money_format }}</strong>
-                    </h6>
-                    {% else %}
-                    por <strong>{{ product.price|money_format }}</strong>
-                    </h6>
-                    {% endif %}
-                </div>
+            <a class="nav-link active btn btn-danger mr-1" href="#">
+                <figure class="figure" style="width:80px;height:60px;">
+                    <img src="{% static 'media/star.png' %}" class="figure-img img-fluid rounded"
+                         alt="Highlight"
+                         style="height:50px;width:50px;">
+                    <figcaption class="text-center">Highlight</figcaption>
+                </figure>
             </a>
-            {% endif %}
+
+            {% if categories %}
+            {% for category in categories %}
+            <a class="nav-link btn btn-danger mr-1" href="#">
+                {% if category.images %}
+                <figure class="figure" style="width:80px;height:60px;">
+                    <img src="{{ category.images.url }}" class="figure-img img-fluid rounded"
+                         alt="{{ category.images.name }}" style="height:50px;width:50px;">
+                    <figcaption class="text-center">{{ category.title }}</figcaption>
+                </figure>
+                {% else %}
+                <p>{{ category.title }}</p>
+                {% endif %}
+            </a>
             {% endfor %}
             {% endif %}
+
+        </nav>
+    </div>
+    <!-- Products -->
+    <div class="row justify-content-center mt-3">
+        {% if products %}
+        {% for product in products %}
+        {% if product.is_active %}
+        <a href="" class="card mb-3 mr-4" style="width: 260px; padding:10px">
+            {% if product.images %}
+            <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+                 style="height:200px;width:268px;">
+            {% endif %}
+            <div class="card-body">
+                <h6 class="card-title">{{ product.title }}
+                    {% if product.promotional_price %}
+                    <strike>{{ product.price|money_format }}</strike> por
+                    <strong>{{ product.promotional_price|money_format }}</strong>
+                </h6>
+                {% else %}
+                por <strong>{{ product.price|money_format }}</strong>
+                </h6>
+                {% endif %}
+            </div>
+        </a>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="row justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if products.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"  href="?page={{ products.previous_page_number }}">
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+                {% if products.paginator.num_pages > 1 %}
+                {% for x in products.paginator.page_range %}
+                {% if products.number == x %}
+                <li class="page-item active">
+                    {% else %}
+                    <li class="page-item">
+                    {% endif %}
+                    <a class="page-link"  href="?page={{ x }}">
+                        {{ x}}
+                    </a>
+                </li>
+                {% endfor %}
+                {% endif %}
+                {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link"  href="?page={{ products.next_page_number }}">
+                        &raquo;
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <div class="row mt-3 bg-danger text-white" style="padding:10px;">
+        <div class="col text-left">
+            <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
+            <p>
+                {% if social_media.instagram %}
+                <a href="https://www.instagram.com/{{ social_media.instagram }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/instagram.png' %}" class="rounded mt-1" alt="instagram">
+                </a>
+                {% endif %}
+                {% if social_media.pinterest %}
+                <a href="https://www.pinterest.com/{{ social_media.pinterest }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/pinterest.png' %}" class="rounded mt-1" alt="pinterest">
+                </a>
+                {% endif %}
+                {% if social_media.facebook %}
+                <a href="https://www.facebook.com/{{ social_media.facebook }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/facebook.png' %}" class="rounded mt-1" alt="facebook">
+                </a>
+                {% endif %}
+                {% if social_media.twitter %}
+                <a href="https://www.twitter.com/{{ social_media.twitter }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/twitter.png' %}" class="rounded mt-1" alt="twitter">
+                </a>
+                {% endif %}
+                {% if social_media.linkedin %}
+                <a href="https://www.linkedin.com/in/{{ social_media.linkedin }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/linkedin.png' %}" class="rounded mt-1" alt="linkedin">
+                </a>
+                {% endif %}
+                {% if social_media.youtube %}
+                <a href="https://www.youtube.com/channel/{{ social_media.youtube }}" target="_blank"
+                   class="mr-1 mt-1">
+                    <img src="{% static 'media/youtube.png' %}" class="rounded mt-1" alt="youtube">
+                </a>
+                {% endif %}
+                {% if social_media.twitch %}
+                <a href="https://www.twitch.tv/{{ social_media.twitch }}" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/twitch.png' %}" class="rounded mt-1" alt="twitch">
+                </a>
+                {% endif %}
+                {% if social_media.discord %}
+                <a href="{{ social_media.discord }}" target="_blank" target="_blank" class="mr-1 mt-1">
+                    <img src="{% static 'media/discord.png' %}" class="rounded mt-1" alt="discord">
+                </a>
+                {% endif %}
+            </p>
         </div>
-        <div class="row mt-3 bg-danger text-white" style="padding:10px;">
-            <div class="col text-left">
-                <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
-                <p>
-                    {% if social_media.instagram %}
-                    <a href="https://www.instagram.com/{{ social_media.instagram }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/instagram.png' %}" class="rounded mt-1" alt="instagram">
-                    </a>
-                    {% endif %}
-                    {% if social_media.pinterest %}
-                    <a href="https://www.pinterest.com/{{ social_media.pinterest }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/pinterest.png' %}" class="rounded mt-1" alt="pinterest">
-                    </a>
-                    {% endif %}
-                    {% if social_media.facebook %}
-                    <a href="https://www.facebook.com/{{ social_media.facebook }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/facebook.png' %}" class="rounded mt-1" alt="facebook">
-                    </a>
-                    {% endif %}
-                    {% if social_media.twitter %}
-                    <a href="https://www.twitter.com/{{ social_media.twitter }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/twitter.png' %}" class="rounded mt-1" alt="twitter">
-                    </a>
-                    {% endif %}
-                    {% if social_media.linkedin %}
-                    <a href="https://www.linkedin.com/in/{{ social_media.linkedin }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/linkedin.png' %}" class="rounded mt-1" alt="linkedin">
-                    </a>
-                    {% endif %}
-                    {% if social_media.youtube %}
-                    <a href="https://www.youtube.com/channel/{{ social_media.youtube }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/youtube.png' %}" class="rounded mt-1" alt="youtube">
-                    </a>
-                    {% endif %}
-                    {% if social_media.twitch %}
-                    <a href="https://www.twitch.tv/{{ social_media.twitch }}" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/twitch.png' %}" class="rounded mt-1" alt="twitch">
-                    </a>
-                    {% endif %}
-                    {% if social_media.discord %}
-                    <a href="{{ social_media.discord }}" target="_blank" target="_blank" class="mr-1 mt-1">
-                        <img src="{% static 'media/discord.png' %}" class="rounded mt-1" alt="discord">
-                    </a>
-                    {% endif %}
-                </p>
-            </div>
-            <div class="col text-center">
-                {% if websites.telephone %}
-                <h6 class="mr-1">Telefone:<br> {{ websites.telephone }}</h6>
-                {% endif %}
-                {% if websites.email %}
-                <h6 class="mr-1">Email:<br> {{ websites.email }}</h6>
-                {% endif %}
-            </div>
-            <div class="col text-right">
-                {% if social_media.whatsapp %}
-                <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
-                <h6><a href="https://api.whatsapp.com/send?phone={{ social_media.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
-                       target="_blank" class="mr-3 text-white" style="text-decoration: none">
+        <div class="col text-center">
+            {% if websites.telephone %}
+            <h6 class="mr-1">Telefone:<br> {{ websites.telephone }}</h6>
+            {% endif %}
+            {% if websites.email %}
+            <h6 class="mr-1">Email:<br> {{ websites.email }}</h6>
+            {% endif %}
+        </div>
+        <div class="col text-right">
+            {% if social_media.whatsapp %}
+            <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
+            <h6>
+                <a href="https://api.whatsapp.com/send?phone={{ social_media.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
+                   target="_blank" class="text-white" style="text-decoration: none">
                     <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
                     {{ social_media.whatsapp }}
                 </a></h6>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
+
+
+    <div class="row justify-content-center bg-danger text-white" style="padding:10px;">
+        <small> Icons made by
+            <a href="https://www.flaticon.com/authors/pixel-perfect" class="text-white" title="Pixel perfect">
+                Pixel perfect
+            </a> from
+            <a href="https://www.flaticon.com/" class="text-white" title="Flaticon">
+                www.flaticon.com
+            </a>
+        </small>
+    </div>
 </div>
+<script>
+    var div = $('.fixed-top');
+    $(window).scroll(function(){
+       if($(document).scrollTop()>12){
+          var percent = $(document).scrollTop() / ($(document).height() - $(window).height());
+          div.css('opacity', 0 + percent);
+       }else{
+          div.css('opacity', 0.2);
+       }
+    });
+
+
+
+</script>
 {% else %}
 {% if websites.reason %}
 <p> {{ websites.reason }} </p>
