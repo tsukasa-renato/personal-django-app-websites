@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 .idea
 media
-static/media
 # C extensions
 *.so
 
