@@ -9,6 +9,8 @@ def mine_less(number):
     return number - 1
 
 
-@register.filter
-def money_format(money):
-    return utils.money_format(money)
+@register.simple_tag
+def money_format(money, currency):
+    if currency == 'auto':
+        return utils.money_format(money, '')
+    return utils.money_format(money, currency)

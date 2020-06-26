@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+<!--First NavBar (title, search bar, cart, account) -->
 {% if websites.is_active %}
 <div class="container-fluid">
     <div class="row">
@@ -24,13 +25,19 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <form class="form-inline navbar-brand">
-                            <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-light" type="submit">Search</button>
+                            <input class="form-control border-dark bg-transparent" type="search" placeholder=""
+                                   aria-label="Search" style="border-style: none none solid none;">
+                            <button class="btn btn-transparent border-0" type="submit">
+                                <img src="{% static 'media/search.png' %}">
+                            </button>
                         </form>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link">
                             <img src="{% static 'media/cart.png' %}">
+                            <span class="rounded bg-white text-transparent">
+                            <b>0</b>
+                            </span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -42,7 +49,6 @@
             </div>
         </nav>
     </div>
-    <!--First NavBar (title, search bar, cart, account) -->
     <!-- Banners -->
     {% if banners %}
     <div class="row justify-content-md-center">
@@ -112,10 +118,16 @@
 
             <a class="nav-link active btn btn-danger mr-1" href="#">
                 <figure class="figure" style="width:80px;height:60px;">
+                    {% if websites.home_images %}
+                    <img src="{{ websites.home_images }}" class="figure-img img-fluid rounded"
+                         alt="Highlight"
+                         style="height:50px;width:50px;">
+                    {% else %}
                     <img src="{% static 'media/star.png' %}" class="figure-img img-fluid rounded"
                          alt="Highlight"
                          style="height:50px;width:50px;">
-                    <figcaption class="text-center">Highlight</figcaption>
+                    {% endif %}
+                    <figcaption class="text-center">{{ websites.home }}</figcaption>
                 </figure>
             </a>
 
@@ -150,11 +162,11 @@
             <div class="card-body">
                 <h6 class="card-title">{{ product.title }}
                     {% if product.promotional_price %}
-                    <strike>{{ product.price|money_format }}</strike> por
-                    <strong>{{ product.promotional_price|money_format }}</strong>
+                    <strike>{% money_format product.price websites.currency %}</strike> por
+                    <strong>{% money_format product.promotional_price websites.currency %}</strong>
                 </h6>
                 {% else %}
-                por <strong>{{ product.price|money_format }}</strong>
+                por <strong>{% money_format product.price websites.currency %}</strong>
                 </h6>
                 {% endif %}
             </div>
