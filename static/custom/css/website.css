@@ -1,0 +1,20 @@
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.fixed-top {
+    opacity: 0.2;
+}
+
+.card {
+    border: none;
+    color: black;
+}
+
+.card:hover {
+    color: red;
+}

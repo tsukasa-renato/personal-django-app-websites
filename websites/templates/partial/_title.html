@@ -1,0 +1,7 @@
+{% load static %}
+
+<title>{{ websites.title }}</title>
+{% if websites.images %}
+<link rel="shortcut icon" href="{{ websites.images.url }}" type="image/x-icon">
+<link rel="stylesheet" href="{% static 'custom/css/website.css' %}">
+{% endif %}

@@ -1,0 +1,23 @@
+{% load filters %}
+
+{% for product in products %}
+{% if product.is_active %}
+<a href="" class="card mb-3 mr-4" style="width: 260px; padding:10px">
+    {% if product.images %}
+    <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+         style="height:200px;width:268px;">
+    {% endif %}
+    <div class="card-body">
+        <h6 class="card-title">{{ product.title }}
+            {% if product.promotional_price %}
+            <strike>{% money_format product.price websites.currency %}</strike> por
+            <strong>{% money_format product.promotional_price websites.currency %}</strong>
+        </h6>
+        {% else %}
+        por <strong>{% money_format product.price websites.currency %}</strong>
+        </h6>
+        {% endif %}
+    </div>
+</a>
+{% endif %}
+{% endfor %}
