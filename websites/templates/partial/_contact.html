@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="col text-left">
+<div class="col-sm text-center">
     <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
     <p>
         {% if social_media.instagram %}
@@ -45,7 +45,7 @@
         {% endif %}
     </p>
 </div>
-<div class="col text-center">
+<div class="col-sm text-center">
     {% if websites.telephone %}
     <h6 class="mr-1">Telefone:<br> {{ websites.telephone }}</h6>
     {% endif %}
@@ -53,12 +53,12 @@
     <h6 class="mr-1">Email:<br> {{ websites.email }}</h6>
     {% endif %}
 </div>
-<div class="col text-right">
+<div class="col-sm text-center">
     {% if social_media.whatsapp %}
     <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
     <h6>
         <a href="https://api.whatsapp.com/send?phone={{ social_media.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
-           target="_blank" class="text-white" style="text-decoration: none">
+           target="_blank" class="text-white">
             <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
             {{ social_media.whatsapp }}
         </a></h6>

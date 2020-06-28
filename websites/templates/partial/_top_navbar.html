@@ -1,7 +1,7 @@
 {% load static %}
 
 <nav class="navbar navbar-expand-sm fixed-top" style="background-color: {{ websites.color }}">
-    <a class="navbar-brand text-white" href="#">{{ websites.title }}</a>
+    <a class="navbar-brand mb-0 h1 text-white" href="#">{{ websites.title }}</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,8 +11,8 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <form class="form-inline navbar-brand">
-                    <input class="form-control border-dark bg-transparent" type="search" placeholder=""
-                           aria-label="Search" style="border-style: none none solid none;">
+                    <input class="form-control border-0" type="search" placeholder=""
+                           aria-label="Search">
                     <button class="btn btn-transparent border-0" type="submit">
                         <img src="{% static 'media/search.png' %}">
                     </button>
@@ -25,11 +25,8 @@
             </li>
             <li class="nav-item">
                 <a href="" class="nav-link">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle bg-white text-transparent"
-                         style="width: 18px; height: 18px; font-size:13px; position:absolute">
-                        <b>0</b>
-                    </div>
                     <img src="{% static 'media/cart.png' %}">
+                    <span class="badge badge-light">4</span>
                 </a>
             </li>
         </ul>

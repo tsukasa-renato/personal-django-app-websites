@@ -15,7 +15,7 @@
         {% endif %}
         {% endfor %}
     </ol>
-    <div class="carousel-inner" style="max-height:450px;width:100%">
+    <div class="carousel-inner">
         {% for banner in banners %}
         {% if forloop.counter == 1 %}
         {% if banner.link %}
@@ -32,11 +32,7 @@
                         {% endif %}
 
                         <img src="{{ banner.images.url }}" class="img-fluid mx-auto"
-                             alt="{{ banner.images.name }}"
-                             style="min-height:450px;">
-                        <li data-target="#carouselExampleIndicators"
-                            data-slide-to="{{ forloop.counter|mine_less }}">
-                        </li>
+                             alt="{{ banner.images.name }}">
 
                         {% if not banner.link %}
                     </div>
