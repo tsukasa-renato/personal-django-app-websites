@@ -17,13 +17,8 @@ def image_path(instance, filename):
 
 class Websites(models.Model):
     url = models.SlugField(max_length=30, unique=True, null=False, blank=False)
-    images = models.ImageField(upload_to=icon_path, null=True, blank=True)
     title = models.CharField(max_length=20, null=False, blank=False)
     home = models.CharField(max_length=20, null=False, blank=False, default='Highlight')
-    home_images = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    color = models.CharField(max_length=20, null=False, blank=False, default='red')
-    telephone = models.CharField(max_length=30, null=True, blank=True)
-    email = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=False)
     reason = models.CharField(max_length=100, null=True, blank=True)
     local_timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
@@ -181,8 +176,10 @@ class Banners(models.Model):
         return self.images.url
 
 
-class SocialMedia(models.Model):
+class Contacts(models.Model):
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    telephone = models.CharField(max_length=30, null=True, blank=True)
+    email = models.CharField(max_length=200, null=True, blank=True)
     facebook = models.CharField(max_length=50, null=True, blank=True)
     instagram = models.CharField(max_length=50, null=True, blank=True)
     pinterest = models.CharField(max_length=50, null=True, blank=True)
@@ -196,8 +193,41 @@ class SocialMedia(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Social Media'
-        verbose_name_plural = 'Social Media'
+        verbose_name = 'Contact'
+        verbose_name_plural = 'Contacts'
 
     def __str__(self):
-        return 'Social Media'
+        return 'Contacts'
+
+
+class Icons(models.Model):
+    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    shortcut = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    account = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    cart = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    search = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    home = models.ImageField(upload_to=icon_path, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Icon'
+        verbose_name_plural = 'Icons'
+
+    def __str__(self):
+        return 'Icons'
+
+
+class Colors(models.Model):
+    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    navbar_top = models.CharField(max_length=20, null=False, blank=False, default='red')
+    categories = models.CharField(max_length=20, null=False, blank=False, default='red')
+    cards = models.CharField(max_length=20, null=False, blank=False, default='red')
+    footer = models.CharField(max_length=20, null=False, blank=False, default='red')
+    products = models.CharField(max_length=20, null=False, blank=False, default='black')
+    text = models.CharField(max_length=20, null=False, blank=False, default='white')
+
+    class Meta:
+        verbose_name = 'Color'
+        verbose_name_plural = 'Colors'
+
+    def __str__(self):
+        return 'Colors'

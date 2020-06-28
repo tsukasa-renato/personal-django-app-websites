@@ -3,12 +3,12 @@
 <button type="button" class="btn btn-danger active" href="#">
     <figure class="figure" style="width:80px;height:60px;">
         {% if websites.home_images %}
-        <img src="{{ websites.home_images }}" class="figure-img img-fluid rounded"
-             alt="Highlight"
+        <img src="{{ icons.home }}" class="figure-img img-fluid rounded"
+             alt="{{ websites.home }}"
              style="height:50px;width:50px;">
         {% else %}
         <img src="{% static 'media/star.png' %}" class="figure-img img-fluid rounded"
-             alt="Highlight"
+             alt="{{ websites.home }}"
              style="height:50px;width:50px;">
         {% endif %}
         <figcaption class="text-center">{{ websites.home }}</figcaption>
