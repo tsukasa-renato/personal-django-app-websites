@@ -1,45 +1,46 @@
 {% load static %}
+{% load filters %}
 
 <div class="col-sm text-center">
     {% if contacts %}
     <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
     <p>
-        {% if social_media.instagram %}
+        {% if contacts.instagram %}
         <a href="https://www.instagram.com/{{ contacts.instagram }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/instagram.png' %}" class="rounded" alt="instagram">
         </a>
         {% endif %}
-        {% if social_media.pinterest %}
+        {% if contacts.pinterest %}
         <a href="https://www.pinterest.com/{{ contacts.pinterest }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/pinterest.png' %}" class="rounded" alt="pinterest">
         </a>
         {% endif %}
-        {% if social_media.facebook %}
+        {% if contacts.facebook %}
         <a href="https://www.facebook.com/{{ contacts.facebook }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/facebook.png' %}" class="rounded" alt="facebook">
         </a>
         {% endif %}
-        {% if social_media.twitter %}
+        {% if contacts.twitter %}
         <a href="https://www.twitter.com/{{ contacts.twitter }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/twitter.png' %}" class="rounded" alt="twitter">
         </a>
         {% endif %}
-        {% if social_media.linkedin %}
+        {% if contacts.linkedin %}
         <a href="https://www.linkedin.com/in/{{ contacts.linkedin }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/linkedin.png' %}" class="rounded" alt="linkedin">
         </a>
         {% endif %}
-        {% if social_media.youtube %}
+        {% if contacts.youtube %}
         <a href="https://www.youtube.com/channel/{{ contacts.youtube }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/youtube.png' %}" class="rounded" alt="youtube">
         </a>
         {% endif %}
-        {% if social_media.twitch %}
+        {% if contacts.twitch %}
         <a href="https://www.twitch.tv/{{ contacts.twitch }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/twitch.png' %}" class="rounded" alt="twitch">
         </a>
         {% endif %}
-        {% if social_media.discord %}
+        {% if contacts.discord %}
         <a href="{{ contacts.discord }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/discord.png' %}" class="rounded" alt="discord">
         </a>
@@ -48,21 +49,21 @@
     {% endif %}
 </div>
 <div class="col-sm text-center">
-    {% if websites.telephone %}
+    {% if contacts.telephone %}
     <h6 class="mr-1">Telefone:<br> {{ contacts.telephone }}</h6>
     {% endif %}
-    {% if websites.email %}
+    {% if contacts.email %}
     <h6 class="mr-1">Email:<br> {{ contacts.email }}</h6>
     {% endif %}
 </div>
 <div class="col-sm text-center">
-    {% if social_media.whatsapp %}
+    {% if contacts.whatsapp %}
     <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
     <h6>
         <a href="https://api.whatsapp.com/send?phone={{ contacts.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
            target="_blank" class="text-white">
             <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
-            {{ social_media.whatsapp }}
+            {{ contacts.whatsapp|smartphone_format }}
         </a></h6>
     {% endif %}
 </div>

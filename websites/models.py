@@ -6,7 +6,7 @@ from utils import utils
 def icon_path(instance, filename):
     if len(filename) > 10:
         filename = filename[-10:]
-    return f'{instance.url}/icon/{filename}'
+    return f'{instance.websites.url}/icon/{filename}'
 
 
 def image_path(instance, filename):

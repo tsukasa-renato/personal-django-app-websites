@@ -15,3 +15,7 @@ def money_format(money, currency):
     money = float(money)
     locale.setlocale(locale.LC_MONETARY, currency)
     return locale.currency(money, grouping=True)
+
+
+def smartphone_format(number):
+    return f'({number[2:4]}) {number[4:]}'

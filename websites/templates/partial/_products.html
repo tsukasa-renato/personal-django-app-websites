@@ -2,7 +2,7 @@
 
 {% for product in products %}
 {% if product.is_active %}
-<a href="" class="card mb-3 mr-4 title" style="width: 260px; padding:10px">
+<a href="" class="card border-0 mb-3 mr-4 title" style="width: 260px; padding:10px">
     {% if product.images %}
     <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
          style="height:200px;width:268px;">
