@@ -10,15 +10,6 @@ a:hover {
     opacity: 0.2;
 }
 
-.card {
-    border: none;
-    color: black;
-}
-
-.card:hover {
-    color: red;
-}
-
 .carousel-inner {
     width: 100%;
 }

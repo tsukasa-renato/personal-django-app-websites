@@ -1,6 +1,6 @@
 {% load static %}
 
-<button type="button" class="btn btn-danger active" href="#">
+<button type="button" class="btn categories active" href="#">
     <figure class="figure" style="width:80px;height:60px;">
         {% if websites.home_images %}
         <img src="{{ icons.home }}" class="figure-img img-fluid rounded"
@@ -11,17 +11,17 @@
              alt="{{ websites.home }}"
              style="height:50px;width:50px;">
         {% endif %}
-        <figcaption class="text-center">{{ websites.home }}</figcaption>
+        <figcaption class="text-center text">{{ websites.home }}</figcaption>
     </figure>
 </button>
 {% if categories %}
 {% for category in categories %}
-<button type="button" class="btn btn-danger" href="#">
+<button type="button" class="btn categories" href="#">
     {% if category.images %}
     <figure class="figure" style="width:80px;height:60px;">
         <img src="{{ category.images.url }}" class="figure-img img-fluid rounded"
              alt="{{ category.images.name }}" style="height:50px;width:50px;">
-        <figcaption class="text-center">{{ category.title }}</figcaption>
+        <figcaption class="text-center text">{{ category.title }}</figcaption>
     </figure>
     {% else %}
     <p>{{ category.title }}</p>

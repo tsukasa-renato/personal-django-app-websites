@@ -7,12 +7,13 @@ from . import models
 class Home(View):
 
     def get(self, *args, **kwargs):
+
         # SQL Queries
         # https://stackoverflow.com/questions/42621402/django-manager-first-vs-model-objects-all1
-        websites = models.Websites.objects.filter(url=kwargs['url'])[:1][0]
-        contacts = models.Contacts.objects.filter(websites=websites)
-        icons = models.Icons.objects.filter(websites=websites)
-        colors = models.Colors.objects.filter(websites=websites)
+        websites = models.Websites.objects.filter(url=kwargs['url']).first()
+        contacts = models.Contacts.objects.filter(websites=websites).first()
+        icons = models.Icons.objects.filter(websites=websites).first()
+        colors = models.Colors.objects.filter(websites=websites).first()
         banners = models.Banners.objects.filter(websites=websites)
         categories = models.Categories.objects.filter(websites=websites)
         products = models.Products.objects.filter(websites=websites, is_highlight=True)

@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block head %}
-{% include 'partial/_title.html' %}
+<title>{{ websites.title }}</title>
+{% include 'partial/_style.html' %}
 {% endblock %}
 
 {% block content %}
@@ -18,7 +19,7 @@
         {% include 'partial/_banners.html' %}
     </div>
     {% endif %}
-    <div class="row justify-content-center bg-danger">
+    <div class="row justify-content-center category">
         <!-- Categories (navbar) -->
         {% include 'partial/_categories.html' %}
     </div>
@@ -31,10 +32,10 @@
     <div class="row justify-content-center">
         {% include 'partial/_pagination.html' %}
     </div>
-    <div class="row mt-3 bg-danger text-white" style="padding:10px;">
+    <div class="row mt-3 bg-danger text-white footer">
         {% include 'partial/_contact.html' %}
     </div>
-    <div class="row justify-content-center bg-danger text-white" style="padding:10px;">
+    <div class="row justify-content-center text-white p-2 footer">
         {% include 'partial/_credits.html' %}
     </div>
 

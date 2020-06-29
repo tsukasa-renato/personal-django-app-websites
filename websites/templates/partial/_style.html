@@ -1,0 +1,50 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'custom/css/website.css' %}">
+
+{% if websites.images %}
+<link rel="shortcut icon" href="{{ icons.shortcut.url }}" type="image/x-icon">
+{% endif %}
+
+{% if colors %}
+<style>
+/* Colors */
+
+.navbar_top {
+    background-color: #{{ colors.navbar_top }};
+}
+
+.category {
+    background-color: #{{ colors.categories }};
+}
+
+.categories {
+    background-color: #{{ colors.categories }};
+}
+
+.categories:hover {
+    background-color: #{{ colors.active }};
+}
+
+.footer {
+    background-color: #{{ colors.footer }};
+}
+
+.active {
+    background-color: #{{ colors.active }};
+}
+
+.title:hover {
+    color: #{{ colors.title_hover }};
+}
+
+.title {
+    color: #{{ colors.title }};
+}
+
+.text {
+    color: #{{ colors.text }};
+}
+
+</style>
+{% endif %}
