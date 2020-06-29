@@ -14,9 +14,9 @@ class Home(View):
         contacts = models.Contacts.objects.filter(websites=websites).first()
         icons = models.Icons.objects.filter(websites=websites).first()
         colors = models.Colors.objects.filter(websites=websites).first()
-        banners = models.Banners.objects.filter(websites=websites)
-        categories = models.Categories.objects.filter(websites=websites)
-        products = models.Products.objects.filter(websites=websites, is_highlight=True)
+        banners = models.Banners.objects.filter(websites=websites).order_by('position')
+        categories = models.Categories.objects.filter(websites=websites).order_by('position')
+        products = models.Products.objects.filter(websites=websites, is_highlight=True).order_by('position')
 
         # https://docs.djangoproject.com/en/3.0/topics/pagination/
         paginator = Paginator(products, 8)

@@ -129,7 +129,7 @@ class Categories(models.Model):
     title = models.CharField(max_length=20, null=False, blank=False)
     images = models.ImageField(upload_to=icon_path, null=True, blank=True)
     color = models.CharField(max_length=20, null=True, blank=True)
-    position = models.PositiveIntegerField(null=False, blank=False)
+    position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -160,7 +160,7 @@ class Products(models.Model):
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    position = models.PositiveIntegerField(null=False, blank=False)
+    position = models.PositiveIntegerField(default=1)
     stock = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
     is_highlight = models.BooleanField(default=True)
