@@ -1,5 +1,6 @@
 from django.db import models
 from utils import utils
+from django.utils.text import slugify
 
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to
@@ -128,7 +129,7 @@ class Categories(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     title = models.CharField(max_length=20, null=False, blank=False)
     images = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    color = models.CharField(max_length=20, null=True, blank=True)
+    slug = models.SlugField(max_length=20, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,11 +138,17 @@ class Categories(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
         constraints = [
-            models.UniqueConstraint(fields=['websites', 'title'], name='unique_category'),
+            models.UniqueConstraint(fields=['websites', 'slug'], name='unique_category'),
         ]
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+
+        self.slug = f'{slugify(self.title)}'
+
+        super().save(*args, **kwargs)
 
 
 class Products(models.Model):
