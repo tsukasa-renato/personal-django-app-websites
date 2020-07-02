@@ -154,7 +154,7 @@ class Categories(models.Model):
 class Products(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE)
-    title = models.CharField(max_length=120, null=False, blank=False)
+    title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
     calculation = models.CharField(

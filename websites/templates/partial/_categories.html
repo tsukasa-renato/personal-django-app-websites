@@ -1,6 +1,6 @@
 {% load static %}
 
-{% if category_slug %}
+{% if category_ %}
 <a class="btn categories"
         href="{% url 'websites:home' url=websites.url %}">
 {% else %}
@@ -25,7 +25,7 @@
 {% endif %}
 {% if categories %}
 {% for category in categories %}
-{% if category_slug == category %}
+{% if category_ == category %}
 <a class="btn categories active"
         href="{% url 'websites:category' url=websites.url category=category.slug %}">
 {% else %}

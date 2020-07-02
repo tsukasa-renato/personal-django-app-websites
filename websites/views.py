@@ -9,6 +9,7 @@ class Home(View):
     def get(self, *args, **kwargs):
 
         category = ''
+        search = self.request.GET.get('search')
 
         websites = models.Websites.objects.filter(url=kwargs['url']).first()
         contacts = models.Contacts.objects.filter(websites=websites).first()
@@ -22,6 +23,9 @@ class Home(View):
 
         if category:
             products = models.Products.objects.filter(websites=websites, categories=category).order_by('position')
+        elif search:
+            products = models.Products.objects.filter(websites=websites,
+                                                      title__icontains=search).order_by('position')
         else:
             products = models.Products.objects.filter(websites=websites, is_highlight=True).order_by('position')
 
@@ -36,7 +40,7 @@ class Home(View):
             'colors': colors or '',
             'banners': banners or '',
             'categories': categories or '',
-            'category_slug': category or '',
+            'category_': category or '',
             'products': page_obj or '',
         }
 
