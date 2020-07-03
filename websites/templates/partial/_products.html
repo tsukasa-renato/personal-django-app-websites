@@ -2,22 +2,29 @@
 
 {% for product in products %}
 {% if product.is_active %}
-<a href="" class="card border-0 mb-3 mr-4 title" style="width: 260px; padding:10px">
-    {% if product.images %}
-    <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
-         style="height:200px;width:268px;">
+{% if forloop.counter == 5 %}
+</div>
+<div class="row mt-2">
     {% endif %}
-    <div class="card-body">
-        <h6 class="card-title text-center">{{ product.title }}
-            {% if product.promotional_price %}
-            <strike>{% money_format product.price websites.currency %}</strike> por
-            <strong>{% money_format product.promotional_price websites.currency %}</strong>
-        </h6>
-        {% else %}
-        por <strong>{% money_format product.price websites.currency %}</strong>
-        </h6>
-        {% endif %}
+    <div class="col-sm">
+        <a href="" class="card border-0 title">
+            <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+                 style="height:300px;">
+            <div class="card-body">
+                <p class="card-text text-center text-truncate">
+                    {{ product.title }}
+                    {% if product.promotional_price %}
+                    <strike>{% money_format product.price websites.currency %}</strike> por
+                    <strong>{% money_format product.promotional_price websites.currency %}</strong>
+                    {% else %}
+                    por <strong>{% money_format product.price websites.currency %}</strong>
+                    {% endif %}
+                </p>
+            </div>
+        </a>
     </div>
-</a>
-{% endif %}
-{% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% if '' %}
+</div>
+    {% endif %}
