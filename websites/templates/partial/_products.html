@@ -7,9 +7,11 @@
 <div class="row mt-2">
     {% endif %}
     <div class="col-sm">
-        <a href="" class="card border-0 title">
+        <a href="" class="card border-0 title" style="max-width:400px;">
+            {% if product.images %}
             <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
                  style="height:300px;">
+            {% endif %}
             <div class="card-body">
                 <p class="card-text text-center text-truncate">
                     {{ product.title }}

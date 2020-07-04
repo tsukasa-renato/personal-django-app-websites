@@ -27,7 +27,7 @@ class Home(View):
             products = models.Products.objects.filter(websites=websites,
                                                       title__icontains=search).order_by('position')
         else:
-            products = models.Products.objects.filter(websites=websites, is_highlight=True).order_by('position')
+            products = models.Products.objects.filter(websites=websites, show_home=True).order_by('position')
 
         paginator = Paginator(products, 8)
         page_number = self.request.GET.get('page')

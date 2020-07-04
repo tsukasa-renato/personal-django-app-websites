@@ -22,7 +22,7 @@ class Websites(models.Model):
     home = models.CharField(max_length=20, null=False, blank=False, default='Highlight')
     is_active = models.BooleanField(default=False)
     reason = models.CharField(max_length=100, null=True, blank=True)
-    local_timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
+    timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
     currency = models.CharField(max_length=10, null=False, blank=False, default='auto')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,56 +31,22 @@ class Websites(models.Model):
         return self.url
 
     def get_created_at(self):
-        if self.local_timezone == 'auto':
+        if self.timezone == 'auto':
             return utils.custom_datetime(self.created_at)
 
-        return utils.custom_datetime(self.created_at, self.local_timezone)
+        return utils.custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
 
     def get_updated_at(self):
-        if self.local_timezone == 'auto':
+        if self.timezone == 'auto':
             return utils.custom_datetime(self.updated_at)
 
-        return utils.custom_datetime(self.updated_at, self.local_timezone)
+        return utils.custom_datetime(self.updated_at, self.timezone)
     get_updated_at.short_description = 'Updated at'
 
     class Meta:
         verbose_name = 'Website'
         verbose_name_plural = 'Websites'
-
-
-class Colors(models.Model):
-    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
-    navbar_top = models.CharField(max_length=6, null=False, blank=False, default='0080FF')
-    categories = models.CharField(max_length=6, null=False, blank=False, default='F03333')
-    active = models.CharField(max_length=6, null=False, blank=False, default='E62D2D')
-    footer = models.CharField(max_length=6, null=False, blank=False, default='F03333')
-    text = models.CharField(max_length=6, null=False, blank=False, default='FFFFFF')
-    title = models.CharField(max_length=6, null=False, blank=False, default='000000')
-    title_hover = models.CharField(max_length=6, null=False, blank=False, default='F03333')
-
-    class Meta:
-        verbose_name = 'Color'
-        verbose_name_plural = 'Colors'
-
-    def __str__(self):
-        return 'Colors'
-
-
-class Icons(models.Model):
-    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
-    shortcut = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    account = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    cart = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    search = models.ImageField(upload_to=icon_path, null=True, blank=True)
-    home = models.ImageField(upload_to=icon_path, null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Icon'
-        verbose_name_plural = 'Icons'
-
-    def __str__(self):
-        return 'Icons'
 
 
 class Contacts(models.Model):
@@ -105,6 +71,44 @@ class Contacts(models.Model):
 
     def __str__(self):
         return 'Contacts'
+
+
+class Colors(models.Model):
+    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    navbar_top = models.CharField(max_length=6, null=False, blank=False, default='0080FF')
+    categories = models.CharField(max_length=6, null=False, blank=False, default='F03333')
+    active = models.CharField(max_length=6, null=False, blank=False, default='E62D2D')
+    footer = models.CharField(max_length=6, null=False, blank=False, default='F03333')
+    text = models.CharField(max_length=6, null=False, blank=False, default='FFFFFF')
+    title = models.CharField(max_length=6, null=False, blank=False, default='000000')
+    title_hover = models.CharField(max_length=6, null=False, blank=False, default='F03333')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Color'
+        verbose_name_plural = 'Colors'
+
+    def __str__(self):
+        return 'Colors'
+
+
+class Icons(models.Model):
+    websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
+    shortcut = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    account = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    cart = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    search = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    home = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Icon'
+        verbose_name_plural = 'Icons'
+
+    def __str__(self):
+        return 'Icons'
 
 
 class Banners(models.Model):
@@ -157,23 +161,21 @@ class Products(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
-    calculation = models.CharField(
+    price_type = models.CharField(
         default='1',
         max_length=1,
         choices=(
-            ('1', 'Unique Price'),
-            ('2', 'Total Sum')
+            ('1', 'Independent'),
+            ('2', 'Partially Dependent'),
+            ('3', 'Totally Dependent')
         )
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     position = models.PositiveIntegerField(default=1)
-    stock = models.PositiveIntegerField(default=1)
+    show_home = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    is_highlight = models.BooleanField(default=True)
     reason = models.CharField(max_length=100, null=True, blank=True)
-    start_at = models.DateField(null=True, blank=True)
-    end_at = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -200,9 +202,19 @@ class Groups(models.Model):
             ('2', 'Average')
         )
     )
+    price_type = models.CharField(
+        default='3',
+        max_length=1,
+        choices=(
+            ('1', 'Independent'),
+            ('2', 'Partially Dependent'),
+            ('3', 'Totally Dependent')
+        )
+    )
+    price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     minimum = models.PositiveIntegerField(default=1)
     maximum = models.PositiveIntegerField(default=1)
-    can_repeat = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -210,7 +222,7 @@ class Groups(models.Model):
         verbose_name = 'Group'
         verbose_name_plural = 'Groups'
         constraints = [
-            models.UniqueConstraint(fields=['websites', 'products', 'title'], name='unique_group')
+            models.UniqueConstraint(fields=['products', 'title'], name='unique_group')
         ]
 
     def __str__(self):
@@ -220,13 +232,13 @@ class Groups(models.Model):
 class Options(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     groups = models.ForeignKey(Groups, on_delete=models.CASCADE)
-    title = models.CharField(max_length=120, null=False, blank=False)
+    title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     promotional_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     minimum = models.PositiveIntegerField(default=0)
-    maximum = models.PositiveIntegerField(null=True, blank=True)
+    maximum = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -234,7 +246,7 @@ class Options(models.Model):
         verbose_name = 'Option',
         verbose_name_plural = 'Options'
         constraints = [
-            models.UniqueConstraint(fields=['websites', 'groups', 'title'], name='unique_options')
+            models.UniqueConstraint(fields=['groups', 'title'], name='unique_options')
         ]
 
     def __str__(self):
