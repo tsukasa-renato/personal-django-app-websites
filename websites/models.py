@@ -75,7 +75,7 @@ class Contacts(models.Model):
 
 class Colors(models.Model):
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
-    navbar_top = models.CharField(max_length=6, null=False, blank=False, default='0080FF')
+    navbar = models.CharField(max_length=6, null=False, blank=False, default='0080FF')
     categories = models.CharField(max_length=6, null=False, blank=False, default='F03333')
     active = models.CharField(max_length=6, null=False, blank=False, default='E62D2D')
     footer = models.CharField(max_length=6, null=False, blank=False, default='F03333')
@@ -161,6 +161,7 @@ class Products(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
+    slug = models.SlugField(max_length=200, null=False, blank=True)
     price_type = models.CharField(
         default='1',
         max_length=1,
@@ -189,11 +190,18 @@ class Products(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+
+        self.slug = f'{slugify(self.title)}'
+
+        super().save(*args, **kwargs)
+
 
 class Groups(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     products = models.ForeignKey(Products, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False, blank=False)
+    user_input = models.CharField(max_length=200, null=True, blank=True)
     calculation = models.CharField(
         default='1',
         max_length=1,

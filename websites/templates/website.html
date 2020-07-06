@@ -10,34 +10,36 @@
 {% if websites.is_active %}
 <div class="container-fluid">
     <div class="row">
-        <!--Top NavBar (title, search bar, cart, account) -->
         {% include 'partial/_top_navbar.html' %}
     </div>
     {% if banners %}
     <div class="row">
-        <!-- Banners (carousel with images) -->
         {% include 'partial/_banners.html' %}
     </div>
     {% endif %}
-    <div class="row justify-content-center category">
-        <!-- Categories (navbar) -->
+    {% if categories %}
+     <div class="row justify-content-center category">
         {% include 'partial/_categories.html' %}
     </div>
+    {% endif %}
+    {% if products %}
     <div class="row mt-2">
-        {% if products %}
-        <!-- Products -->
         {% include 'partial/_products.html' %}
-        {% endif %}
     </div>
     <div class="row justify-content-center mt-2">
         {% include 'partial/_pagination.html' %}
     </div>
+    {% endif %}
+    {% if product %}
+    {% include 'partial/_product.html' %}
+    {% else %}
     <div class="row mt-3 text footer">
         {% include 'partial/_contact.html' %}
     </div>
     <div class="row justify-content-center text p-2 footer">
         {% include 'partial/_credits.html' %}
     </div>
+    {% endif %}
 
 <script src="{% static 'custom/js/website.js' %}"></script>
 </div>

@@ -45,3 +45,27 @@ class Home(View):
         }
 
         return render(self.request, 'website.html', context)
+
+
+class Product(View):
+
+    def get(self, *args, **kwargs):
+
+        websites = models.Websites.objects.filter(url=kwargs['url']).first()
+        icons = models.Icons.objects.filter(websites=websites).first()
+        colors = models.Colors.objects.filter(websites=websites).first()
+
+        product = models.Products.objects.filter(slug=kwargs['product']).first()
+        groups = models.Groups.objects.filter(products=product)
+        options = models.Options.objects.filter(groups__in=groups)
+
+        context = {
+            'websites': websites,
+            'icons': icons or '',
+            'colors': colors or '',
+            'product': product or '',
+            'groups': groups or '',
+            'options': options or ''
+        }
+
+        return render(self.request, 'website.html', context)
