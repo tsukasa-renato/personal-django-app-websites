@@ -9,6 +9,9 @@
 {% block content %}
 {% if websites.is_active %}
 <div class="container-fluid">
+    {% if product %}
+    {% include 'partial/_product.html' %}
+    {% else %}
     <div class="row">
         {% include 'partial/_top_navbar.html' %}
     </div>
@@ -26,13 +29,10 @@
     <div class="row mt-2">
         {% include 'partial/_products.html' %}
     </div>
-    <div class="row justify-content-center mt-2">
+    <div class="row justify-content-center">
         {% include 'partial/_pagination.html' %}
     </div>
     {% endif %}
-    {% if product %}
-    {% include 'partial/_product.html' %}
-    {% else %}
     <div class="row mt-3 text footer">
         {% include 'partial/_contact.html' %}
     </div>

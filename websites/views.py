@@ -6,10 +6,19 @@ from . import models
 
 class Home(View):
 
-    def get(self, *args, **kwargs):
+    @staticmethod
+    def list_product(**kwargs):
 
-        category = ''
-        search = self.request.GET.get('search')
+        if kwargs['category']:
+            return models.Products.objects.filter(categories=kwargs['category']).order_by('position')
+        if kwargs['search']:
+            return models.Products.objects.filter(websites=kwargs['websites'],
+                                                  title__icontains=kwargs['search']).order_by('position')
+
+        return models.Products.objects.filter(websites=kwargs['websites'],
+                                              show_home=True).order_by('position')
+
+    def get(self, *args, **kwargs):
 
         websites = models.Websites.objects.filter(url=kwargs['url']).first()
         contacts = models.Contacts.objects.filter(websites=websites).first()
@@ -18,16 +27,13 @@ class Home(View):
         banners = models.Banners.objects.filter(websites=websites).order_by('position')
         categories = models.Categories.objects.filter(websites=websites).order_by('position')
 
+        category = ''
+        search = self.request.GET.get('search')
+
         if 'category' in kwargs:
             category = models.Categories.objects.filter(websites=websites, slug=kwargs['category']).first()
 
-        if category:
-            products = models.Products.objects.filter(websites=websites, categories=category).order_by('position')
-        elif search:
-            products = models.Products.objects.filter(websites=websites,
-                                                      title__icontains=search).order_by('position')
-        else:
-            products = models.Products.objects.filter(websites=websites, show_home=True).order_by('position')
+        products = self.list_product(websites=websites, category=category, search=search)
 
         paginator = Paginator(products, 8)
         page_number = self.request.GET.get('page')
@@ -54,10 +60,9 @@ class Product(View):
         websites = models.Websites.objects.filter(url=kwargs['url']).first()
         icons = models.Icons.objects.filter(websites=websites).first()
         colors = models.Colors.objects.filter(websites=websites).first()
-
-        product = models.Products.objects.filter(slug=kwargs['product']).first()
-        groups = models.Groups.objects.filter(products=product)
-        options = models.Options.objects.filter(groups__in=groups)
+        product = models.Products.objects.filter(websites=websites, slug=kwargs['product']).first()
+        groups = models.Groups.objects.filter(products=product).order_by('position')
+        options = models.Options.objects.filter(groups__in=groups).order_by('position')
 
         context = {
             'websites': websites,

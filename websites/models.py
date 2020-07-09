@@ -132,7 +132,7 @@ class Banners(models.Model):
 class Categories(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     title = models.CharField(max_length=20, null=False, blank=False)
-    images = models.ImageField(upload_to=icon_path, null=True, blank=True)
+    icon = models.ImageField(upload_to=icon_path, null=True, blank=True)
     slug = models.SlugField(max_length=20, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -184,7 +184,7 @@ class Products(models.Model):
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
         constraints = [
-            models.UniqueConstraint(fields=['websites', 'title'], name='unique_product')
+            models.UniqueConstraint(fields=['websites', 'slug'], name='unique_product')
         ]
 
     def __str__(self):
@@ -223,6 +223,7 @@ class Groups(models.Model):
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     minimum = models.PositiveIntegerField(default=1)
     maximum = models.PositiveIntegerField(default=1)
+    position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -247,6 +248,7 @@ class Options(models.Model):
     promotional_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     minimum = models.PositiveIntegerField(default=0)
     maximum = models.PositiveIntegerField(default=1)
+    position = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

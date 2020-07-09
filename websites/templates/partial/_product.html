@@ -1,63 +1,88 @@
 {% load static %}
-<form method="post">
+{% load filters %}
+<form method="post" id="options_form">
     {% csrf_token %}
-    <div class="row">
-        <div class="col text-center">
-            <img src="{% static 'media/test1.png' %}" class="figure-img img-fluid rounded"
-                 alt="{{ websites.home }}" style="max-height:400px;">
-        </div>
-        <div class="col text-center">
-            <h2> PROCESSADOR INTEL i5 9400F </h2>
-            <h4>
-                9ª geração de processadores Intel Core, os processadores são mais eficientes no processamento de
-                conteúdo
-                em 4K (incluindo transmissões em 360 graus nessa resolução), têm mais performance em games,
-                inclui suporte as tecnologias Turbo Boost 2.0, Speed Shift, HDMI 2.0, HDCP 2.2 e Thunderbolt 3.
-            </h4>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col text-center">
-            <h4>Escolha o processador</h4>
-            <div class="row justify-content-center">
-                <div class="form-check mr-3">
-                    <button type="button" class="btn btn-primary">
-                        <input class="form-check-input" type="radio" name="option" id="exampleRadios1" value="option1"
-                               checked>
-                        <label class="form-check-label" for="exampleRadios1">
-                            Intel
-                        </label>
-                    </button>
-                </div>
-                <div class="form-check mr-3">
-                    <button type="button" class="btn btn-primary">
-                        <input class="form-check-input" type="radio" name="option" id="exampleRadios2" value="option2">
-                        <label class="form-check-label" for="exampleRadios2">
-                            AMD
-                        </label>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row w-100 navbar" style="position:absolute;bottom:0">
-        <div class="col text-center text">
-        <h4> Camisetas Python é legal </h4>
-        <h5> Final Price R$ 0,00 </h5>
-        <button type="submit" class="btn btn-success mb-1">
-            <b> + </b> Add to Cart
-        </button>
-            </div>
-    </div>
 </form>
 
 <script>
     $(document).ready(function(){
-        $("#exampleRadios1").click(function(){
-            console.log('Test');
+
+        {% for group in groups %}
+
+            $("#options_form").append(function(){
+
+                return  "<div class='row w-100 mt-3'>" +
+                            "<div class='col text-center'>" +
+                                "<img src='...' class='figure-img img-fluid rounded' " +
+                                "alt='{{ option.title }}' id='option_images' style='max-height:300px;'>" +
+                            "</div>" +
+                            "<div class='col text-center overflow-auto' style='max-height:300px;'>" +
+                                "<h5 id='option_title'> </h5>" +
+                                "<p id='option_description'>" +
+                                  "</p>" +
+                            "</div>" +
+                        "</div>" +
+
+                        "<div class='row mt-3'>" +
+                            "<div class='col text-center'>" +
+                                "<h4> {{ group.title }} </h4>" +
+                                "<div class='row justify-content-center' id='{{ group.title }}'>" +
+                                    "<!-- Options -->"
+                                "</div>" +
+                            "</div>" +
+                        "</div>";
             });
+
+        {% endfor %}
+
+        {% for option in options %}
+            var checked = ""
+            $("#{{ option.groups }}").append(function() {
+
+                {% if forloop.counter == 1 %}
+                    $("#option_title").append("{{ option.title }}")
+                    $("#option_description").append("{{ option.description|linebreaks }}")
+                    $("#option_images").attr({"src": "{{ option.images.url }}"})
+                    checked = "checked"
+                {% endif %}
+
+                return  "<div class='form-check mr-3'>" +
+                            "<input class='form-check-input' type='radio' name='option' id='{{ option.id }}'" +
+                            "value='{{ option.id }}'" + checked + ">" +
+                            "<label class='form-check-label p-1 btn-primary rounded' for='{{ option.id }}'>" +
+                            "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
+                                "alt='{{ websites.home }}' style='width: 30px;height: 30px;'>" +
+                                {% if option.price %}
+                                "{% money_format option.price websites.currency %}" +
+                                {% else %}
+                                "{{ option.title }}" +
+                                {% endif %}
+                            "</label>" +
+                        "</div>";
+            });
+
+            $("#{{option.id}}").click(function(){
+                $("#option_title").empty()
+                $("#option_description").empty()
+                $("#option_title").append("{{ option.title }}")
+                $("#option_description").append("{{ option.description|linebreaks }}")
+                $("#option_images").attr({"src": "{{ option.images.url }}"})
+            });
+
+        {% endfor %}
+
+        $("#options_form").append(function(){
+            return "<div class='row navbar mt-3'>" +
+                        "<div class='col text-center text'>" +
+                            "<h5> Final Price R$ 0,00 </h5>" +
+                            "<button type='submit' class='btn btn-success'>" +
+                                "<b> + </b> Add to Cart" +
+                            "</button>" +
+                        "</div>" +
+                    "</div>";
+        });
+
     });
+
 
 </script>
