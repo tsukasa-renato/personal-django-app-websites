@@ -20,20 +20,21 @@
             $("#options_form").append(function(){
 
                 return  "<div class='row p-1'>" +
-                            "<div class='col'>" +
+                            "<div class='col-sm'>" +
                                 "<img src='...' class='img-fluid' " +
-                                "alt='...' id='option_images' style='max-height:400px;'>" +
+                                "alt='...' id='{{ group.slug }}_images' style='max-height:400px;'>" +
                             "</div>" +
-                            "<div class='col'>" +
-                                "<h5 id='option_title'> </h5>" +
-                                "<p class='overflow-auto' style='max-height:300px;' id='option_description'> </p>" +
+                            "<div class='col-sm'>" +
+                                "<h5 id='{{ group.slug }}_title'> </h5>" +
+                                "<p class='overflow-auto' style='max-height:300px;' " +
+                                "id='{{ group.slug }}_description'> </p>" +
                             "</div>" +
                         "</div>" +
 
                         "<div class='row justify-content-center'>" +
                             "<h4> {{ group.title }} </h4>" +
                         "</div>" +
-                        "<div class='row justify-content-center' id='{{ group.title }}'>" +
+                        "<div class='row justify-content-center' id='{{ group.slug }}'>" +
                             "<p class='d-none'>" + radio + "</p>" +
                             "<!-- Options -->" +
                         "</div>";
@@ -67,10 +68,10 @@
             {% endif %}
 
             {% if forloop.counter == 1 %}
-                $("#option_title").append("{{ option.title }}")
-                $("#option_description").append("{{ option.description|linebreaks }}")
-                $("#option_images").attr({"src": "{{ option.images.url }}"})
-                $("#option_images").attr({"alt": "{{ option.title }}"})
+                $("#{{ option.groups }}_title").append("{{ option.title }}")
+                $("#{{ option.groups }}_description").append("{{ option.description|linebreaks }}")
+                $("#{{ option.groups }}_images").attr({"src": "{{ option.images.url }}"})
+                $("#{{ option.groups }}_images").attr({"alt": "{{ option.title }}"})
                 checked = "checked"
             {% endif %}
 
@@ -85,7 +86,7 @@
                         "<label class='form-check-label btn-primary rounded p-1' for='{{ option.id }}'>" +
 
                         "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
-                                "alt='{{ option.title }}' style='width: 30px;height: 30px;'>" +
+                                "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>" +
                         option_text +
 
                         "</label>" +
@@ -94,13 +95,13 @@
 
             $("#{{option.id}}").click(function(){
 
-                $("#option_title").empty()
-                $("#option_description").empty()
+                $("#{{ option.groups }}_title").empty()
+                $("#{{ option.groups }}_description").empty()
 
-                $("#option_title").append("{{ option.title }}")
-                $("#option_description").append("{{ option.description|linebreaks }}")
-                $("#option_images").attr({"src": "{{ option.images.url }}"})
-                $("#option_images").attr({"alt": "{{ option.title }}"})
+                $("#{{ option.groups }}_title").append("{{ option.title }}")
+                $("#{{ option.groups }}_description").append("{{ option.description|linebreaks }}")
+                $("#{{ option.groups }}_images").attr({"src": "{{ option.images.url }}"})
+                $("#{{ option.groups }}_images").attr({"alt": "{{ option.title }}"})
 
             });
 

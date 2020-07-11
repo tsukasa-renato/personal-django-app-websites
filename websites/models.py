@@ -146,7 +146,7 @@ class Categories(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return self.slug
 
     def save(self, *args, **kwargs):
 
@@ -188,7 +188,7 @@ class Products(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return self.slug
 
     def save(self, *args, **kwargs):
 
@@ -247,7 +247,7 @@ class Groups(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return self.slug
 
     def save(self, *args, **kwargs):
 
@@ -279,7 +279,7 @@ class Options(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return self.slug
 
     def save(self, *args, **kwargs):
 
