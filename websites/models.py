@@ -201,7 +201,19 @@ class Groups(models.Model):
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     products = models.ForeignKey(Products, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False, blank=False)
-    user_input = models.CharField(max_length=200, null=True, blank=True)
+    slug = models.SlugField(max_length=200, null=False, blank=True)
+    user_input = models.CharField(
+        default='1',
+        max_length=1,
+        choices=(
+            ('1', 'default'),
+            ('2', 'text'),
+            ('3', 'number'),
+            ('4', 'date'),
+            ('5', 'color'),
+            ('6', 'image')
+        )
+    )
     calculation = models.CharField(
         default='1',
         max_length=1,
@@ -231,11 +243,17 @@ class Groups(models.Model):
         verbose_name = 'Group'
         verbose_name_plural = 'Groups'
         constraints = [
-            models.UniqueConstraint(fields=['products', 'title'], name='unique_group')
+            models.UniqueConstraint(fields=['products', 'slug'], name='unique_group')
         ]
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+
+        self.slug = f'{slugify(self.title)}'
+
+        super().save(*args, **kwargs)
 
 
 class Options(models.Model):
@@ -244,6 +262,7 @@ class Options(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
+    slug = models.SlugField(max_length=200, null=False, blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     promotional_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     minimum = models.PositiveIntegerField(default=0)
@@ -256,8 +275,14 @@ class Options(models.Model):
         verbose_name = 'Option',
         verbose_name_plural = 'Options'
         constraints = [
-            models.UniqueConstraint(fields=['groups', 'title'], name='unique_options')
+            models.UniqueConstraint(fields=['groups', 'slug'], name='unique_options')
         ]
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+
+        self.slug = f'{slugify(self.title)}'
+
+        super().save(*args, **kwargs)

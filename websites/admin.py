@@ -23,21 +23,25 @@ class OptionsInline(admin.TabularInline):
 
 
 class GroupsAdmin(admin.ModelAdmin):
-    list_display = ['title', 'calculation', 'minimum', 'maximum']
+    list_display = ['title', 'slug', 'calculation', 'minimum', 'maximum']
     inlines = [
         OptionsInline
     ]
 
 
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ['title', 'description', 'images']
+    list_display = ['title', 'slug', 'images']
+
+
+class OptionsAdmin(admin.ModelAdmin):
+    list_display = ['title', 'slug', 'images']
 
 
 admin.site.register(models.Websites, WebsitesAdmin)
 admin.site.register(models.Categories)
 admin.site.register(models.Products, ProductsAdmin)
 admin.site.register(models.Groups, GroupsAdmin)
-admin.site.register(models.Options)
+admin.site.register(models.Options, OptionsAdmin)
 admin.site.register(models.Banners)
 admin.site.register(models.Contacts)
 admin.site.register(models.Icons)
