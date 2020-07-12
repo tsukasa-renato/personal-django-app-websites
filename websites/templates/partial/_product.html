@@ -9,6 +9,8 @@
 <script>
     $(document).ready(function(){
 
+        var total = 0
+
         {% for group in groups %}
 
             var radio = ""
@@ -16,13 +18,12 @@
             {% if group.maximum == 1 and group.minimum == 1 %}
                 radio = "radio"
             {% endif %}
-
+            console.log(radio)
             $("#options_form").append(function(){
 
                 return  "<div class='row p-1'>" +
-                            "<div class='col-sm'>" +
-                                "<img src='...' class='img-fluid' " +
-                                "alt='...' id='{{ group.slug }}_images' style='max-height:400px;'>" +
+                            "<div class='col-sm' id='{{ group.slug }}_images'>" +
+
                             "</div>" +
                             "<div class='col-sm'>" +
                                 "<h5 id='{{ group.slug }}_title'> </h5>" +
@@ -35,7 +36,8 @@
                             "<h4> {{ group.title }} </h4>" +
                         "</div>" +
                         "<div class='row justify-content-center' id='{{ group.slug }}'>" +
-                            "<p class='d-none'>" + radio + "</p>" +
+                            "<p class='d-none' id='{{ group.slug }}_type'>" + radio + "</p>" +
+                            "<p class='d-none' id='{{ group.slug }}_total'> 0 </p>" +
                             "<!-- Options -->" +
                         "</div>";
             });
@@ -44,9 +46,11 @@
 
         {% for option in options %}
 
-            var checked = ""
-            var type_input = $(".d-none").text()
+            var type_input = $("#{{ option.groups }}_type").text()
+            var div_input = "check"
+            var value_input = "value='{{ option.id }}'"
             var option_text = ""
+            var checked = ""
             var readonly = ""
 
             {% if option.price %}
@@ -60,7 +64,10 @@
                     type_input = "checkbox"
                 {% else %}
                     type_input = "number"
+                    div_input = "control"
+                    value_input = "value='{{ option.minimum }}' min='{{ option.minimum }}' max='{{ option.maximum }}'"
                 {% endif %}
+                $("#{{ group.slug }}_type").text(type_input)
             }
 
             {% if option.maximum == option.minimum %}
@@ -68,25 +75,36 @@
             {% endif %}
 
             {% if forloop.counter == 1 %}
+
                 $("#{{ option.groups }}_title").append("{{ option.title }}")
                 $("#{{ option.groups }}_description").append("{{ option.description|linebreaks }}")
-                $("#{{ option.groups }}_images").attr({"src": "{{ option.images.url }}"})
-                $("#{{ option.groups }}_images").attr({"alt": "{{ option.title }}"})
+                $("#{{ option.groups }}_total").text("{{ option.price }}")
+
+                {% if option.images %}
+                $("#{{ option.groups }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
+                                "alt='{{ option.slug }}' style='max-height:400px;'>")
+                {% endif %}
+
+                total += parseFloat("{{ option.price }}")
                 checked = "checked"
+
             {% endif %}
 
             $("#{{ option.groups }}").append(function() {
 
-                return  "<div class='form-check mr-1'>" +
+                return  "<div class='form-" + div_input + " mr-1'>" +
 
-                        "<input class='form-check-input' type=" + type_input + " name='option' id='{{ option.id }}'" +
-                        "value='{{ option.id }}'" + checked + " " +
+                        "<input class='form-check-input' type=" + type_input + " name='option' id='{{ option.id }}' " +
+                        value_input + " " + checked + " " +
                         readonly + ">" +
 
                         "<label class='form-check-label btn-primary rounded p-1' for='{{ option.id }}'>" +
 
+                        {% if option.images %}
                         "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
                                 "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>" +
+                        {% endif %}
+
                         option_text +
 
                         "</label>" +
@@ -100,8 +118,25 @@
 
                 $("#{{ option.groups }}_title").append("{{ option.title }}")
                 $("#{{ option.groups }}_description").append("{{ option.description|linebreaks }}")
-                $("#{{ option.groups }}_images").attr({"src": "{{ option.images.url }}"})
-                $("#{{ option.groups }}_images").attr({"alt": "{{ option.title }}"})
+
+                {% if option.images %}
+                $("#{{ option.groups }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
+                                "alt='{{ option.slug }}' style='max-height:400px;'>")
+                {% endif %}
+
+                if (type_input == 'radio') {
+                    total -= parseFloat($("#{{ option.groups }}_total").text())
+                    total += parseFloat("{{ option.price }}")
+                    $("#{{ option.groups }}_total").text("{{ option.price }}")
+                } else if (type_input == 'checkbox') {
+                    total += parseFloat("{{ option.price }}")
+                    $("#{{ option.groups }}_total").text("{{ option.price }}")
+                } else {
+                    total += parseFloat("{{ option.price }}")
+                    $("#{{ option.groups }}_total").text("{{ option.price }}")
+                }
+
+                console.log(total)
 
             });
 
