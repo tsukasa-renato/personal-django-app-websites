@@ -23,9 +23,8 @@ def smartphone_format(number):
     return utils.smartphone_format(number)
 
 
-@register.simple_tag
-def url_custom(request, context):
-    print(request)
-    q = QueryDict('a=1', mutable=True)
-    q.update({'a': '2'})
-    return context.slug
+@register.filter
+def remove_dash(text):
+    text = str(text)
+    return text.replace('-', '')
+
