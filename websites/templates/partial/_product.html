@@ -6,14 +6,14 @@
     {% csrf_token %}
     <div class="row mt-5">
         <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
-            <img src="{{ product.images.url }}"  style="max-height:400px;">
+            <img src="{{ product.images.url }}"  style="max-height:400px;max-width:100%;">
         </div>
         <div class="col-sm text-center">
             <h5 id="{{ product.slug|remove_dash }}_title">
                 {{ product.title }}
             </h5>
             <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug|remove_dash }}_description">
-                {{ product.description }}
+                {{ product.description|safe }}
             </p>
         </div>
     </div>
@@ -110,9 +110,9 @@
                 {% else %}
                     {{ option.groups|remove_dash }}.type_input = "number"
                     {{ option.groups|remove_dash }}.class_div = "form-group"
-                    {{ option.groups|remove_dash }}.class_input = "form-control-input"
+                    {{ option.groups|remove_dash }}.class_input = "form-control-input mr-1"
                     auxiliary.value_input = "{{ option.minimum }}"
-                    auxiliary.min_max = "min='{{ option.minimum }}' max='{{ option.maximum }}'"
+                    auxiliary.min_max = "min='{{ option.minimum }}' max='{{ option.maximum }}' style='width:50px;'"
                 {% endif %}
 
             }
@@ -120,11 +120,11 @@
             if (!{{ option.groups|remove_dash }}.option_selected) {
 
                 $("#{{ option.groups|remove_dash }}_title").append("{{ option.title }}")
-                $("#{{ option.groups|remove_dash }}_description").append("{{ option.description|linebreaks }}")
+                $("#{{ option.groups|remove_dash }}_description").html("{{ option.description|safe }}")
 
                 {% if option.images %}
                 $("#{{ option.groups|remove_dash }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
-                                "alt='{{ option.slug }}' style='max-height:400px;'>")
+                                "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>")
                 {% endif %}
 
                 if ({{ option.groups|remove_dash }}.type_input == "radio") {
@@ -141,7 +141,7 @@
 
             $("#{{ option.groups|remove_dash }}").append(function() {
 
-                return  "<div class='" + {{ option.groups|remove_dash }}.class_div+ " mr-1'>" +
+                return  "<div class='" + {{ option.groups|remove_dash }}.class_div+ " mr-2'>" +
 
                         "<input class='" + {{ option.groups|remove_dash }}.class_input + "' type='" +  {{ option.groups|remove_dash }}.type_input +
                         "' name='option' id='{{ option.id }}' " + "value='" + auxiliary.value_input + "' " +
@@ -167,11 +167,11 @@
                 $("#{{ option.groups|remove_dash }}_description").empty()
 
                 $("#{{ option.groups|remove_dash }}_title").append("{{ option.title }}")
-                $("#{{ option.groups|remove_dash }}_description").append("{{ option.description|linebreaks }}")
+                $("#{{ option.groups|remove_dash }}_description").append("{{ option.description|safe }}")
 
                 {% if option.images %}
                 $("#{{ option.groups|remove_dash }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
-                                "alt='{{ option.slug }}' style='max-height:400px;'>")
+                                "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>")
                 {% endif %}
 
                 {% if option.price %}
