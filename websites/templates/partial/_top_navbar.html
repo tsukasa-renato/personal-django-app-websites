@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-sm fixed-top">
 
-    <a class="navbar-brand mb-0 h1 text" href="#">{{ websites.title }}</a>
+    <a class="navbar-brand mb-0 h1 text" href="{%url 'websites:home' url=websites.url %}">{{ websites.title }}</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent"

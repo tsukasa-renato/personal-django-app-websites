@@ -4,6 +4,22 @@
 
 <form method="post" action="{% url 'websites:addtocart' url=websites.url product=product.slug %}" id="options_form">
     {% csrf_token %}
+    <div class="row mt-5">
+        <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
+            <img src="{{ product.images.url }}"  style="max-height:400px;">
+        </div>
+        <div class="col-sm text-center">
+            <h5 id="{{ product.slug|remove_dash }}_title">
+                {{ product.title }}
+            </h5>
+            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug|remove_dash }}_description">
+                {{ product.description }}
+            </p>
+        </div>
+    </div>
+    <div class="row justify-content-center"  id="{{ product.slug|remove_dash }}">
+        <img src="{% static 'media/line.png' %}" style="max-width:100%;">
+    </div>
 </form>
 
 <script>
