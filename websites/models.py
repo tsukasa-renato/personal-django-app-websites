@@ -22,7 +22,7 @@ class Websites(models.Model):
     title = models.CharField(max_length=20, null=False, blank=False)
     home = models.CharField(max_length=20, null=False, blank=False, default='Highlight')
 
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     reason = models.CharField(max_length=100, null=True, blank=True)
 
     timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
@@ -283,6 +283,12 @@ class Groups(models.Model):
     def __str__(self):
         return self.slug
 
+    def max(self):
+        return self.maximum
+
+    def min(self):
+        return self.minimum
+
     def save(self, *args, **kwargs):
 
         self.slug = f'{slugify(self.title)}'
@@ -320,6 +326,12 @@ class Options(models.Model):
 
     def __str__(self):
         return self.slug
+
+    def max(self):
+        return self.maximum
+
+    def min(self):
+        return self.minimum
 
     def save(self, *args, **kwargs):
 
