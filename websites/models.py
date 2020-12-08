@@ -2,6 +2,9 @@ from django.db import models
 from utils import utils
 from django.utils.text import slugify
 
+# TODO use abstract class
+# TODO implement validations for products, groups, options
+
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to
 def icon_path(instance, filename):
@@ -192,8 +195,10 @@ class Products(models.Model):
         max_length=1,
         choices=(
             (1, "Only use the product price"),
-            (2, "Only use the options price"),
-            (3, "Add the product price to the option price")
+            (2, "Sum all the groups price"),
+            (3, "Average all the groups price"),
+            (4, "Add the product price to the sum groups price"),
+            (5, "Add the product price to the average groups price")
         )
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
@@ -239,9 +244,10 @@ class Groups(models.Model):
         max_length=1,
         choices=(
             (1, "Only use the group price"),
-            (2, "Only use the options price"),
-            (3, "Add the group price to the option price"),
-            (4, "Average the group price to the option price")
+            (2, "Sum all the options price"),
+            (3, "Average all the options price"),
+            (4, "Add the group price to the sum options price"),
+            (5, "Add the group price to the average options price")
         )
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
