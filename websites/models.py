@@ -20,19 +20,16 @@ class Websites(models.Model):
 
     url = models.SlugField(max_length=30, unique=True, null=False, blank=False)
     title = models.CharField(max_length=20, null=False, blank=False)
-    home = models.CharField(max_length=20, null=False, blank=False, default='Highlight')
+    home = models.CharField("Homepage title", max_length=20, null=False, blank=False, default='Highlight')
 
-    is_active = models.BooleanField(default=True)
-    reason = models.CharField(max_length=100, null=True, blank=True)
+    is_active = models.BooleanField("Is it active?", default=True)
+    reason = models.CharField("Reason (only for disabled websites)", max_length=100, null=True, blank=True)
 
     timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
     currency = models.CharField(max_length=10, null=False, blank=False, default='auto')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.url
 
     def get_created_at(self):
         if self.timezone == 'auto':
@@ -51,6 +48,9 @@ class Websites(models.Model):
     class Meta:
         verbose_name = 'Website'
         verbose_name_plural = 'Websites'
+
+    def __str__(self):
+        return self.url
 
 
 class Contacts(models.Model):
@@ -78,7 +78,7 @@ class Contacts(models.Model):
         verbose_name_plural = 'Contacts'
 
     def __str__(self):
-        return 'Contacts'
+        return self.websites
 
 
 class Colors(models.Model):
@@ -101,7 +101,7 @@ class Colors(models.Model):
         verbose_name_plural = 'Colors'
 
     def __str__(self):
-        return 'Colors'
+        return self.websites
 
 
 class Icons(models.Model):
@@ -122,7 +122,7 @@ class Icons(models.Model):
         verbose_name_plural = 'Icons'
 
     def __str__(self):
-        return 'Icons'
+        return self.websites
 
 
 class Banners(models.Model):
@@ -187,12 +187,13 @@ class Products(models.Model):
     images = models.ImageField(upload_to=image_path, null=True, blank=True)
 
     price_type = models.CharField(
+        "How is the price calculated?",
         default='1',
         max_length=1,
         choices=(
-            ('1', 'Independent'),
-            ('2', 'Partially Dependent'),
-            ('3', 'Totally Dependent')
+            (1, "Only use the product price"),
+            (2, "Only use the options price"),
+            (3, "Add the product price to the option price")
         )
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
@@ -232,33 +233,15 @@ class Groups(models.Model):
 
     title = models.CharField(max_length=50, null=False, blank=False)
 
-    user_input = models.CharField(
-        default='1',
-        max_length=1,
-        choices=(
-            ('1', 'default'),
-            ('2', 'text'),
-            ('3', 'number'),
-            ('4', 'date'),
-            ('5', 'color'),
-            ('6', 'image')
-        )
-    )
-    calculation = models.CharField(
-        default='1',
-        max_length=1,
-        choices=(
-            ('1', 'Sum'),
-            ('2', 'Average')
-        )
-    )
     price_type = models.CharField(
-        default='3',
+        "How is the price calculated?",
+        default='1',
         max_length=1,
         choices=(
-            ('1', 'Independent'),
-            ('2', 'Partially Dependent'),
-            ('3', 'Totally Dependent')
+            (1, "Only use the group price"),
+            (2, "Only use the options price"),
+            (3, "Add the group price to the option price"),
+            (4, "Average the group price to the option price")
         )
     )
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
