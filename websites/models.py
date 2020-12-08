@@ -2,7 +2,6 @@ from django.db import models
 from utils import utils
 from django.utils.text import slugify
 
-# TODO use abstract class
 # TODO implement validations for products, groups, options
 
 
@@ -19,20 +18,61 @@ def image_path(instance, filename):
     return f'{instance.websites.url}/images/{filename}'
 
 
-class Websites(models.Model):
+class CreateUpdate(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class CommonInfo(models.Model):
+    title = models.CharField(max_length=200, null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
+    images = models.ImageField(upload_to=image_path, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Prices(models.Model):
+    price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class MinMax(models.Model):
+    minimum = models.PositiveIntegerField(default=0)
+    maximum = models.PositiveIntegerField(default=1)
+
+    def max(self):
+        return self.maximum
+
+    def min(self):
+        return self.minimum
+
+    class Meta:
+        abstract = True
+
+
+class Enable(models.Model):
+    is_available = models.BooleanField("Is available?", default=True)
+    reason = models.CharField("Reason (optional, only for unavailable)", max_length=100, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Websites(CreateUpdate, Enable):
 
     url = models.SlugField(max_length=30, unique=True, null=False, blank=False)
     title = models.CharField(max_length=20, null=False, blank=False)
     home = models.CharField("Homepage title", max_length=20, null=False, blank=False, default='Highlight')
 
-    is_active = models.BooleanField("Is it active?", default=True)
-    reason = models.CharField("Reason (only for disabled websites)", max_length=100, null=True, blank=True)
-
     timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
     currency = models.CharField(max_length=10, null=False, blank=False, default='auto')
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def get_created_at(self):
         if self.timezone == 'auto':
@@ -56,7 +96,7 @@ class Websites(models.Model):
         return self.url
 
 
-class Contacts(models.Model):
+class Contacts(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
@@ -73,9 +113,6 @@ class Contacts(models.Model):
     discord = models.CharField(max_length=200, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         verbose_name = 'Contact'
         verbose_name_plural = 'Contacts'
@@ -84,7 +121,7 @@ class Contacts(models.Model):
         return self.websites
 
 
-class Colors(models.Model):
+class Colors(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
@@ -96,9 +133,6 @@ class Colors(models.Model):
     title = models.CharField(max_length=6, null=False, blank=False, default='000000')
     title_hover = models.CharField(max_length=6, null=False, blank=False, default='F03333')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         verbose_name = 'Color'
         verbose_name_plural = 'Colors'
@@ -107,7 +141,7 @@ class Colors(models.Model):
         return self.websites
 
 
-class Icons(models.Model):
+class Icons(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
@@ -117,9 +151,6 @@ class Icons(models.Model):
     search = models.ImageField(upload_to=icon_path, null=True, blank=True)
     home = models.ImageField(upload_to=icon_path, null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         verbose_name = 'Icon'
         verbose_name_plural = 'Icons'
@@ -128,7 +159,7 @@ class Icons(models.Model):
         return self.websites
 
 
-class Banners(models.Model):
+class Banners(CreateUpdate):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
 
@@ -139,9 +170,6 @@ class Banners(models.Model):
 
     position = models.PositiveIntegerField(default=1)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         verbose_name = 'Banner'
         verbose_name_plural = 'Banners'
@@ -150,7 +178,7 @@ class Banners(models.Model):
         return self.images.url
 
 
-class Categories(models.Model):
+class Categories(CreateUpdate):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
 
@@ -159,9 +187,6 @@ class Categories(models.Model):
 
     slug = models.SlugField(max_length=20, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Category'
@@ -180,14 +205,10 @@ class Categories(models.Model):
         super().save(*args, **kwargs)
 
 
-class Products(models.Model):
+class Products(CreateUpdate, Enable, CommonInfo, Prices):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE)
-
-    title = models.CharField(max_length=200, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    images = models.ImageField(upload_to=image_path, null=True, blank=True)
 
     price_type = models.CharField(
         "How is the price calculated?",
@@ -201,18 +222,10 @@ class Products(models.Model):
             (5, "Add the product price to the average groups price")
         )
     )
-    price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
-    promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
     show_home = models.BooleanField(default=True)
     position = models.PositiveIntegerField(default=1)
-
-    is_active = models.BooleanField(default=True)
-    reason = models.CharField(max_length=100, null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Product'
@@ -231,7 +244,7 @@ class Products(models.Model):
         super().save(*args, **kwargs)
 
 
-class Groups(models.Model):
+class Groups(CreateUpdate, Prices, MinMax):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     products = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -250,17 +263,9 @@ class Groups(models.Model):
             (5, "Add the group price to the average options price")
         )
     )
-    price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-
-    minimum = models.PositiveIntegerField(default=1)
-    maximum = models.PositiveIntegerField(default=1)
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Group'
@@ -272,12 +277,6 @@ class Groups(models.Model):
     def __str__(self):
         return self.slug
 
-    def max(self):
-        return self.maximum
-
-    def min(self):
-        return self.minimum
-
     def save(self, *args, **kwargs):
 
         self.slug = f'{slugify(self.title)}'
@@ -285,26 +284,13 @@ class Groups(models.Model):
         super().save(*args, **kwargs)
 
 
-class Options(models.Model):
+class Options(CreateUpdate, CommonInfo, Prices, MinMax):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     groups = models.ForeignKey(Groups, on_delete=models.CASCADE)
 
-    title = models.CharField(max_length=200, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    images = models.ImageField(upload_to=image_path, null=True, blank=True)
-
-    price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    promotional_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-
-    minimum = models.PositiveIntegerField(default=0)
-    maximum = models.PositiveIntegerField(default=1)
-
     slug = models.SlugField(max_length=200, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Option',
@@ -315,12 +301,6 @@ class Options(models.Model):
 
     def __str__(self):
         return self.slug
-
-    def max(self):
-        return self.maximum
-
-    def min(self):
-        return self.minimum
 
     def save(self, *args, **kwargs):
 
