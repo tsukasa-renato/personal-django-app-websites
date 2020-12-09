@@ -2,8 +2,6 @@ from django.db import models
 from utils import utils
 from django.utils.text import slugify
 
-# TODO implement validations for products, groups, options
-
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to
 def icon_path(instance, filename):
@@ -53,6 +51,10 @@ class MinMax(models.Model):
     def min(self):
         return self.minimum
 
+    def check_min_max(self):
+        if self.minimum > self.maximum:
+            raise ValueError("Minimum can't be less than the maximum")
+
     class Meta:
         abstract = True
 
@@ -60,6 +62,30 @@ class MinMax(models.Model):
 class Enable(models.Model):
     is_available = models.BooleanField("Is available?", default=True)
     reason = models.CharField("Reason (optional, only for unavailable)", max_length=100, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class PriceType(models.Model):
+    price_type = models.CharField(
+        "How is the price calculated?",
+        max_length=1,
+        default=1,
+        choices=(
+            ('1', "Only use the product price"),
+            ('2', "Sum all the groups price"),
+            ('3', "Average all the groups price"),
+            ('4', "Add the product price to the sum groups price"),
+            ('5', "Add the product price to the average groups price")
+        )
+    )
+
+    def check_price(self):
+        if self.price_type in ['1', '4', '5'] and self.price is None:
+            raise ValueError("Enter a price or change the type price")
+        if self.price_type in ['2', '3'] and self.price is not None:
+            raise ValueError("Remove the price or change the type price")
 
     class Meta:
         abstract = True
@@ -205,26 +231,13 @@ class Categories(CreateUpdate):
         super().save(*args, **kwargs)
 
 
-class Products(CreateUpdate, Enable, CommonInfo, Prices):
+class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE)
 
-    price_type = models.CharField(
-        "How is the price calculated?",
-        default='1',
-        max_length=1,
-        choices=(
-            (1, "Only use the product price"),
-            (2, "Sum all the groups price"),
-            (3, "Average all the groups price"),
-            (4, "Add the product price to the sum groups price"),
-            (5, "Add the product price to the average groups price")
-        )
-    )
-
     slug = models.SlugField(max_length=200, null=False, blank=True)
-    show_home = models.BooleanField(default=True)
+    show_home = models.BooleanField("Show in homepage?", default=True)
     position = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -239,30 +252,19 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices):
 
     def save(self, *args, **kwargs):
 
+        self.check_price()
+
         self.slug = f'{slugify(self.title)}'
 
         super().save(*args, **kwargs)
 
 
-class Groups(CreateUpdate, Prices, MinMax):
+class Groups(CreateUpdate, Prices, MinMax, PriceType):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     products = models.ForeignKey(Products, on_delete=models.CASCADE)
 
     title = models.CharField(max_length=50, null=False, blank=False)
-
-    price_type = models.CharField(
-        "How is the price calculated?",
-        default='1',
-        max_length=1,
-        choices=(
-            (1, "Only use the group price"),
-            (2, "Sum all the options price"),
-            (3, "Average all the options price"),
-            (4, "Add the group price to the sum options price"),
-            (5, "Add the group price to the average options price")
-        )
-    )
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
     position = models.PositiveIntegerField(default=1)
@@ -278,6 +280,10 @@ class Groups(CreateUpdate, Prices, MinMax):
         return self.slug
 
     def save(self, *args, **kwargs):
+
+        self.check_price()
+
+        self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
 
@@ -302,7 +308,15 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
     def __str__(self):
         return self.slug
 
+    def check_max_max(self):
+        if self.maximum > self.groups__maximum:
+            raise ValueError("Options' maximum can't be greater than Groups' maximum")
+
     def save(self, *args, **kwargs):
+
+        self.check_min_max()
+
+        self.check_max_max()
 
         self.slug = f'{slugify(self.title)}'
 
