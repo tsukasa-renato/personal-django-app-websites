@@ -4,26 +4,28 @@ from django.core.paginator import Paginator
 from . import models
 
 
-class Home(View):
-
-    @staticmethod
-    def list_product(**kwargs):
-
-        if kwargs['category']:
-            return models.Products.objects.filter(categories=kwargs['category']).order_by('position')
-        if kwargs['search']:
-            return models.Products.objects.filter(websites=kwargs['websites'],
-                                                  title__icontains=kwargs['search']).order_by('position')
-
+def list_product(**kwargs):
+    """
+    There are 3 ways to list the products, 1 by category, 2 by the search bar, 3 by accessing the homepage.
+    """
+    if kwargs['category']:
+        return models.Products.objects.filter(categories=kwargs['category']).order_by('position')
+    if kwargs['search']:
         return models.Products.objects.filter(websites=kwargs['websites'],
-                                              show_home=True).order_by('position')
+                                              title__icontains=kwargs['search']).order_by('position')
+
+    return models.Products.objects.filter(websites=kwargs['websites'],
+                                          show_home=True).order_by('position')
+
+
+class Home(View):
 
     def get(self, *args, **kwargs):
 
-        websites = models.Websites.objects.filter(url=kwargs['url']).first()
-        contacts = models.Contacts.objects.filter(websites=websites).first()
-        icons = models.Icons.objects.filter(websites=websites).first()
-        colors = models.Colors.objects.filter(websites=websites).first()
+        websites = models.Websites.objects.get(url=kwargs['url'])
+        contacts = models.Contacts.objects.get(websites=websites)
+        icons = models.Icons.objects.get(websites=websites)
+        colors = models.Colors.objects.get(websites=websites)
         banners = models.Banners.objects.filter(websites=websites).order_by('position')
         categories = models.Categories.objects.filter(websites=websites).order_by('position')
 
@@ -33,7 +35,7 @@ class Home(View):
         if 'category' in kwargs:
             category = models.Categories.objects.filter(websites=websites, slug=kwargs['category']).first()
 
-        products = self.list_product(websites=websites, category=category, search=search)
+        products = list_product(websites=websites, category=category, search=search)
 
         paginator = Paginator(products, 8)
         page_number = self.request.GET.get('page')
@@ -57,10 +59,10 @@ class Product(View):
 
     def get(self, *args, **kwargs):
 
-        websites = models.Websites.objects.filter(url=kwargs['url']).first()
-        icons = models.Icons.objects.filter(websites=websites).first()
-        colors = models.Colors.objects.filter(websites=websites).first()
-        product = models.Products.objects.filter(websites=websites, slug=kwargs['product']).first()
+        websites = models.Websites.objects.get(url=kwargs['url'])
+        icons = models.Icons.objects.get(websites=websites)
+        colors = models.Colors.objects.get(websites=websites)
+        product = models.Products.objects.get(websites=websites, slug=kwargs['product'])
         groups = models.Groups.objects.filter(products=product).order_by('position')
         options = models.Options.objects.filter(groups__in=groups).order_by('position')
 
@@ -77,10 +79,10 @@ class Product(View):
 
     def post(self, *args, **kwargs):
 
-            websites = models.Websites.objects.filter(url=kwargs['url']).first()
-            icons = models.Icons.objects.filter(websites=websites).first()
-            colors = models.Colors.objects.filter(websites=websites).first()
-            product = models.Products.objects.filter(websites=websites, slug=kwargs['product']).first()
+            websites = models.Websites.objects.get(url=kwargs['url'])
+            icons = models.Icons.objects.get(websites=websites)
+            colors = models.Colors.objects.get(websites=websites)
+            product = models.Products.objects.get(websites=websites, slug=kwargs['product'])
             groups = models.Groups.objects.filter(products=product).order_by('position')
             options = models.Options.objects.filter(groups__in=groups).order_by('position')
 
