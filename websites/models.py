@@ -74,17 +74,17 @@ class PriceType(models.Model):
         default=1,
         choices=(
             ('1', "Only use the product price"),
-            ('2', "Sum all the groups price"),
-            ('3', "Average all the groups price"),
-            ('4', "Add the product price to the sum groups price"),
-            ('5', "Add the product price to the average groups price")
+            ('2', "Add the product price to the sum groups price"),
+            ('3', "Add the product price to the average groups price"),
+            ('4', "Sum all the groups price"),
+            ('5', "Average all the groups price"),
         )
     )
 
     def check_price(self):
-        if self.price_type in ['1', '4', '5'] and self.price is None:
+        if self.price_type in ['1', '2', '3'] and self.price is None:
             raise ValueError("Enter a price or change the type price")
-        if self.price_type in ['2', '3'] and self.price is not None:
+        if self.price_type in ['4', '5'] and self.price is not None:
             raise ValueError("Remove the price or change the type price")
 
     class Meta:
