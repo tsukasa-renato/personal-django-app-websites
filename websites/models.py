@@ -37,6 +37,16 @@ class Prices(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
+    def check_promotional_price(self):
+
+        if self.promotional_price is not None:
+
+            if self.price is None:
+                raise ValueError("Price can't be None when the promotional_price is set")
+
+            if self.price < self.promotional_price:
+                raise ValueError("Promotional price can't be less than price")
+
     class Meta:
         abstract = True
 
@@ -254,6 +264,8 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
 
         self.check_price()
 
+        self.check_promotional_price()
+
         self.slug = f'{slugify(self.title)}'
 
         super().save(*args, **kwargs)
@@ -282,6 +294,8 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     def save(self, *args, **kwargs):
 
         self.check_price()
+
+        self.check_promotional_price()
 
         self.check_min_max()
 
@@ -313,6 +327,8 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
             raise ValueError("Options' maximum can't be greater than Groups' maximum")
 
     def save(self, *args, **kwargs):
+
+        self.check_promotional_price()
 
         self.check_min_max()
 
