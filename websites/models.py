@@ -81,7 +81,7 @@ class PriceType(models.Model):
     price_type = models.CharField(
         "How is the price calculated?",
         max_length=1,
-        default=1,
+        default='1',
         choices=(
             ('1', "Only use the product price"),
             ('2', "Add the product price to the sum groups price"),
