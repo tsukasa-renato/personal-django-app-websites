@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from ..models import Websites, Categories, Products
+from ..models import Websites, Categories, Products, Groups, Options
 
 
-class SetUpConfig(TestCase):
+class InitalDataTest(TestCase):
     """
     Register necessary initial data for the tests
     """
@@ -11,11 +11,11 @@ class SetUpConfig(TestCase):
     def setUpTestData(cls):
         cls.website = Websites.objects.create(url='url', title="title")
         cls.category = Categories.objects.create(websites=cls.website, title="title")
-        cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="title",
-                                              price_type='1', price=1, position=1)
+        cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="title", price=1)
+        cls.groups = Groups.objects.create(websites=cls.website, products=cls.product, title="title", price=1)
 
 
-class ProductsModelTest(SetUpConfig):
+class ProductsModelTest(InitalDataTest):
 
     def test_unique_constraints(self):
         """
@@ -106,3 +106,22 @@ class ProductsModelTest(SetUpConfig):
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
                                  ['<Products: title>', '<Products: title_>'])
+
+
+class GroupsModelTest(InitalDataTest):
+
+    def test_unique_constraints(self):
+        """
+        Register two products with same website and title (slug)
+        """
+
+        with self.assertRaises(Exception):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", price=1)
+
+    def test_check_min_and_max(self):
+        """
+        Register a group with minimum value greater than maximum value
+        """
+
+        with self.assertRaises(ValidationError):
+            Groups.objects.create(websites=self.website, products=self.product, title="title_", price=1, minimum=2)
