@@ -21,6 +21,20 @@ class CreateUpdate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_created_at(self):
+        if self.websites.timezone == 'auto':
+            return utils.custom_datetime(self.created_at)
+
+        return utils.custom_datetime(self.created_at, self.websites.timezone)
+    get_created_at.short_description = 'Created at'
+
+    def get_updated_at(self):
+        if self.websites.timezone == 'auto':
+            return utils.custom_datetime(self.updated_at)
+
+        return utils.custom_datetime(self.updated_at, self.websites.timezone)
+    get_updated_at.short_description = 'Updated at'
+
     class Meta:
         abstract = True
 

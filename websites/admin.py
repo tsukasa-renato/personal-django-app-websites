@@ -41,7 +41,7 @@ class WebsitesAdmin(admin.ModelAdmin):
 
 
 class CategoriesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'icon')
+    list_display = ('title', 'icon', 'get_created_at')
 
     inlines = [
         ProductsInline,
@@ -49,7 +49,7 @@ class CategoriesAdmin(admin.ModelAdmin):
 
 
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'images', 'price', 'price_type', 'is_available')
+    list_display = ('title', 'description', 'images', 'price', 'price_type', 'is_available', 'get_created_at')
 
     inlines = [
         GroupsInline,
@@ -57,7 +57,7 @@ class ProductsAdmin(admin.ModelAdmin):
 
 
 class GroupsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'price_type', 'maximum', 'minimum')
+    list_display = ('title', 'price', 'price_type', 'maximum', 'minimum', 'get_created_at')
 
     inlines = [
         OptionsInline,
@@ -65,24 +65,23 @@ class GroupsAdmin(admin.ModelAdmin):
 
 
 class OptionsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'maximum', 'minimum')
+    list_display = ('title', 'price', 'maximum', 'minimum', 'get_created_at')
 
 
 class BannersAdmin(admin.ModelAdmin):
-    list_display = ('title', 'images')
+    list_display = ('title', 'images', 'get_created_at')
 
 
 class ContactsAdmin(admin.ModelAdmin):
-    list_display = ('email', 'telephone', 'facebook', 'twitter', 'linkedin', 'instagram', 'pinterest',
-                    'youtube', 'twitch', 'discord', 'whatsapp')
+    list_display = ('email', 'telephone', 'facebook', 'twitter', 'linkedin', 'instagram', 'get_created_at')
 
 
 class IconsAdmin(admin.ModelAdmin):
-    list_display = ('shortcut', 'account', 'cart', 'search', 'home')
+    list_display = ('shortcut', 'account', 'cart', 'search', 'home', 'get_created_at')
 
 
 class ColorsAdmin(admin.ModelAdmin):
-    list_display = ('navbar', 'category', 'active', 'footer', 'text', 'title', 'title_hover')
+    list_display = ('navbar', 'category', 'active', 'footer', 'text', 'title', 'title_hover', 'get_created_at')
 
 
 admin.site.register(Websites, WebsitesAdmin)
