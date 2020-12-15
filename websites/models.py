@@ -205,7 +205,7 @@ class Banners(CreateUpdate):
     images = models.ImageField(upload_to=image_path, null=False, blank=False)
     link = models.SlugField(max_length=30, null=True, blank=True)
 
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Banner'
@@ -223,7 +223,7 @@ class Categories(CreateUpdate):
     icon = models.ImageField(upload_to=icon_path, null=True, blank=True)
 
     slug = models.SlugField(max_length=20, null=False, blank=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Category'
@@ -249,7 +249,7 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
     show_home = models.BooleanField("Show in homepage?", default=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Product'
@@ -280,7 +280,7 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     title = models.CharField(max_length=50, null=False, blank=False)
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Group'
@@ -311,7 +311,7 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
     groups = models.ForeignKey(Groups, on_delete=models.CASCADE)
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Option',
@@ -325,7 +325,7 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
 
     def check_max_max(self):
         if self.maximum > self.groups__maximum:
-            raise ValueError("Options' maximum can't be greater than Groups' maximum")
+            raise ValidationError("Options' maximum can't be greater than Groups' maximum")
 
     def save(self, *args, **kwargs):
 
