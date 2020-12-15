@@ -155,27 +155,27 @@ class Contacts(CreateUpdate):
         verbose_name_plural = 'Contacts'
 
     def __str__(self):
-        return self.websites
+        return 'contacts'
 
 
 class Colors(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
-    navbar = models.CharField(max_length=6, null=False, blank=False, default='0080FF')
-    categories = models.CharField(max_length=6, null=False, blank=False, default='F03333')
-    active = models.CharField(max_length=6, null=False, blank=False, default='E62D2D')
-    footer = models.CharField(max_length=6, null=False, blank=False, default='F03333')
-    text = models.CharField(max_length=6, null=False, blank=False, default='FFFFFF')
-    title = models.CharField(max_length=6, null=False, blank=False, default='000000')
-    title_hover = models.CharField(max_length=6, null=False, blank=False, default='F03333')
+    navbar = models.CharField(max_length=6, null=True, blank=True)
+    category = models.CharField(max_length=6, null=True, blank=True)
+    active = models.CharField(max_length=6, null=True, blank=True)
+    footer = models.CharField(max_length=6, null=True, blank=True)
+    text = models.CharField(max_length=6, null=True, blank=True)
+    title = models.CharField(max_length=6, null=True, blank=True)
+    title_hover = models.CharField(max_length=6, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Color'
         verbose_name_plural = 'Colors'
 
     def __str__(self):
-        return self.websites
+        return 'colors'
 
 
 class Icons(CreateUpdate):
@@ -193,7 +193,7 @@ class Icons(CreateUpdate):
         verbose_name_plural = 'Icons'
 
     def __str__(self):
-        return self.websites
+        return 'icons'
 
 
 class Banners(CreateUpdate):
