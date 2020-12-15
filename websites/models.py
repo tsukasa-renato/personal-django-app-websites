@@ -1,6 +1,7 @@
 from django.db import models
 from utils import utils
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to
@@ -42,10 +43,10 @@ class Prices(models.Model):
         if self.promotional_price is not None:
 
             if self.price is None:
-                raise ValueError("Price can't be None when the promotional_price is set")
+                raise ValidationError("Price can't be None when the promotional_price is set")
 
             if self.price < self.promotional_price:
-                raise ValueError("Promotional price can't be less than price")
+                raise ValidationError("Promotional price can't be less than price")
 
     class Meta:
         abstract = True
@@ -63,7 +64,7 @@ class MinMax(models.Model):
 
     def check_min_max(self):
         if self.minimum > self.maximum:
-            raise ValueError("Minimum can't be less than the maximum")
+            raise ValidationError("Minimum can't be less than the maximum")
 
     class Meta:
         abstract = True
@@ -92,10 +93,10 @@ class PriceType(models.Model):
     )
 
     def check_price(self):
-        if self.price_type in ['1', '2', '3'] and self.price is None:
-            raise ValueError("Enter a price or change the type price")
-        if self.price_type in ['4', '5'] and self.price is not None:
-            raise ValueError("Remove the price or change the type price")
+        if self.price_type not in ['4', '5'] and self.price is None:
+            raise ValidationError("Enter a price or change the type price")
+        if self.price_type not in ['1', '2', '3'] and self.price is not None:
+            raise ValidationError("Remove the price or change the type price")
 
     class Meta:
         abstract = True

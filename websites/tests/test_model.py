@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 from ..models import Websites, Categories, Products
 
 
@@ -30,13 +30,13 @@ class ProductsModelTest(SetUpConfig):
         Register a product with price_type in (1,2,3) and price=None
         """
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='1')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='2')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='3')
 
     def test_fail_in_check_price_with_price(self):
@@ -44,11 +44,11 @@ class ProductsModelTest(SetUpConfig):
         Register a product with price_type in (4,5) and price=1
         """
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='4',
                                     price=1)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='5',
                                     price=1)
 
@@ -83,7 +83,7 @@ class ProductsModelTest(SetUpConfig):
         Register a product without price, but with promotional price
         """
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='4',
                                     promotional_price=1)
 
@@ -92,7 +92,7 @@ class ProductsModelTest(SetUpConfig):
         Register a product with promotional price greater than price
         """
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title_", price=1,
                                     promotional_price=2)
 
