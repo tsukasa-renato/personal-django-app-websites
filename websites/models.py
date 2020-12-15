@@ -324,7 +324,7 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
         return self.slug
 
     def check_max_max(self):
-        if self.maximum > self.groups__maximum:
+        if self.maximum > self.groups.maximum:
             raise ValidationError("Options' maximum can't be greater than Groups' maximum")
 
     def save(self, *args, **kwargs):

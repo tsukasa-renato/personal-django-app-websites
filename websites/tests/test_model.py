@@ -12,7 +12,8 @@ class InitalDataTest(TestCase):
         cls.website = Websites.objects.create(url='url', title="title")
         cls.category = Categories.objects.create(websites=cls.website, title="title")
         cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="title", price=1)
-        cls.groups = Groups.objects.create(websites=cls.website, products=cls.product, title="title", price=1)
+        cls.group = Groups.objects.create(websites=cls.website, products=cls.product, title="title", price=1)
+        cls.option = Options.objects.create(websites=cls.website, groups=cls.group, title="title", price=1)
 
 
 class ProductsModelTest(InitalDataTest):
@@ -125,3 +126,22 @@ class GroupsModelTest(InitalDataTest):
 
         with self.assertRaises(ValidationError):
             Groups.objects.create(websites=self.website, products=self.product, title="title_", price=1, minimum=2)
+
+
+class OptionsModelTest(InitalDataTest):
+
+    def test_unique_constraints(self):
+        """
+        Register two products with same website and title (slug)
+        """
+
+        with self.assertRaises(Exception):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", price=1)
+
+    def test_check_max_and_max(self):
+        """
+        Register a group with minimum value greater than maximum value
+        """
+
+        with self.assertRaises(ValidationError):
+            Options.objects.create(websites=self.website, groups=self.group, title="title_", price=1, maximum=2)
