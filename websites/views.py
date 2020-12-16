@@ -5,21 +5,17 @@ from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
 
 
-def website_configs(website):
-    pass
-
-
-def list_product(**kwargs):
+def list_product(website, category, search):
     """
     There are 3 ways to list the products, 1 by category, 2 by the search bar, 3 by accessing the homepage.
     """
-    if kwargs['category']:
-        return Products.objects.filter(categories=kwargs['category']).order_by('position')
-    if kwargs['search']:
-        return Products.objects.filter(websites=kwargs['websites'],
-                                       title__icontains=kwargs['search']).order_by('position')
+    if category:
+        return Products.objects.filter(categories=category).order_by('position')
+    if search:
+        return Products.objects.filter(websites=website,
+                                       title__icontains=search).order_by('position')
 
-    return Products.objects.filter(websites=kwargs['websites'],
+    return Products.objects.filter(websites=website,
                                    show_home=True).order_by('position')
 
 
@@ -36,13 +32,14 @@ class Home(View):
         banners = Banners.objects.filter(websites=website).order_by('position')
         categories = Categories.objects.filter(websites=website).order_by('position')
 
-        category = ''
         search = self.request.GET.get('search')
 
-        if 'category' in kwargs:
-            category = Categories.objects.filter(websites=website, slug=kwargs['category']).first()
+        if 'category_selected' in kwargs:
+            category_selected = Categories.objects.filter(websites=website, slug=kwargs['category_selected']).first()
+        else:
+            category_selected = False
 
-        products = list_product(websites=website, category=category, search=search)
+        products = list_product(website=website, category=category_selected, search=search)
 
         paginator = Paginator(products, 8)
         page_number = self.request.GET.get('page')
@@ -55,7 +52,7 @@ class Home(View):
             'colors': color,
             'banners': banners,
             'categories': categories,
-            'category_': category,
+            'category_selected': category_selected,
             'products': page_obj,
         }
 

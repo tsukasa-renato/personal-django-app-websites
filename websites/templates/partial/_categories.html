@@ -1,36 +1,28 @@
 {% load static %}
 
-{% if category_ %}
-<a class="btn categories"
+
+<a {% if category_selected %} class="btn categories" {% else %} class="btn categories active" {% endif %}
         href="{% url 'websites:home' url=websites.url %}">
-{% else %}
-<a class="btn categories active"
-        href="{% url 'websites:home' url=websites.url %}">
-{% endif %}
+
     <figure class="figure" style="width:80px;height:60px;">
         {% if websites.home_images %}
         <img src="{{ icons.home }}" class="figure-img img-fluid rounded"
              alt="{{ websites.home }}"
              style="height:50px;width:50px;">
         {% else %}
-        <img src="{% static 'media/star.png' %}" class="figure-img img-fluid rounded"
+        <img src="{% static 'media/category.png' %}" class="figure-img img-fluid rounded"
              alt="{{ websites.home }}"
              style="height:50px;width:50px;">
         {% endif %}
         <figcaption class="text-center text">{{ websites.home }}</figcaption>
     </figure>
 </a>
-{% if '' %}
-</a>
-{% endif %}
+
 {% for category in categories %}
-{% if category_ == category %}
-<a class="btn categories active"
-        href="{% url 'websites:category' url=websites.url category=category.slug %}">
-{% else %}
-<a class="btn categories"
-        href="{% url 'websites:category' url=websites.url category=category.slug %}">
-{% endif %}
+
+<a {% if category_selected == category %} class="btn categories active" {% else %} class="btn categories" {% endif %}
+        href="{% url 'websites:category' url=websites.url category_selected=category.slug %}">
+
     {% if category.icon %}
     <figure class="figure" style="width:80px;height:60px;">
         <img src="{{ category.icon.url }}" class="figure-img img-fluid rounded"
@@ -38,10 +30,12 @@
         <figcaption class="text-center text">{{ category.title }}</figcaption>
     </figure>
     {% else %}
-    <p class="text">{{ category.title }}</p>
+    <figure class="figure" style="width:80px;height:60px;">
+        <img src="{% static 'media/category.png' %}" class="figure-img img-fluid rounded"
+             alt="{{ category.title }}" style="height:50px;width:50px;">
+        <figcaption class="text-center text">{{ category.title }}</figcaption>
+    </figure>
     {% endif %}
 </a>
-{% if '' %}
-</a>
-{% endif %}
+
 {% endfor %}
