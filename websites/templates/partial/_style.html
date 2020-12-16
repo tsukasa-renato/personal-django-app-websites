@@ -4,47 +4,88 @@
 
 {% if icons %}
 <link rel="shortcut icon" href="{{ icons.shortcut.url }}" type="image/x-icon">
+{% else %}
+<link rel="shortcut icon" href="{% static 'media/link.png' %}" type="image/x-icon">
 {% endif %}
 
-{% if colors %}
+
 <style>
-/* Colors */
+
 
 .navbar {
-    background-color: #{{ colors.navbar }};
+    {% if colors.navbar %}
+        background-color: #{{ colors.navbar }};
+    {% else %}
+        background-color: #0080FF;
+    {% endif %}
 }
 
+
+
 .category {
-    background-color: #{{ colors.categories }};
+    {% if colors.categories %}
+        background-color: #{{ colors.categories }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
 }
 
 .categories {
-    background-color: #{{ colors.categories }};
+    {% if colors.categories %}
+        background-color: #{{ colors.categories }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
 }
 
 .categories:hover {
-    background-color: #{{ colors.active }};
+    {% if colors.active %}
+        background-color: #{{ colors.active }};
+    {% else %}
+        background-color: #E62D2D;
+    {% endif %}
 }
 
 .footer {
-    background-color: #{{ colors.footer }};
+    {% if colors.footer %}
+        background-color: #{{ colors.footer }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
 }
 
 .active {
-    background-color: #{{ colors.active }};
+    {% if colors.active %}
+        background-color: #{{ colors.active }};
+    {% else %}
+        background-color: #E62D2D;
+    {% endif %}
 }
 
 .title:hover {
-    color: #{{ colors.title_hover }};
+    {% if colors.title_hover %}
+        color: #{{ colors.title_hover }};
+    {% else %}
+        color: #F03333;
+    {% endif %}
 }
 
 .title {
-    color: #{{ colors.title }};
+
+    {% if colors.title %}
+        color: #{{ colors.title }};
+    {% else %}
+        color: #000000;
+    {% endif %}
+
 }
 
 .text {
-    color: #{{ colors.text }};
+    {% if colors.text %}
+        color: #{{ colors.text }};
+    {% else %}
+        color: #FFFFFF;
+    {% endif %}
 }
 
 </style>
-{% endif %}

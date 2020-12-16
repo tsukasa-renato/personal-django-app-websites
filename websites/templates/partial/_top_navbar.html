@@ -1,6 +1,6 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-sm fixed-top">
+<nav class="navbar navbar-expand-sm">
 
     <a class="navbar-brand mb-0 h1 text" href="{%url 'websites:home' url=websites.url %}">{{ websites.title }}</a>
 
@@ -19,31 +19,37 @@
                     <input class="form-control border-0" type="search" placeholder=""
                            aria-label="Search" name="search" id="search">
                     <button class="btn btn-transparent border-0" type="submit">
+
                         {% if icons.search %}
                         <img src="{{ icons.search.url }}">
                         {% else %}
                         <img src="{% static 'media/search.png' %}">
                         {% endif %}
+
                     </button>
                 </form>
             </li>
             <li class="nav-item">
                 <a href="" class="nav-link">
+
                     {% if icons.account %}
                     <img src="{{ icons.account.url }}">
                     {% else %}
                     <img src="{% static 'media/account.png' %}">
                     {% endif %}
+
                 </a>
             </li>
             <li class="nav-item">
                 <a href="" class="nav-link">
+
                     {% if icons.cart %}
                     <img src="{{ icons.cart.url }}">
                     {% else %}
                     <img src="{% static 'media/cart.png' %}">
                     {% endif %}
-                    <span class="badge badge-light">4</span>
+
+                    <span class="badge badge-light">0</span>
                 </a>
             </li>
         </ul>
