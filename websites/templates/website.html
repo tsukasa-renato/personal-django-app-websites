@@ -46,23 +46,24 @@
 
     {% endif %}
 
-    {% if contacts %}
-    <div class="row mt-3 text footer">
-        {% include 'partial/_contact.html' %}
-    </div>
-    {% endif %}
-
-    <div class="row justify-content-center text footer">
-        <h4>IMAGE CREDITS</h4>
-    </div>
-    <div class="row justify-content-center text footer">
-        {% include 'partial/_credits.html' %}
-    </div>
-
 
     <script src="{% static 'custom/js/website.js' %}"></script>
 
 </div>
+ {% if contacts %}
+    <div class="container-fluid footer">
+    <div class="row mt-3 text">
+        {% include 'partial/_contact.html' %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center mt-5 text">
+        <h5>IMAGE CREDITS</h5>
+    </div>
+    <div class="row justify-content-center text">
+        {% include 'partial/_credits.html' %}
+    </div>
+    </div>
 {% endif %}
 
 {% if websites.reason %}

@@ -2,7 +2,11 @@
 {% load filters %}
 
 <div class="col-sm text-center">
-    <h6 class="mt-2">Dá um follow ai 😁🤙</h6>
+    {% if contacts.social_media_text %}
+    <h6 class="mt-2">{{ contacts.social_media_text }}</h6>
+    {% else %}
+    <h6 class="mt-2">Follow us 😁🤙</h6>
+    {% endif %}
     <p>
         {% if contacts.instagram %}
         <a href="https://www.instagram.com/{{ contacts.instagram }}" target="_blank" class="mr-1 mt-1">
@@ -34,21 +38,11 @@
             <img src="{% static 'media/youtube.png' %}" class="rounded" alt="youtube">
         </a>
         {% endif %}
-        {% if contacts.twitch %}
-        <a href="https://www.twitch.tv/{{ contacts.twitch }}" target="_blank" class="mr-1 mt-1">
-            <img src="{% static 'media/twitch.png' %}" class="rounded" alt="twitch">
-        </a>
-        {% endif %}
-        {% if contacts.discord %}
-        <a href="{{ contacts.discord }}" target="_blank" class="mr-1 mt-1">
-            <img src="{% static 'media/discord.png' %}" class="rounded" alt="discord">
-        </a>
-        {% endif %}
     </p>
 </div>
 <div class="col-sm text-center">
     {% if contacts.telephone %}
-    <h6 class="mr-1">Telefone:<br> {{ contacts.telephone }}</h6>
+    <h6 class="mr-1">Tel:<br> {{ contacts.telephone }}</h6>
     {% endif %}
     {% if contacts.email %}
     <h6 class="mr-1">Email:<br> {{ contacts.email }}</h6>
@@ -56,7 +50,11 @@
 </div>
 <div class="col-sm text-center">
     {% if contacts.whatsapp %}
-    <h6 class="mt-2"> Faça seu pedido pelo whats 😍😋 </h6>
+    {% if contacts.whatsapp_text %}
+    <h6 class="mt-2"> {{ contacts.whatsapp_text }} </h6>
+    {% else %}
+    <h6 class="mt-2"> Contact us by WhatsApp 😍😋 </h6>
+    {% endif %}
     <h6>
         <a href="https://api.whatsapp.com/send?phone={{ contacts.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
            target="_blank" class="text-white">

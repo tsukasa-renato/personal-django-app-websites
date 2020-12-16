@@ -3,6 +3,9 @@ from utils import utils
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
+# TODO: Create validations for the websites model
+# TODO: Create validations for the contacts model
+
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to
 def icon_path(instance, filename):
@@ -160,9 +163,10 @@ class Contacts(CreateUpdate):
     twitter = models.CharField(max_length=50, null=True, blank=True)
     linkedin = models.CharField(max_length=50, null=True, blank=True)
     youtube = models.CharField(max_length=100, null=True, blank=True)
-    twitch = models.CharField(max_length=100, null=True, blank=True)
-    discord = models.CharField(max_length=200, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
+
+    social_media_text = models.CharField("Type a message (e.g. follow us)", max_length=50, null=True, blank=True)
+    whatsapp_text = models.CharField("Type a message (e.g. my whatsapp is)", max_length=50, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Contact'
