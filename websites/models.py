@@ -1,5 +1,5 @@
 from django.db import models
-from utils import utils
+from websites import utils
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
@@ -154,8 +154,8 @@ class Contacts(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
-    telephone = models.CharField(max_length=30, null=True, blank=True)
-    email = models.CharField(max_length=200, null=True, blank=True)
+    telephone = models.CharField("Telephone, only numbers", max_length=30, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)
 
     facebook = models.CharField(max_length=50, null=True, blank=True)
     instagram = models.CharField(max_length=50, null=True, blank=True)
@@ -163,7 +163,7 @@ class Contacts(CreateUpdate):
     twitter = models.CharField(max_length=50, null=True, blank=True)
     linkedin = models.CharField(max_length=50, null=True, blank=True)
     youtube = models.CharField(max_length=100, null=True, blank=True)
-    whatsapp = models.CharField(max_length=20, null=True, blank=True)
+    whatsapp = models.CharField("Whatsapp, only numbers (e.g. DD999555566)", max_length=20, null=True, blank=True)
 
     social_media_text = models.CharField("Type a message (e.g. follow us)", max_length=50, null=True, blank=True)
     whatsapp_text = models.CharField("Type a message (e.g. my whatsapp is)", max_length=50, null=True, blank=True)

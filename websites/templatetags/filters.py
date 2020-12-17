@@ -1,7 +1,6 @@
 from django import template
-from django.http import QueryDict
 
-from utils import utils
+from websites import utils
 
 register = template.Library()
 

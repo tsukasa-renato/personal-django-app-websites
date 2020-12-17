@@ -18,4 +18,4 @@ def money_format(money, currency):
 
 
 def smartphone_format(number):
-    return f'({number[2:4]}) {number[4:]}'
+    return f'({number[0:2]}) {number[2:]}'

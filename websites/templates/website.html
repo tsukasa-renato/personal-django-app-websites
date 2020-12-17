@@ -50,8 +50,12 @@
     <script src="{% static 'custom/js/website.js' %}"></script>
 
 </div>
- {% if contacts %}
-    <div class="container-fluid footer">
+
+{% endif %}
+
+<div class="container-fluid footer">
+
+    {% if contacts %}
     <div class="row mt-3 text">
         {% include 'partial/_contact.html' %}
     </div>
@@ -63,8 +67,8 @@
     <div class="row justify-content-center text">
         {% include 'partial/_credits.html' %}
     </div>
-    </div>
-{% endif %}
+
+</div>
 
 {% if websites.reason %}
 <p> {{ websites.reason }} </p>
