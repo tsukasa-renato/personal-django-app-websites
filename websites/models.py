@@ -217,9 +217,6 @@ class Icons(CreateUpdate):
 class Banners(CreateUpdate):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
-
-    title = models.CharField(max_length=50, null=True, blank=True)
-    description = models.CharField(max_length=200, null=True, blank=True)
     images = models.ImageField(upload_to=image_path, null=False, blank=False)
     link = models.SlugField(max_length=30, null=True, blank=True)
 

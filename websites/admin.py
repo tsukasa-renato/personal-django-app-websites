@@ -69,7 +69,7 @@ class OptionsAdmin(admin.ModelAdmin):
 
 
 class BannersAdmin(admin.ModelAdmin):
-    list_display = ('title', 'images', 'get_created_at')
+    list_display = ('images', 'link', 'get_created_at')
 
 
 class ContactsAdmin(admin.ModelAdmin):
