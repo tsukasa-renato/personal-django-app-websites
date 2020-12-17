@@ -2,56 +2,57 @@
 {% load filters %}
 
 <div class="col-sm text-center">
-    {% if contacts.social_media_text %}
-    <h6 class="mt-2">{{ contacts.social_media_text }}</h6>
+    {% if contact.social_media_text %}
+    <h6 class="mt-2">{{ contact.social_media_text }}</h6>
     {% else %}
     <h6 class="mt-2">Follow us 😁🤙</h6>
     {% endif %}
     <p>
-        {% if contacts.instagram %}
-        <a href="https://www.instagram.com/{{ contacts.instagram }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.instagram %}
+        <a href="https://www.instagram.com/{{ contact.instagram }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/instagram.png' %}" class="rounded" alt="instagram">
         </a>
         {% endif %}
-        {% if contacts.pinterest %}
-        <a href="https://www.pinterest.com/{{ contacts.pinterest }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.pinterest %}
+        <a href="https://www.pinterest.com/{{ contact.pinterest }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/pinterest.png' %}" class="rounded" alt="pinterest">
         </a>
         {% endif %}
-        {% if contacts.facebook %}
-        <a href="https://www.facebook.com/{{ contacts.facebook }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.facebook %}
+        <a href="https://www.facebook.com/{{ contact.facebook }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/facebook.png' %}" class="rounded" alt="facebook">
         </a>
         {% endif %}
-        {% if contacts.twitter %}
-        <a href="https://www.twitter.com/{{ contacts.twitter }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.twitter %}
+        <a href="https://www.twitter.com/{{ contact.twitter }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/twitter.png' %}" class="rounded" alt="twitter">
         </a>
         {% endif %}
-        {% if contacts.linkedin %}
-        <a href="https://www.linkedin.com/in/{{ contacts.linkedin }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.linkedin %}
+        <a href="https://www.linkedin.com/in/{{ contact.linkedin }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/linkedin.png' %}" class="rounded" alt="linkedin">
         </a>
         {% endif %}
-        {% if contacts.youtube %}
-        <a href="https://www.youtube.com/channel/{{ contacts.youtube }}" target="_blank" class="mr-1 mt-1">
+        {% if contact.youtube %}
+        <a href="https://www.youtube.com/channel/{{ contact.youtube }}" target="_blank" class="mr-1 mt-1">
             <img src="{% static 'media/youtube.png' %}" class="rounded" alt="youtube">
         </a>
         {% endif %}
     </p>
 </div>
 <div class="col-sm text-center">
-    {% if contacts.telephone %}
-    <h6 class="mr-1">Tel:<br> {{ contacts.telephone }}</h6>
+    {% if contact.telephone %}
+    <h6 class="mr-1">Tel:<br> {{ contact.telephone }}</h6>
     {% endif %}
-    {% if contacts.email %}
-    <h6 class="mr-1">Email:<br> {{ contacts.email }}</h6>
+    {% if contact.email %}
+    <h6 class="mr-1">Email:<br> {{ contact.email }}</h6>
     {% endif %}
 </div>
 <div class="col-sm text-center">
-    {% if contacts.whatsapp %}
-    {% if contacts.whatsapp_text %}
-    <h6 class="mt-2"> {{ contacts.whatsapp_text }} </h6>
+    {% if contact.whatsapp %}
+
+    {% if contact.whatsapp_text %}
+    <h6 class="mt-2"> {{ contact.whatsapp_text }} </h6>
     {% else %}
     <h6 class="mt-2"> Contact us by WhatsApp 😍😋 </h6>
     {% endif %}
@@ -59,7 +60,9 @@
         <a href="https://api.whatsapp.com/send?phone={{ contacts.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
            target="_blank" class="text-white">
             <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
-            {{ contacts.whatsapp|smartphone_format }}
-        </a></h6>
+            {{ contact.whatsapp|smartphone_format }}
+        </a>
+    </h6>
+
     {% endif %}
 </div>

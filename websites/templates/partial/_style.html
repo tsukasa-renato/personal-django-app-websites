@@ -13,8 +13,8 @@
 
 
 .navbar {
-    {% if colors.navbar %}
-        background-color: #{{ colors.navbar }};
+    {% if color.navbar %}
+        background-color: #{{ color.navbar }};
     {% else %}
         background-color: #0080FF;
     {% endif %}
@@ -23,48 +23,48 @@
 
 
 .category {
-    {% if colors.categories %}
-        background-color: #{{ colors.categories }};
+    {% if color.categories %}
+        background-color: #{{ color.categories }};
     {% else %}
         background-color: #F03333;
     {% endif %}
 }
 
 .categories {
-    {% if colors.categories %}
-        background-color: #{{ colors.categories }};
+    {% if color.categories %}
+        background-color: #{{ color.categories }};
     {% else %}
         background-color: #F03333;
     {% endif %}
 }
 
 .categories:hover {
-    {% if colors.active %}
-        background-color: #{{ colors.active }};
+    {% if color.active %}
+        background-color: #{{ color.active }};
     {% else %}
         background-color: #E62D2D;
     {% endif %}
 }
 
 .footer {
-    {% if colors.footer %}
-        background-color: #{{ colors.footer }};
+    {% if color.footer %}
+        background-color: #{{ color.footer }};
     {% else %}
         background-color: #F03333;
     {% endif %}
 }
 
 .active {
-    {% if colors.active %}
-        background-color: #{{ colors.active }};
+    {% if color.active %}
+        background-color: #{{ color.active }};
     {% else %}
         background-color: #E62D2D;
     {% endif %}
 }
 
 .title:hover {
-    {% if colors.title_hover %}
-        color: #{{ colors.title_hover }};
+    {% if color.title_hover %}
+        color: #{{ color.title_hover }};
     {% else %}
         color: #F03333;
     {% endif %}
@@ -72,8 +72,8 @@
 
 .title {
 
-    {% if colors.title %}
-        color: #{{ colors.title }};
+    {% if color.title %}
+        color: #{{ color.title }};
     {% else %}
         color: #000000;
     {% endif %}
@@ -81,8 +81,8 @@
 }
 
 .text {
-    {% if colors.text %}
-        color: #{{ colors.text }};
+    {% if color.text %}
+        color: #{{ color.text }};
     {% else %}
         color: #FFFFFF;
     {% endif %}

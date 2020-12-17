@@ -12,7 +12,7 @@
 
     <div class="col-sm">
 
-        <a href="{% url 'websites:product' url=websites.url product=product.slug %}"
+        <a href="{% url 'websites:product' url=website.url product=product.slug %}"
            class="card border-0 title" style="max-width:400px;">
 
             {% if product.images %}
@@ -46,7 +46,7 @@
 
 {% endif %}
 
-{% if forloop.counter == 4 or foorloop.last %}
+{% if forloop.last or forloop.counter == 4 %}
 </div>
 {% endif %}
 

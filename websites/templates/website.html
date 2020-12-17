@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-<title>{{ websites.title }}</title>
+<title>{{ website.title }}</title>
 {% include 'partial/_style.html' %}
 {% endblock %}
 
@@ -10,16 +10,14 @@
 
 {% include 'partial/_top_navbar.html' %}
 
-{% if websites.is_available %}
+{% if website.is_available %}
 <div class="container-fluid">
-
 
     {% if product %}
 
     <div class="row">
         {% include 'partial/_product.html' %}
     </div>
-
 
     {% else %}
 
@@ -69,8 +67,8 @@
 
 </div>
 
-{% if websites.reason %}
-<p> {{ websites.reason }} </p>
+{% if website.reason %}
+<p> {{ website.reason }} </p>
 {% endif %}
 
 

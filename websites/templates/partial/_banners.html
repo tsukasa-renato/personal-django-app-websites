@@ -3,16 +3,18 @@
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
         {% for banner in banners %}
+
         {% if forloop.counter == 1 %}
         <li data-target="#carouselExampleIndicators"
-            data-slide-to="{{ forloop.counter|mine_less }}"
+            data-slide-to="{{ forloop.counter0 }}"
             class="active">
         </li>
         {% else %}
         <li data-target="#carouselExampleIndicators"
-            data-slide-to="{{ forloop.counter|mine_less }}">
+            data-slide-to="{{ forloop.counter0 }}">
         </li>
         {% endif %}
+
         {% endfor %}
     </ol>
     <div class="carousel-inner">

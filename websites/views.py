@@ -46,10 +46,10 @@ class Home(View):
         page_obj = paginator.get_page(page_number)
 
         context = {
-            'websites': website,
-            'contacts': contact,
-            'icons': icon,
-            'colors': color,
+            'website': website,
+            'contact': contact,
+            'icon': icon,
+            'color': color,
             'banners': banners,
             'categories': categories,
             'category_selected': category_selected,

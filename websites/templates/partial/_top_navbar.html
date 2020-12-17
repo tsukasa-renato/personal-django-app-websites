@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-sm">
 
-    <a class="navbar-brand mb-0 h1 text" href="{%url 'websites:home' url=websites.url %}">{{ websites.title }}</a>
+    <a class="navbar-brand mb-0 h1 text" href="{%url 'websites:home' url=website.url %}">{{ website.title }}</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent"
@@ -20,8 +20,8 @@
                            aria-label="Search" name="search" id="search">
                     <button class="btn btn-transparent border-0" type="submit">
 
-                        {% if icons.search %}
-                        <img src="{{ icons.search.url }}">
+                        {% if icon.search %}
+                        <img src="{{ icon.search.url }}">
                         {% else %}
                         <img src="{% static 'media/search.png' %}">
                         {% endif %}
@@ -32,8 +32,8 @@
             <li class="nav-item">
                 <a href="" class="nav-link">
 
-                    {% if icons.account %}
-                    <img src="{{ icons.account.url }}">
+                    {% if icon.account %}
+                    <img src="{{ icon.account.url }}">
                     {% else %}
                     <img src="{% static 'media/account.png' %}">
                     {% endif %}
@@ -43,8 +43,8 @@
             <li class="nav-item">
                 <a href="" class="nav-link">
 
-                    {% if icons.cart %}
-                    <img src="{{ icons.cart.url }}">
+                    {% if icon.cart %}
+                    <img src="{{ icon.cart.url }}">
                     {% else %}
                     <img src="{% static 'media/cart.png' %}">
                     {% endif %}
