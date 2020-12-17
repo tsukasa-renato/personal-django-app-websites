@@ -1,32 +1,53 @@
 {% load filters %}
+{% load static %}
 
 {% for product in products %}
-{% if product.is_active %}
-{% if forloop.counter == 5 %}
-</div>
+
+{% if forloop.first or forloop.counter == 5 %}
 <div class="row mt-2">
-    {% endif %}
+{% endif %}
+
+
+{% if product.is_available %}
+
     <div class="col-sm">
-        <a href="{% url 'websites:product' url=websites.url product=product.slug %}" class="card border-0 title" style="max-width:400px;">
+
+        <a href="{% url 'websites:product' url=websites.url product=product.slug %}"
+           class="card border-0 title" style="max-width:400px;">
+
             {% if product.images %}
             <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
                  style="height:300px;">
+            {% else %}
+            <img class="card-img-top" src="{% static 'media/category.png' %}" alt="{{ product.title }}"
+                 style="height:300px;">
             {% endif %}
+
             <div class="card-body">
                 <p class="card-text text-center text-truncate">
+
                     {{ product.title }} <br>
+
+                    {% if product.price %}
                     {% if product.promotional_price %}
                     <strike>{% money_format product.price websites.currency %}</strike> por
                     <strong>{% money_format product.promotional_price websites.currency %}</strong>
                     {% else %}
                     por <strong>{% money_format product.price websites.currency %}</strong>
                     {% endif %}
+                    {% endif %}
+
                 </p>
             </div>
+
         </a>
+
     </div>
-    {% endif %}
-    {% endfor %}
-    {% if '' %}
+
+{% endif %}
+
+{% if forloop.counter == 4 or foorloop.last %}
 </div>
-    {% endif %}
+{% endif %}
+
+{% endfor %}
