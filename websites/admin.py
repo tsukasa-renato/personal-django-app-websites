@@ -31,7 +31,8 @@ class OptionsInline(admin.StackedInline):
 
 
 class WebsitesAdmin(admin.ModelAdmin):
-    list_display = ('url', 'title', 'home', 'timezone', 'currency', 'language', 'is_available', 'get_created_at')
+    list_display = ('url', 'title', 'home', 'timezone', 'currency', 'language', 'is_available', 'get_created_at',
+                    'get_updated_at')
 
     inlines = [
         ContactsInline,
@@ -41,7 +42,7 @@ class WebsitesAdmin(admin.ModelAdmin):
 
 
 class CategoriesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'icon', 'get_created_at')
+    list_display = ('title', 'icon', 'get_created_at', 'get_updated_at')
 
     inlines = [
         ProductsInline,
@@ -49,7 +50,8 @@ class CategoriesAdmin(admin.ModelAdmin):
 
 
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'images', 'price', 'price_type', 'is_available', 'get_created_at')
+    list_display = ('title', 'description', 'images', 'get_price', 'get_promotional_price', 'price_type',
+                    'is_available', 'get_created_at', 'get_updated_at')
 
     inlines = [
         GroupsInline,
@@ -57,7 +59,8 @@ class ProductsAdmin(admin.ModelAdmin):
 
 
 class GroupsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'price_type', 'maximum', 'minimum', 'get_created_at')
+    list_display = ('title', 'get_price', 'get_promotional_price', 'price_type', 'maximum', 'minimum',
+                    'get_created_at', 'get_updated_at')
 
     inlines = [
         OptionsInline,
@@ -65,7 +68,8 @@ class GroupsAdmin(admin.ModelAdmin):
 
 
 class OptionsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'maximum', 'minimum', 'get_created_at')
+    list_display = ('title', 'get_price', 'get_promotional_price', 'maximum', 'minimum', 'get_created_at',
+                    'get_updated_at')
 
 
 class BannersAdmin(admin.ModelAdmin):
@@ -73,15 +77,17 @@ class BannersAdmin(admin.ModelAdmin):
 
 
 class ContactsAdmin(admin.ModelAdmin):
-    list_display = ('email', 'telephone', 'facebook', 'twitter', 'linkedin', 'instagram', 'get_created_at')
+    list_display = ('email', 'telephone', 'facebook', 'twitter', 'linkedin', 'instagram', 'get_created_at',
+                    'get_updated_at')
 
 
 class IconsAdmin(admin.ModelAdmin):
-    list_display = ('shortcut', 'account', 'cart', 'search', 'home', 'get_created_at')
+    list_display = ('shortcut', 'account', 'cart', 'search', 'home', 'get_created_at', 'get_updated_at')
 
 
 class ColorsAdmin(admin.ModelAdmin):
-    list_display = ('navbar', 'category', 'active', 'footer', 'text', 'title', 'title_hover', 'get_created_at')
+    list_display = ('navbar', 'category', 'active', 'footer', 'text', 'title', 'title_hover', 'get_created_at',
+                    'get_updated_at')
 
 
 admin.site.register(Websites, WebsitesAdmin)

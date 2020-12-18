@@ -27,10 +27,12 @@ class CreateUpdate(models.Model):
     def get_created_at(self):
         return utils.custom_datetime(self.created_at, self.websites.timezone)
     get_created_at.short_description = 'Created at'
+    get_created_at.admin_order_field = 'created_at'
 
     def get_updated_at(self):
         return utils.custom_datetime(self.updated_at, self.websites.timezone)
     get_updated_at.short_description = 'Updated at'
+    get_updated_at.admin_order_field = 'updated_at'
 
     class Meta:
         abstract = True
@@ -48,6 +50,20 @@ class CommonInfo(models.Model):
 class Prices(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
+    def get_price(self):
+        if self.price is not None:
+            return utils.money_format(self.price, self.websites.currency, self.websites.language)
+        return ''
+    get_price.short_description = 'Price'
+    get_price.admin_order_field = 'price'
+
+    def get_promotional_price(self):
+        if self.promotional_price is not None:
+            return utils.money_format(self.promotional_price, self.websites.currency, self.websites.language)
+        return ''
+    get_promotional_price.short_description = 'Promotional price'
+    get_promotional_price.admin_order_field = 'promotional_price'
 
     def check_promotional_price(self):
 
@@ -140,10 +156,12 @@ class Websites(CreateUpdate, Enable):
     def get_created_at(self):
         return utils.custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
+    get_created_at.admin_order_field = 'created_at'
 
     def get_updated_at(self):
         return utils.custom_datetime(self.updated_at, self.timezone)
     get_updated_at.short_description = 'Updated at'
+    get_updated_at.admin_order_field = 'updated_at'
 
     class Meta:
         verbose_name = 'Website'
