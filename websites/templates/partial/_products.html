@@ -30,10 +30,10 @@
 
                     {% if product.price %}
                     {% if product.promotional_price %}
-                    <strike>{% money_format product.price websites.currency %}</strike> por
-                    <strong>{% money_format product.promotional_price websites.currency %}</strong>
+                    <strike>{% money_format product.price website.currency %}</strike> por
+                    <strong>{% money_format product.promotional_price website.currency %}</strong>
                     {% else %}
-                    por <strong>{% money_format product.price websites.currency %}</strong>
+                    por <strong>{% money_format product.price website.currency %}</strong>
                     {% endif %}
                     {% endif %}
 
