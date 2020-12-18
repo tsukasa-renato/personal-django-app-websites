@@ -25,16 +25,10 @@ class CreateUpdate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def get_created_at(self):
-        if self.websites.timezone == 'auto':
-            return utils.custom_datetime(self.created_at)
-
         return utils.custom_datetime(self.created_at, self.websites.timezone)
     get_created_at.short_description = 'Created at'
 
     def get_updated_at(self):
-        if self.websites.timezone == 'auto':
-            return utils.custom_datetime(self.updated_at)
-
         return utils.custom_datetime(self.updated_at, self.websites.timezone)
     get_updated_at.short_description = 'Updated at'
 
@@ -125,20 +119,23 @@ class Websites(CreateUpdate, Enable):
     title = models.CharField(max_length=20, null=False, blank=False)
     home = models.CharField("Homepage title", max_length=20, null=False, blank=False, default='Highlight')
 
-    timezone = models.CharField(max_length=50, null=False, blank=False, default='auto')
-    currency = models.CharField(max_length=10, null=False, blank=False, default='auto')
+    timezone = models.CharField(
+        max_length=30,
+        default='UTC',
+        choices=utils.choice_timezones()
+    )
+
+    currency = models.CharField(
+        max_length=3,
+        default='USD',
+        choices=utils.choice_currencies()
+    )
 
     def get_created_at(self):
-        if self.timezone == 'auto':
-            return utils.custom_datetime(self.created_at)
-
         return utils.custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
 
     def get_updated_at(self):
-        if self.timezone == 'auto':
-            return utils.custom_datetime(self.updated_at)
-
         return utils.custom_datetime(self.updated_at, self.timezone)
     get_updated_at.short_description = 'Updated at'
 
@@ -157,12 +154,12 @@ class Contacts(CreateUpdate):
     telephone = models.CharField("Telephone, only numbers", max_length=30, null=True, blank=True)
     email = models.EmailField(max_length=200, null=True, blank=True)
 
-    facebook = models.CharField(max_length=50, null=True, blank=True)
-    instagram = models.CharField(max_length=50, null=True, blank=True)
-    pinterest = models.CharField(max_length=50, null=True, blank=True)
-    twitter = models.CharField(max_length=50, null=True, blank=True)
-    linkedin = models.CharField(max_length=50, null=True, blank=True)
-    youtube = models.CharField(max_length=100, null=True, blank=True)
+    facebook = models.CharField("facebook.com/", max_length=50, null=True, blank=True)
+    instagram = models.CharField("instagram.com/", max_length=50, null=True, blank=True)
+    pinterest = models.CharField("pinterest.com/", max_length=50, null=True, blank=True)
+    twitter = models.CharField("twitter.com/", max_length=50, null=True, blank=True)
+    linkedin = models.CharField("linkedin.com/in/", max_length=50, null=True, blank=True)
+    youtube = models.CharField("youtube.com/channel/", max_length=100, null=True, blank=True)
     whatsapp = models.CharField("Whatsapp, only numbers (e.g. DD999555566)", max_length=20, null=True, blank=True)
 
     social_media_text = models.CharField("Type a message (e.g. follow us)", max_length=50, null=True, blank=True)

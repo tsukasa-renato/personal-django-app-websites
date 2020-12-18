@@ -3,5 +3,6 @@ django-crispy-forms
 django-debug-toolbar~=2.2
 djangorestframework
 pillow
-pytz~=2020.1
+pytz~=2019.3
 tzlocal~=2.1
+currencies~=2020
