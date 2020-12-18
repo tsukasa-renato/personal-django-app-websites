@@ -7,8 +7,14 @@ from .models import Websites, Categories, Products, Groups, Options, \
 
 def list_product(website, category, search):
     """
-    There are 3 ways to list the products, 1 by category, 2 by the search bar, 3 by accessing the homepage.
+    There are 4 ways to list the products, 1 by category and search bar, 2 by category, 3 by the search bar,
+    4 by accessing the homepage.
     """
+
+    if category and search:
+        return Products.objects.filter(websites=website, categories=category,
+                                       title__icontains=search).order_by('position')
+
     if category:
         return Products.objects.filter(categories=category).order_by('position')
     if search:
