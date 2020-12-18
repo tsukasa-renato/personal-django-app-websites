@@ -68,18 +68,20 @@ class Home(View):
 class Product(View):
 
     def get(self, *args, **kwargs):
+        website = get_object_or_404(Websites, url=kwargs['url'])
 
-        websites = Websites.objects.get(url=kwargs['url'])
-        icons = Icons.objects.get(websites=websites)
-        colors = Colors.objects.get(websites=websites)
-        product = Products.objects.get(websites=websites, slug=kwargs['product'])
+        contact = Contacts.objects.filter(websites=website).first()
+        icon = Icons.objects.filter(websites=website).first()
+        color = Colors.objects.filter(websites=website).first()
+
+        product = Products.objects.get(websites=website, slug=kwargs['product'])
         groups = Groups.objects.filter(products=product).order_by('position')
         options = Options.objects.filter(groups__in=groups).order_by('position')
 
         context = {
-            'websites': websites,
-            'icons': icons or '',
-            'colors': colors or '',
+            'website': website,
+            'icon': icon or '',
+            'color': color or '',
             'product': product or '',
             'groups': groups or '',
             'options': options or ''

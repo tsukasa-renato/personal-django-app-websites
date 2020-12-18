@@ -2,7 +2,7 @@
 {% load filters %}
 
 
-<form method="post" action="{% url 'websites:addtocart' url=websites.url product=product.slug %}" id="options_form">
+<form method="post" action="{% url 'websites:addtocart' url=website.url product=product.slug %}" id="options_form">
     {% csrf_token %}
     <div class="row mt-5">
         <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="row justify-content-center"  id="{{ product.slug|remove_dash }}">
-        <img src="{% static 'media/line.png' %}" style="max-width:100%;">
+        <img src="{% static 'media/line.jpg' %}" style="max-width:100%;">
     </div>
 </form>
 
@@ -95,7 +95,7 @@
             {% endif %}
 
             {% if option.price %}
-                auxiliary.option_text = "{% money_format option.price websites.currency %}"
+                auxiliary.option_text = "{% money_format option.price website.currency website.language %}"
             {% else %}
                 auxiliary.option_text = "{{ option.title }}"
             {% endif %}
