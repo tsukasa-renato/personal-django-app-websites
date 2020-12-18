@@ -11,10 +11,8 @@ def mine_less(number):
 
 
 @register.simple_tag
-def money_format(money, currency):
-    if currency == 'auto':
-        return utils.money_format(money, '')
-    return utils.money_format(money, currency)
+def money_format(money, currency, language):
+    return utils.money_format(money, currency, language)
 
 
 @register.filter
