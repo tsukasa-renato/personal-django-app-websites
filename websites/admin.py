@@ -31,7 +31,7 @@ class OptionsInline(admin.StackedInline):
 
 
 class WebsitesAdmin(admin.ModelAdmin):
-    list_display = ('url', 'title', 'home', 'timezone', 'currency', 'is_available', 'get_created_at')
+    list_display = ('url', 'title', 'home', 'timezone', 'currency', 'language', 'is_available', 'get_created_at')
 
     inlines = [
         ContactsInline,

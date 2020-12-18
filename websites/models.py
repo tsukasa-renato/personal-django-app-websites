@@ -131,6 +131,12 @@ class Websites(CreateUpdate, Enable):
         choices=utils.choice_currencies()
     )
 
+    language = models.CharField(
+        max_length=11,
+        default='en_US',
+        choices=utils.choice_language()
+    )
+
     def get_created_at(self):
         return utils.custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
