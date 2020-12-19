@@ -25,11 +25,17 @@ class CreateUpdate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def get_created_at(self):
+        """
+        Formats the created_at in the time zone registered on the website
+        """
         return utils.custom_datetime(self.created_at, self.websites.timezone)
     get_created_at.short_description = 'Created at'
     get_created_at.admin_order_field = 'created_at'
 
     def get_updated_at(self):
+        """
+        Formats the updated_at in the time zone registered on the website
+        """
         return utils.custom_datetime(self.updated_at, self.websites.timezone)
     get_updated_at.short_description = 'Updated at'
     get_updated_at.admin_order_field = 'updated_at'
@@ -52,6 +58,9 @@ class Prices(models.Model):
     promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
     def get_price(self):
+        """
+        Formats the price in the currency informed in website
+        """
         if self.price is not None:
             return utils.money_format(self.price, self.websites.currency, self.websites.language)
         return ''
@@ -59,6 +68,9 @@ class Prices(models.Model):
     get_price.admin_order_field = 'price'
 
     def get_promotional_price(self):
+        """
+        Formats the promotional price in the currency informed in website
+        """
         if self.promotional_price is not None:
             return utils.money_format(self.promotional_price, self.websites.currency, self.websites.language)
         return ''
@@ -66,6 +78,10 @@ class Prices(models.Model):
     get_promotional_price.admin_order_field = 'promotional_price'
 
     def get_real_price(self):
+        """
+        The get_real_price method checks if the option is in the promotion and returns the promotional_price else it
+        returns price else returns None.
+        """
         if self.promotional_price is not None:
             return self.promotional_price
 
@@ -163,11 +179,17 @@ class Websites(CreateUpdate, Enable):
     )
 
     def get_created_at(self):
+        """
+        Formats the created_at in the time zone registered on the website
+        """
         return utils.custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
     get_created_at.admin_order_field = 'created_at'
 
     def get_updated_at(self):
+        """
+        Formats the updated_at in the time zone registered on the website
+        """
         return utils.custom_datetime(self.updated_at, self.timezone)
     get_updated_at.short_description = 'Updated at'
     get_updated_at.admin_order_field = 'updated_at'
