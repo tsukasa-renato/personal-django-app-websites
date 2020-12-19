@@ -86,22 +86,27 @@
 
             options_group = $("#{{ option.groups|remove_dash }}");
 
-            {% if option.price %}
-                content = "{% money_format option.price website.currency website.language %}";
-                value = {{ option.price }}
+            /*The get_real_price method checks if the option is in the promotion and returns the promotional_price
+            else it returns price else returns None.*/
+            {% if option.get_real_price %}
+                content = "{% money_format option.get_real_price website.currency website.language %}";
+                value = {{ option.get_real_price }}
             {% else %}
                 content = "{{ option.title }}";
                 value = content
             {% endif %}
 
+            /*Creating an icon rounded for the options.*/
             {% if option.images %}
                 image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
                         "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>";
             {% endif %}
 
-            min = 0
-            max = 0
+            /*Used for number type input and to check whether the input is read-only.*/
+            min = {{ option.minimum }}
+            max = {{ option.maximum }}
 
+            /*In radio type input, the name is the same for the options that group.*/
             if (options_group.attr("name") == "radio") {
                 input_type = "radio";
                 name = "{{ option.groups }}";
@@ -111,8 +116,6 @@
                     input_type = "checkbox";
                 } else {
                     input_type = "number";
-                    min = {{ option.minimum }}
-                    max = {{ option.maximum }}
                 }
             }
 
