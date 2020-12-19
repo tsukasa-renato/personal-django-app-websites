@@ -65,6 +65,15 @@ class Prices(models.Model):
     get_promotional_price.short_description = 'Promotional price'
     get_promotional_price.admin_order_field = 'promotional_price'
 
+    def get_real_price(self):
+        if self.promotional_price is not None:
+            return self.promotional_price
+
+        if self.price is not None:
+            return self.price
+
+        return None
+
     def check_promotional_price(self):
 
         if self.promotional_price is not None:
