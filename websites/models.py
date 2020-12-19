@@ -318,6 +318,19 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     slug = models.SlugField(max_length=200, null=False, blank=True)
     position = models.PositiveSmallIntegerField(default=1)
 
+    price_type = models.CharField(
+        "How is the price calculated?",
+        max_length=1,
+        default='1',
+        choices=(
+            ('1', "Only use the group price"),
+            ('2', "Add the group price to the sum options price"),
+            ('3', "Add the group price to the average options price"),
+            ('4', "Sum all the options price"),
+            ('5', "Average all the options price"),
+        )
+    )
+
     class Meta:
         verbose_name = 'Group'
         verbose_name_plural = 'Groups'

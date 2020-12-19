@@ -9,3 +9,94 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+<!-- Custom -->
+<script src="{% static 'custom/js/website.js' %}"></script>
+<link rel="stylesheet" href="{% static 'custom/css/website.css' %}">
+
+{% if icons %}
+<link rel="shortcut icon" href="{{ icons.shortcut.url }}" type="image/x-icon">
+{% else %}
+<link rel="shortcut icon" href="{% static 'media/link.png' %}" type="image/x-icon">
+{% endif %}
+
+<style>
+
+
+.navbar {
+    {% if color.navbar %}
+        background-color: #{{ color.navbar }};
+    {% else %}
+        background-color: #0080FF;
+    {% endif %}
+}
+
+
+
+.category {
+    {% if color.categories %}
+        background-color: #{{ color.categories }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
+}
+
+.categories {
+    {% if color.categories %}
+        background-color: #{{ color.categories }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
+}
+
+.categories:hover {
+    {% if color.active %}
+        background-color: #{{ color.active }};
+    {% else %}
+        background-color: #E62D2D;
+    {% endif %}
+}
+
+.footer {
+    {% if color.footer %}
+        background-color: #{{ color.footer }};
+    {% else %}
+        background-color: #F03333;
+    {% endif %}
+}
+
+.active {
+    {% if color.active %}
+        background-color: #{{ color.active }};
+    {% else %}
+        background-color: #E62D2D;
+    {% endif %}
+}
+
+.title:hover {
+    {% if color.title_hover %}
+        color: #{{ color.title_hover }};
+    {% else %}
+        color: #F03333;
+    {% endif %}
+}
+
+.title {
+
+    {% if color.title %}
+        color: #{{ color.title }};
+    {% else %}
+        color: #000000;
+    {% endif %}
+
+}
+
+.text {
+    {% if color.text %}
+        color: #{{ color.text }};
+    {% else %}
+        color: #FFFFFF;
+    {% endif %}
+}
+
+</style>

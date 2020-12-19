@@ -59,22 +59,14 @@
 
                         "<div class='row justify-content-center'>" +
                             "<h4> {{ group.title }} </h4>" +
-                            {% if group.user_input != "1" %}
-                            "</div>" +
-                            "<div class='row justify-content-center'>" +
-                            "<div class='form-group'>" +
-                                "<input type='{{ group.get_user_input_display }}' class='form-control' id='{{ group.id }}'>" +
-                            "</div>" +
-                            "</div>" +
-                            {% else %}
-                            "</div>" +
-                            {% endif %}
+                        "</div>" +
+
 
                         "<div class='row justify-content-center mb-2'  id='{{ group.slug|remove_dash }}'>" +
                             "<!-- Options -->" +
                         "</div>" +
                         "<div class='row justify-content-center'  id='{{ group.slug|remove_dash }}'>" +
-                            "<img src='" + "{% static 'media/line.png' %}" + "' style='max-width:100%;'>" +
+                            "<img src='" + "{% static 'media/line.jpg' %}" + "' style='max-width:100%;'>" +
                         "</div>";
             });
 

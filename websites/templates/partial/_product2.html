@@ -1,0 +1,131 @@
+{% load static %}
+{% load filters %}
+
+
+<form method="post" action="{% url 'websites:addtocart' url=website.url product=product.slug %}" id="options_form">
+    {% csrf_token %}
+
+    <div class="row mt-5">
+
+        <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
+            <img src="{{ product.images.url }}"  style="max-height:400px;max-width:100%;">
+        </div>
+
+        <div class="col-sm text-center">
+
+            <h5 id="{{ product.slug|remove_dash }}_title">
+                {{ product.title }}
+            </h5>
+
+            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug|remove_dash }}_description">
+                {{ product.description|safe }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center">
+        <img src="{% static 'media/line.jpg' %}" style="max-width:100%;">
+    </div>
+
+    {% for group in groups %}
+    <div class="row mt-5">
+
+        <div class="col-sm text-center" id="{{ group.slug|remove_dash }}_images">
+            <!-- Option title selected -->
+        </div>
+
+        <div class="col-sm text-center">
+
+            <h5 id="{{ group.slug|remove_dash }}_title">
+                <!-- Option title selected -->
+            </h5>
+
+            <p class="overflow-auto" style="max-height:300px;" id="{{ group.slug|remove_dash }}_description">
+                <!-- Option description selected -->
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center">
+        <h4> {{ group.title }} </h4>
+    </div>
+
+    <div class="row justify-content-center"
+         {% if group.maximum == group.minimum %} name="radio" {% endif %}
+         id="{{ group.slug|remove_dash }}">
+        <!-- Options -->
+    </div>
+
+    <div class="row justify-content-center">
+        <img src="{% static 'media/line.jpg' %}" style='max-width:100%;'>
+    </div>
+
+    {% endfor %}
+
+    <div class='row navbar mt-3'>
+        <div class='col text-center text'>
+            <h5> Total R$ 0,00 </h5>
+            <button type='submit' class='btn btn-success'>
+                <b> + </b> Add to Cart
+            </button>
+        </div>
+    </div>
+
+
+
+</form>
+
+<script>
+    $(document).ready(function(){
+
+        {% for option in options %}
+
+            options_group = $("#{{ option.groups|remove_dash }}");
+
+            {% if option.price %}
+                content = "{% money_format option.price website.currency website.language %}";
+                value = {{ option.price }}
+            {% else %}
+                content = "{{ option.title }}";
+                value = content
+            {% endif %}
+
+            {% if option.images %}
+                image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
+                        "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>";
+            {% endif %}
+
+            min = 0
+            max = 0
+
+            if (options_group.attr("name") == "radio") {
+                input_type = "radio";
+                name = "{{ option.groups }}";
+            } else {
+                name = "{{ option.slug }}"
+                if ({{ option.maximum }} == 1) {
+                    input_type = "checkbox";
+                } else {
+                    input_type = "number";
+                    min = {{ option.minimum }}
+                    max = {{ option.maximum }}
+                }
+            }
+
+            html_input = returns_input_html(input_type, name, "{{ option.slug }}", value, min, max, image, content);
+
+            options_group.append(function() {
+
+                return  html_input;
+
+            });
+
+
+        {% endfor %}
+
+    });
+</script>

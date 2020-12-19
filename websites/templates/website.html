@@ -3,7 +3,6 @@
 
 {% block head %}
 <title>{{ website.title }}</title>
-{% include 'partial/_style.html' %}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +14,7 @@
 
     {% if product %}
 
-    {% include 'partial/_product.html' %}
+    {% include 'partial/_product2.html' %}
 
     {% else %}
 
@@ -40,9 +39,6 @@
     {% endif %}
 
     {% endif %}
-
-
-    <script src="{% static 'custom/js/website.js' %}"></script>
 
 </div>
 
