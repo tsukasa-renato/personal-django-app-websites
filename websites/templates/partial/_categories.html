@@ -1,7 +1,7 @@
 {% load static %}
 
 
-<a {% if category_selected %} class="btn categories" {% else %} class="btn categories active" {% endif %}
+<a {% if selected_category %} class="btn categories" {% else %} class="btn categories active" {% endif %}
         href="{% url 'websites:home' url=website.url %}">
 
     <figure class="figure" style="width:80px;height:60px;">
@@ -20,8 +20,8 @@
 
 {% for category in categories %}
 
-<a {% if category_selected == category %} class="btn categories active" {% else %} class="btn categories" {% endif %}
-        href="{% url 'websites:category' url=website.url category_selected=category.slug %}">
+<a {% if selected_category == category %} class="btn categories active" {% else %} class="btn categories" {% endif %}
+        href="{% url 'websites:category' url=website.url selected_category=category.slug %}">
 
     {% if category.icon %}
     <figure class="figure" style="width:80px;height:60px;">
