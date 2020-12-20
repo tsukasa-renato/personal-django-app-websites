@@ -1,5 +1,5 @@
 from django.db import models
-from websites import utils
+from websites.utils import utils, choices
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
@@ -163,19 +163,19 @@ class Websites(CreateUpdate, Enable):
     timezone = models.CharField(
         max_length=30,
         default='UTC',
-        choices=utils.choice_timezones()
+        choices=choices.choice_timezones()
     )
 
     currency = models.CharField(
         max_length=3,
         default='USD',
-        choices=utils.choice_currencies()
+        choices=choices.choice_currencies()
     )
 
     language = models.CharField(
         max_length=11,
         default='en_US',
-        choices=utils.choice_language()
+        choices=choices.choice_language()
     )
 
     def get_created_at(self):

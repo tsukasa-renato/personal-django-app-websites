@@ -129,6 +129,23 @@
 
             });
 
+            $("#{{ option.pk }}").click(function(){
+
+                $("#{{ option.groups }}_title").text("{{ option.title }}");
+                $("#{{ option.groups }}_description").empty();
+                $("#{{ option.groups }}_images").empty();
+
+                {% if option.description %}
+                    $("#{{ option.groups }}_description").text("{{ option.description }}");
+                {% endif %}
+
+                {% if option.images %}
+                $("#{{ option.groups }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
+                        "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>");
+                {% endif %}
+
+            });
+
 
         {% endfor %}
 

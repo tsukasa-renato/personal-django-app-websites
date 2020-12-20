@@ -1,6 +1,6 @@
 from django import template
 
-from websites import utils
+from websites.utils import utils
 
 register = template.Library()
 
@@ -18,10 +18,4 @@ def money_format(money, currency, language):
 @register.filter
 def smartphone_format(number):
     return utils.smartphone_format(number)
-
-
-@register.filter
-def remove_dash(text):
-    text = str(text)
-    return text.replace('-', '')
 

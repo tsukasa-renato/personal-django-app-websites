@@ -1,8 +1,20 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.core.paginator import Paginator
+from django.views.generic.base import TemplateView
 from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
+
+
+class Website(TemplateView):
+
+    def __init__(self, *args, **kwargs):
+        if 'url' in kwargs:
+            self.website = get_object_or_404(Websites, url=kwargs['url'])
+            self.contact = Contacts.objects.filter(websites=self.website).first()
+            self.icon = Icons.objects.filter(websites=self.website).first()
+            self.color = Colors.objects.filter(websites=self.website).first()
+            self.categories = Categories.objects.filter(websites=self.website).order_by('position')
 
 
 def list_product(website, category, search):
@@ -25,44 +37,39 @@ def list_product(website, category, search):
                                    show_home=True).order_by('position')
 
 
-class Home(View):
+class Home(Website):
 
-    def get(self, *args, **kwargs):
+    template_name = "website.html"
 
-        website = get_object_or_404(Websites, url=kwargs['url'])
+    def get_context_data(self, **kwargs):
 
-        contact = Contacts.objects.filter(websites=website).first()
-        icon = Icons.objects.filter(websites=website).first()
-        color = Colors.objects.filter(websites=website).first()
+        context = super().get_context_data(**kwargs)
 
-        banners = Banners.objects.filter(websites=website).order_by('position')
-        categories = Categories.objects.filter(websites=website).order_by('position')
+        super().__init__(self, **kwargs)
+
+        context['banners'] = Banners.objects.filter(websites=self.website).order_by('position')
 
         search = self.request.GET.get('search')
 
         if 'category_selected' in kwargs:
-            category_selected = Categories.objects.filter(websites=website, slug=kwargs['category_selected']).first()
+            category = Categories.objects.filter(websites=self.website, slug=kwargs['category_selected']).first()
         else:
-            category_selected = False
+            category = False
 
-        products = list_product(website=website, category=category_selected, search=search)
+        products = list_product(website=self.website, category=category, search=search)
 
         paginator = Paginator(products, 8)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        context = {
-            'website': website,
-            'contact': contact,
-            'icon': icon,
-            'color': color,
-            'banners': banners,
-            'categories': categories,
-            'category_selected': category_selected,
-            'products': page_obj,
-        }
+        context['website'] = self.website
+        context['icon'] = self.icon
+        context['color'] = self.color
+        context['categories'] = self.categories
+        context['products'] = page_obj
+        context['contact'] = self.contact
 
-        return render(self.request, 'website.html', context)
+        return context
 
 
 class Product(View):
@@ -80,6 +87,7 @@ class Product(View):
 
         context = {
             'website': website,
+            'contact': contact,
             'icon': icon,
             'color': color,
             'product': product,
@@ -88,26 +96,6 @@ class Product(View):
         }
 
         return render(self.request, 'website.html', context)
-
-    def post(self, *args, **kwargs):
-
-            websites = Websites.objects.get(url=kwargs['url'])
-            icons = Icons.objects.get(websites=websites)
-            colors = Colors.objects.get(websites=websites)
-            product = Products.objects.get(websites=websites, slug=kwargs['product'])
-            groups = Groups.objects.filter(products=product).order_by('position')
-            options = Options.objects.filter(groups__in=groups).order_by('position')
-
-            context = {
-                'websites': websites,
-                'icons': icons or '',
-                'colors': colors or '',
-                'product': product or '',
-                'groups': groups or '',
-                'options': options or ''
-            }
-
-            return render(self.request, 'website.html', context)
 
 
 class Cart(View):
