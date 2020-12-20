@@ -145,9 +145,9 @@ class PriceType(models.Model):
     )
 
     def check_price(self):
-        if self.price_type not in ['4', '5'] and self.price is None:
+        if self.price_type not in ['4', '5', None] and self.get_real_price() is None:
             raise ValidationError("Enter a price or change the type price")
-        if self.price_type not in ['1', '2', '3'] and self.price is not None:
+        if self.price_type not in ['1', '2', '3'] and self.get_real_price() is not None:
             raise ValidationError("Remove the price or change the type price")
 
     class Meta:
@@ -353,15 +353,15 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
         "How is the price calculated?",
         max_length=1,
         default='1',
+        null=True,
+        blank=True,
         choices=(
             ('1', "Only use the group price"),
             ('2', "Add the group price to the sum options price"),
             ('3', "Add the group price to the average options price"),
             ('4', "Sum all the options price"),
             ('5', "Average all the options price"),
-        ),
-        null=True,
-        blank=True,
+        )
     )
 
     class Meta:
@@ -374,18 +374,25 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     def __str__(self):
         return self.slug
 
+    def check_price(self):
+        if self.products.price_type == '1':
+            if self.price_type is not None:
+                raise ValidationError("Only the product price will be used, so group can't be priced")
+        else:
+            if self.price_type is None:
+                raise ValidationError("Products require the group price, so price type can't be None")
+
+        super().check_price()
+
     def save(self, *args, **kwargs):
 
-        self.check_price()
-
         self.check_promotional_price()
+
+        self.check_price()
 
         self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
-
-        if self.products.price_type == 1:
-            self.price_type = None
 
         super().save(*args, **kwargs)
 
@@ -412,9 +419,18 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
         if self.maximum > self.groups.maximum:
             raise ValidationError("Options' maximum can't be greater than Groups' maximum")
 
+    def check_price(self):
+        if self.get_real_price():
+            if self.groups.price_type == '1':
+                raise ValidationError("Only the group price will be used")
+            if self.groups.price_type is None:
+                raise ValidationError("Only the product price will be used")
+
     def save(self, *args, **kwargs):
 
         self.check_promotional_price()
+
+        self.check_price()
 
         self.check_min_max()
 
