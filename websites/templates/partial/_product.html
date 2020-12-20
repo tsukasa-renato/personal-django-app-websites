@@ -4,202 +4,175 @@
 
 <form method="post" action="{% url 'websites:addtocart' url=website.url product=product.slug %}" id="options_form">
     {% csrf_token %}
+
     <div class="row mt-5">
-        <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
+
+        <div class="col-sm text-center" id="{{ product.slug }}_images">
             <img src="{{ product.images.url }}"  style="max-height:400px;max-width:100%;">
         </div>
+
         <div class="col-sm text-center">
-            <h5 id="{{ product.slug|remove_dash }}_title">
+
+            <h5 id="{{ product.slug }}_title">
                 {{ product.title }}
             </h5>
-            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug|remove_dash }}_description">
+
+            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug }}_description">
                 {{ product.description|safe }}
             </p>
+
         </div>
+
     </div>
-    <div class="row justify-content-center"  id="{{ product.slug|remove_dash }}">
+
+    <div class="row justify-content-center">
         <img src="{% static 'media/line.jpg' %}" style="max-width:100%;">
     </div>
+
+    {% for group in groups %}
+    <div class="row mt-5">
+
+        <div class="col-sm text-center" id="{{ group.slug }}_images">
+            <!-- Option title selected -->
+        </div>
+
+        <div class="col-sm text-center">
+
+            <h5 id="{{ group.slug }}_title">
+                <!-- Option title selected -->
+            </h5>
+
+            <p class="overflow-auto" style="max-height:300px;" id="{{ group.slug }}_description">
+                <!-- Option description selected -->
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center">
+        <h4> {{ group.title }} </h4>
+    </div>
+
+    <div class="row justify-content-center"
+         {% if group.maximum == 1 and group.minimum == 1 %} name="radio" {% endif %}
+         id="{{ group.slug }}_options">
+        <!-- Options -->
+    </div>
+
+    <div class="row justify-content-center">
+        <img src="{% static 'media/line.jpg' %}" style='max-width:100%;'>
+    </div>
+
+    {% endfor %}
+
+    <div class='row navbar mt-3'>
+        <div class='col text-center text'>
+            <h5> Total R$ 0,00 </h5>
+            <button type='submit' class='btn btn-success'>
+                <b> + </b> Add to Cart
+            </button>
+        </div>
+    </div>
+
+
+
 </form>
 
 <script>
     $(document).ready(function(){
 
-        var total = 0
-        var auxiliary
+        {% if product.get_real_price %}
+            total = {{ product.get_real_price }}
+        {% else %}
+            total = 0
+        {% endif %}
 
         {% for group in groups %}
-
-            var {{ group.slug|remove_dash }} = {
-                old_value: 0,
-                type_input: "",
-                class_div: "",
-                class_input: "",
-                option_selected: false
-            }
-
-            {% if group.maximum == 1 and group.minimum == 1 %}
-                {{ group.slug|remove_dash }}.type_input = "radio"
-                {{ group.slug|remove_dash }}.class_div = "form-check"
-                {{ group.slug|remove_dash }}.class_input = "form-check-input"
+            {% if group.get_real_price %}
+                total += {{ group.get_real_price }}
             {% endif %}
-
-            $("#options_form").append(function(){
-
-                return  "<div class='row mt-3'>" +
-                            "<div class='col-sm text-center' id='{{ group.slug|remove_dash }}_images'>" +
-
-                            "</div>" +
-                            "<div class='col-sm text-center'>" +
-                                "<h5 id='{{ group.slug|remove_dash }}_title'> </h5>" +
-                                "<p class='overflow-auto' style='max-height:300px;' " +
-                                "id='{{ group.slug|remove_dash }}_description'> </p>" +
-                            "</div>" +
-                        "</div>" +
-
-                        "<div class='row justify-content-center'>" +
-                            "<h4> {{ group.title }} </h4>" +
-                        "</div>" +
-
-
-                        "<div class='row justify-content-center mb-2'  id='{{ group.slug|remove_dash }}'>" +
-                            "<!-- Options -->" +
-                        "</div>" +
-                        "<div class='row justify-content-center'  id='{{ group.slug|remove_dash }}'>" +
-                            "<img src='" + "{% static 'media/line.jpg' %}" + "' style='max-width:100%;'>" +
-                        "</div>";
-            });
-
+            {{ group.price_type }}
         {% endfor %}
 
         {% for option in options %}
 
-            auxiliary = {
-                 option_text: "",
-                 value_input: "",
-                 readonly: "",
-                 checked: "",
-                 min_max: ""
-             }
+            options_group = $("#{{ option.groups }}_options");
 
-            {% if option.maximum == option.minimum %}
-                auxiliary.readonly = "readonly"
-            {% endif %}
-
-            {% if option.price %}
-                auxiliary.option_text = "{% money_format option.price website.currency website.language %}"
+            /*The get_real_price method checks if the option is in the promotion and returns the promotional_price
+            else it returns price else returns None.*/
+            {% if option.get_real_price %}
+                content = "{% money_format option.get_real_price website.currency website.language %}";
+                value = {{ option.get_real_price }}
             {% else %}
-                auxiliary.option_text = "{{ option.title }}"
+                content = "{{ option.title }}";
+                value = "{{ option.pk }}";
             {% endif %}
 
-            if ({{ option.groups|remove_dash }}.type_input != "radio") {
+            /*Creating an icon rounded for the options.*/
+            {% if option.images %}
+                image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
+                        "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>";
+            {% else %}
+                image = ""
+            {% endif %}
 
-                {% if option.maximum == 1 %}
-                    {{ option.groups|remove_dash }}.type_input = "checkbox"
-                    {{ option.groups|remove_dash }}.class_div = "form-check"
-                    {{ option.groups|remove_dash }}.class_input = "form-check-input"
-                    auxiliary.value_input = "{{ option.id }}"
-                {% else %}
-                    {{ option.groups|remove_dash }}.type_input = "number"
-                    {{ option.groups|remove_dash }}.class_div = "form-group"
-                    {{ option.groups|remove_dash }}.class_input = "form-control-input mr-1"
-                    auxiliary.value_input = "{{ option.minimum }}"
-                    auxiliary.min_max = "min='{{ option.minimum }}' max='{{ option.maximum }}' style='width:50px;'"
-                {% endif %}
+            /*Used for number type input and to check whether the input is read-only.*/
+            min = {{ option.minimum }}
+            max = {{ option.maximum }}
 
-            }
-
-            if (!{{ option.groups|remove_dash }}.option_selected) {
-
-                $("#{{ option.groups|remove_dash }}_title").append("{{ option.title }}")
-                $("#{{ option.groups|remove_dash }}_description").html("{{ option.description|safe }}")
-
-                {% if option.images %}
-                $("#{{ option.groups|remove_dash }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
-                                "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>")
-                {% endif %}
-
-                if ({{ option.groups|remove_dash }}.type_input == "radio") {
-                    {% if option.price %}
-                    total += {{ option.price }}
-                    {{ option.groups|remove_dash }}.old_value = {{ option.price }}
-                    {% endif %}
-                    auxiliary.checked = "checked"
+            /*In radio type input, the name is the same for the options that group.*/
+            if (options_group.attr("name") == "radio") {
+                input_type = "radio";
+                name = "{{ option.groups }}";
+                {{ option.groups }} = 0
+            } else {
+                name = "{{ option.pk }}"
+                if ({{ option.maximum }} == 1) {
+                    input_type = "checkbox";
+                } else {
+                    input_type = "number";
                 }
-
-                {{ option.groups|remove_dash }}.option_selected = true
-
             }
 
-            $("#{{ option.groups|remove_dash }}").append(function() {
+            html_input = returns_input_html(input_type, name, "{{ option.pk }}", value, min, max, image, content);
 
-                return  "<div class='" + {{ option.groups|remove_dash }}.class_div+ " mr-2'>" +
+            options_group.append(function() {
 
-                        "<input class='" + {{ option.groups|remove_dash }}.class_input + "' type='" +  {{ option.groups|remove_dash }}.type_input +
-                        "' name='option' id='{{ option.id }}' " + "value='" + auxiliary.value_input + "' " +
-                         + " " + auxiliary.min_max + " " + auxiliary.checked + " " + auxiliary.readonly +
-                        ">" +
+                return  html_input;
 
-                        "<label class='" + {{ option.groups|remove_dash }}.class_input + "-label btn-primary rounded p-1' for='{{ option.id }}'>" +
-
-                        {% if option.images %}
-                        "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
-                                "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>" +
-                        {% endif %}
-
-                        auxiliary.option_text +
-
-                        "</label>" +
-                        "</div>";
             });
 
-            $("#{{option.id}}").click(function(){
+            $("#{{ option.pk }}").click(function(){
 
-                $("#{{ option.groups|remove_dash }}_title").empty()
-                $("#{{ option.groups|remove_dash }}_description").empty()
+                $("#{{ option.groups }}_title").text("{{ option.title }}");
+                $("#{{ option.groups }}_description").empty();
+                $("#{{ option.groups }}_images").empty();
 
-                $("#{{ option.groups|remove_dash }}_title").append("{{ option.title }}")
-                $("#{{ option.groups|remove_dash }}_description").append("{{ option.description|safe }}")
+                {% if option.description %}
+                    $("#{{ option.groups }}_description").text("{{ option.description }}");
+                {% endif %}
 
                 {% if option.images %}
-                $("#{{ option.groups|remove_dash }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
-                                "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>")
+                $("#{{ option.groups }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
+                        "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>");
                 {% endif %}
 
-                {% if option.price %}
-                if ({{ option.groups|remove_dash }}.type_input == 'radio') {
-                    total -= {{ option.groups|remove_dash }}.old_value
-                    total += parseFloat("{{ option.price }}")
-                    {{ option.groups|remove_dash }}.old_value = parseFloat("{{ option.price }}")
-                } else if ({{ option.groups|remove_dash }}.type_input == 'checkbox') {
-                    total -= {{ option.groups|remove_dash }}.old_value
-                    total += parseFloat("{{ option.price }}")
-                    {{ option.groups|remove_dash }}.old_value = parseFloat("{{ option.price }}")
-                } else {
-                    total -= {{ option.groups|remove_dash }}.old_value
-                    total += parseFloat("{{ option.price }}")
-                    {{ option.groups|remove_dash }}.old_value = parseFloat("{{ option.price }}")
-                }
+                {% if option.get_real_price %}
+                    if ($(this).is(':radio')) {
+                        total += update_total_radio({{ option.groups }}, {{ option.get_real_price }})
+                    } else if ($(this).is(':checkbox')){
+                        total += update_total_checkbox($(this), {{ option.get_real_price }})
+                    }
                 {% endif %}
+
 
                 console.log(total)
 
             });
 
+
         {% endfor %}
 
-        $("#options_form").append(function(){
-            return "<div class='row navbar mt-3'>" +
-                        "<div class='col text-center text'>" +
-                            "<h5> Final Price R$ 0,00 </h5>" +
-                            "<button type='submit' class='btn btn-success'>" +
-                                "<b> + </b> Add to Cart" +
-                            "</button>" +
-                        "</div>" +
-                    "</div>";
-        });
-
     });
-
-
 </script>

@@ -359,7 +359,9 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
             ('3', "Add the group price to the average options price"),
             ('4', "Sum all the options price"),
             ('5', "Average all the options price"),
-        )
+        ),
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -381,6 +383,9 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
         self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
+
+        if self.products.price_type == 1:
+            self.price_type = None
 
         super().save(*args, **kwargs)
 
