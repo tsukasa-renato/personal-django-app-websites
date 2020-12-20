@@ -76,15 +76,15 @@ class Product(View):
 
         product = Products.objects.get(websites=website, slug=kwargs['product'])
         groups = Groups.objects.filter(products=product).order_by('position')
-        options = Options.objects.filter(groups__in=groups).order_by('position')
+        options = Options.objects.filter(groups__in=groups).select_related('groups').order_by('position')
 
         context = {
             'website': website,
-            'icon': icon or '',
-            'color': color or '',
-            'product': product or '',
-            'groups': groups or '',
-            'options': options or ''
+            'icon': icon,
+            'color': color,
+            'product': product,
+            'groups': groups,
+            'options': options,
         }
 
         return render(self.request, 'website.html', context)

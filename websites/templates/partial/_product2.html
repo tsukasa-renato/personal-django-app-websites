@@ -7,17 +7,17 @@
 
     <div class="row mt-5">
 
-        <div class="col-sm text-center" id="{{ product.slug|remove_dash }}_images">
+        <div class="col-sm text-center" id="{{ product.slug }}_images">
             <img src="{{ product.images.url }}"  style="max-height:400px;max-width:100%;">
         </div>
 
         <div class="col-sm text-center">
 
-            <h5 id="{{ product.slug|remove_dash }}_title">
+            <h5 id="{{ product.slug }}_title">
                 {{ product.title }}
             </h5>
 
-            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug|remove_dash }}_description">
+            <p class="overflow-auto" style="max-height:300px;" id="{{ product.slug }}_description">
                 {{ product.description|safe }}
             </p>
 
@@ -32,17 +32,17 @@
     {% for group in groups %}
     <div class="row mt-5">
 
-        <div class="col-sm text-center" id="{{ group.slug|remove_dash }}_images">
+        <div class="col-sm text-center" id="{{ group.slug }}_images">
             <!-- Option title selected -->
         </div>
 
         <div class="col-sm text-center">
 
-            <h5 id="{{ group.slug|remove_dash }}_title">
+            <h5 id="{{ group.slug }}_title">
                 <!-- Option title selected -->
             </h5>
 
-            <p class="overflow-auto" style="max-height:300px;" id="{{ group.slug|remove_dash }}_description">
+            <p class="overflow-auto" style="max-height:300px;" id="{{ group.slug }}_description">
                 <!-- Option description selected -->
             </p>
 
@@ -55,8 +55,8 @@
     </div>
 
     <div class="row justify-content-center"
-         {% if group.maximum == group.minimum %} name="radio" {% endif %}
-         id="{{ group.slug|remove_dash }}">
+         {% if group.maximum == 1 and group.minimum == 1 %} name="radio" {% endif %}
+         id="{{ group.slug }}_options">
         <!-- Options -->
     </div>
 
@@ -84,7 +84,7 @@
 
         {% for option in options %}
 
-            options_group = $("#{{ option.groups|remove_dash }}");
+            options_group = $("#{{ option.groups }}_options");
 
             /*The get_real_price method checks if the option is in the promotion and returns the promotional_price
             else it returns price else returns None.*/
@@ -93,13 +93,15 @@
                 value = {{ option.get_real_price }}
             {% else %}
                 content = "{{ option.title }}";
-                value = content
+                value = "{{ option.pk }}";
             {% endif %}
 
             /*Creating an icon rounded for the options.*/
             {% if option.images %}
                 image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
                         "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>";
+            {% else %}
+                image = ""
             {% endif %}
 
             /*Used for number type input and to check whether the input is read-only.*/
@@ -111,7 +113,7 @@
                 input_type = "radio";
                 name = "{{ option.groups }}";
             } else {
-                name = "{{ option.slug }}"
+                name = "{{ option.pk }}"
                 if ({{ option.maximum }} == 1) {
                     input_type = "checkbox";
                 } else {
@@ -119,7 +121,7 @@
                 }
             }
 
-            html_input = returns_input_html(input_type, name, "{{ option.slug }}", value, min, max, image, content);
+            html_input = returns_input_html(input_type, name, "{{ option.pk }}", value, min, max, image, content);
 
             options_group.append(function() {
 

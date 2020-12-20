@@ -18,7 +18,7 @@ function returns_input_html(type, name, id, value, min, max, image, content){
     if (type != "number") {
         return '<div class="form-check mr-2"> ' +
             '<input class="form-check-input" type='+type+' name='+name+' id='+id+' value='+value+' '+readonly+'> ' +
-            '<label class="form-check-label btn-primary rounded p-1" for='+name+'> ' +
+            '<label class="form-check-label btn-primary rounded p-1" for='+id+'> ' +
                 image +
                 content +
             '</label> ' +
@@ -26,7 +26,7 @@ function returns_input_html(type, name, id, value, min, max, image, content){
     }
 
     return '<div class="form-check mr-2"> ' +
-        '<input class="form-control-input mr-1" type='+type+' name='+name+' id='+id+' value='+min+
+        '<input class="form-control-input mr-1" type='+type+' name='+name+' id='+id+' '+
         'min='+min+' max='+max+' style="width:50px;" '+readonly+'>' +
         '<label class="form-control-input btn-primary rounded p-1" for='+name+'>' +
             image +
