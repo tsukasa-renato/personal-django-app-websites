@@ -46,7 +46,7 @@ class ShowProducts(Website):
         context['banners'] = Banners.objects.filter(websites=context['website']).order_by('position')
 
         category = context['selected_category'] if 'selected_category' in context else ''
-        search = context['search'] if 'search' in context else ''
+        search = self.request.GET.get('search')
 
         products = list_products(website=context['website'], category=category, search=search)
 

@@ -12,21 +12,21 @@
 {% if website.is_available %}
 <div class="container-fluid">
 
+    {% if categories %}
+     <div class="row justify-content-center category">
+        {% include 'partial/_categories.html' %}
+    </div>
+    {% endif %}
+
     {% if product %}
 
     {% include 'partial/_product.html' %}
 
-    {% else %}
+    {% endif %}
 
     {% if banners %}
     <div class="row">
         {% include 'partial/_banners.html' %}
-    </div>
-    {% endif %}
-
-    {% if categories %}
-     <div class="row justify-content-center category">
-        {% include 'partial/_categories.html' %}
     </div>
     {% endif %}
 
@@ -38,7 +38,6 @@
     </div>
     {% endif %}
 
-    {% endif %}
 
 </div>
 
