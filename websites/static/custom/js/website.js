@@ -36,17 +36,26 @@ function returns_input_html(type, name, id, value, min, max, image, content){
 
 }
 
+function update_total_radio(previous_value, value){
+
+    return value - previous_value;
+
+}
+
 function update_total_checkbox(checkbox, value){
     if (checkbox.is(":checked")) {
-        return value
+        return value;
     } else {
-        return -value
+        return -value;
     }
 }
 
-function update_total_radio(previous_value, value){
+function update_total_number(previous_value, number, value){
 
-    return value - previous_value
+    if ($.isNumeric(number)) {
+        return (parseInt(number) * value) - previous_value;
+    } else {
+        return 0
+    }
 
 }
-

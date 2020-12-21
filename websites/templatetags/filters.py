@@ -19,3 +19,8 @@ def money_format(money, currency, language):
 def smartphone_format(number):
     return utils.smartphone_format(number)
 
+
+@register.filter
+def html_format(language):
+    return language.replace('_', '-')
+

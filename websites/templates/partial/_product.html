@@ -68,7 +68,9 @@
 
     <div class='row navbar mt-3'>
         <div class='col text-center text'>
-            <h5 id="total"> Total {% money_format 0 website.currency website.language %} </h5>
+            <h5 id="{{ product.slug }}_total">
+                Total {% money_format product.get_real_price website.currency website.language %}
+            </h5>
             <button type='submit' class='btn btn-success'>
                 <b> + </b> Add to Cart
             </button>
@@ -82,6 +84,9 @@
 <script>
     $(document).ready(function(){
 
+        currency = new Intl.NumberFormat('{{ website.language|html_format }}', {
+                                            style: 'currency', currency: '{{ website.currency }}' })
+
         {% if product.get_real_price %}
             total = {{ product.get_real_price }}
         {% else %}
@@ -92,7 +97,6 @@
             {% if group.get_real_price %}
                 total += {{ group.get_real_price }}
             {% endif %}
-            {{ group.price_type }}
         {% endfor %}
 
         {% for option in options %}
@@ -132,6 +136,7 @@
                     input_type = "checkbox";
                 } else {
                     input_type = "number";
+                    {{ option.slug }} = 0
                 }
             }
 
@@ -161,18 +166,26 @@
                 {% if option.get_real_price %}
                     if ($(this).is(':radio')) {
                         total += update_total_radio({{ option.groups }}, {{ option.get_real_price }})
-                    } else if ($(this).is(':checkbox')){
+                        {{ option.groups }} = {{ option.get_real_price }} // Update previous value
+                    } else if ($(this).is(':checkbox')) {
                         total += update_total_checkbox($(this), {{ option.get_real_price }})
+                    } else {
+                        number = $(this).val()
+                        total += update_total_number({{ option.slug }}, number, {{ option.get_real_price }})
+                        {{ option.slug }} = number * {{ option.get_real_price }} // Update previous value
                     }
+
+                    $("#{{ product.slug }}_total").text(currency.format(total));
+
                 {% endif %}
 
 
-                console.log(total)
+                console.log(currency.format(total));
 
             });
 
-
         {% endfor %}
+
 
     });
 </script>
