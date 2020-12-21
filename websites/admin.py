@@ -15,21 +15,6 @@ class ColorsInline(admin.StackedInline):
     model = Colors
 
 
-class ProductsInline(admin.StackedInline):
-    model = Products
-    extra = 1
-
-
-class GroupsInline(admin.StackedInline):
-    model = Groups
-    extra = 1
-
-
-class OptionsInline(admin.StackedInline):
-    model = Options
-    extra = 1
-
-
 class WebsitesAdmin(admin.ModelAdmin):
     list_display = ('url', 'title', 'home', 'timezone', 'currency', 'language', 'is_available', 'get_created_at',
                     'get_updated_at')
@@ -48,10 +33,6 @@ class CategoriesAdmin(admin.ModelAdmin):
     show_full_result_count = False
     list_select_related = ('websites',)
 
-    inlines = [
-        ProductsInline,
-    ]
-
 
 class ProductsAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'images', 'get_price', 'get_promotional_price', 'price_type',
@@ -60,10 +41,6 @@ class ProductsAdmin(admin.ModelAdmin):
     show_full_result_count = False
     list_select_related = ('websites',)
 
-    inlines = [
-        GroupsInline,
-    ]
-
 
 class GroupsAdmin(admin.ModelAdmin):
     list_display = ('title', 'get_price', 'get_promotional_price', 'price_type', 'maximum', 'minimum',
@@ -71,10 +48,6 @@ class GroupsAdmin(admin.ModelAdmin):
     actions_selection_counter = False
     show_full_result_count = False
     list_select_related = ('websites',)
-
-    inlines = [
-        OptionsInline,
-    ]
 
 
 class OptionsAdmin(admin.ModelAdmin):
