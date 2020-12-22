@@ -9,11 +9,11 @@ class InitialDataTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls.website = Websites.objects.create(url='url', title="title")
-        cls.category = Categories.objects.create(websites=cls.website, title="title")
-        cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="title", price=1)
-        cls.group = Groups.objects.create(websites=cls.website, products=cls.product, title="title")
-        cls.option = Options.objects.create(websites=cls.website, groups=cls.group, title="title")
+        cls.website = Websites.objects.create(url='url', title="_title")
+        cls.category = Categories.objects.create(websites=cls.website, title="_title")
+        cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="_title", price=1)
+        cls.group = Groups.objects.create(websites=cls.website, products=cls.product, title="_title")
+        cls.option = Options.objects.create(websites=cls.website, groups=cls.group, title="_title")
 
 
 class ProductsModelTest(InitialDataTest):
@@ -24,7 +24,7 @@ class ProductsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(Exception):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price=1)
+            Products.objects.create(websites=self.website, categories=self.category, title="_title", price=1)
 
     def test_fail_in_check_price_without_price(self):
         """
@@ -32,13 +32,13 @@ class ProductsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='1')
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='1')
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='2')
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='2')
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='3')
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='3')
 
     def test_fail_in_check_price_with_price(self):
         """
@@ -46,11 +46,11 @@ class ProductsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='4',
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='4',
                                     price=1)
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='5',
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='5',
                                     price=1)
 
     def test_success_in_check_price_with_price(self):
@@ -64,7 +64,7 @@ class ProductsModelTest(InitialDataTest):
                                 price=1, position=3)
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: title>', '<Products: title2>', '<Products: title3>'])
+                                 ['<Products: _title>', '<Products: title2>', '<Products: title3>'])
 
     def test_success_in_check_price_without_price(self):
         """
@@ -77,7 +77,7 @@ class ProductsModelTest(InitialDataTest):
                                 position=2)
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: title>', '<Products: title2>', '<Products: title3>'])
+                                 ['<Products: _title>', '<Products: title2>', '<Products: title3>'])
 
     def test_fail_in_check_promotional_price_without_price(self):
         """
@@ -85,7 +85,7 @@ class ProductsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price_type='4',
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='4',
                                     promotional_price=1)
 
     def test_fail_in_check_promotional_price_with_price(self):
@@ -94,7 +94,7 @@ class ProductsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title_", price=1,
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price=1,
                                     promotional_price=2)
 
     def test_success_in_check_promotional_price(self):
@@ -102,11 +102,11 @@ class ProductsModelTest(InitialDataTest):
         Register a product with promotional price
         """
 
-        Products.objects.create(websites=self.website, categories=self.category, title="title_", price=2,
+        Products.objects.create(websites=self.website, categories=self.category, title="title", price=2,
                                 promotional_price=1)
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: title>', '<Products: title_>'])
+                                 ['<Products: _title>', '<Products: title>'])
 
 
 class GroupsModelTest(InitialDataTest):
@@ -117,7 +117,7 @@ class GroupsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(Exception):
-            Groups.objects.create(websites=self.website, products=self.product, title="title")
+            Groups.objects.create(websites=self.website, products=self.product, title="_title")
 
     def test_check_min_and_max(self):
         """
@@ -125,7 +125,7 @@ class GroupsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Groups.objects.create(websites=self.website, products=self.product, title="title_", minimum=2, maximum=1)
+            Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=2, maximum=1)
 
 
 class OptionsModelTest(InitialDataTest):
@@ -136,7 +136,7 @@ class OptionsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(Exception):
-            Options.objects.create(websites=self.website, groups=self.group, title="title")
+            Options.objects.create(websites=self.website, groups=self.group, title="_title")
 
     def test_check_max_and_max(self):
         """
@@ -144,4 +144,4 @@ class OptionsModelTest(InitialDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Options.objects.create(websites=self.website, groups=self.group, title="title_", maximum=2)
+            Options.objects.create(websites=self.website, groups=self.group, title="title", maximum=2)
