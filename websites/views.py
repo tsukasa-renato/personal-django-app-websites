@@ -19,7 +19,7 @@ def list_products(website, category, search):
         return Products.objects.filter(categories=category).order_by('position')
 
     return Products.objects.filter(websites=website,
-                                   show_home=True).order_by('position')
+                                   show_on_home=True).order_by('position')
 
 
 class Website(TemplateView):

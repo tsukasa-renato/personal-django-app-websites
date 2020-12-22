@@ -315,7 +315,7 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE)
 
     slug = models.SlugField(max_length=200, null=False, blank=True)
-    show_home = models.BooleanField("Show in homepage?", default=True)
+    show_on_home = models.BooleanField("Show on homepage?", default=True)
     position = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
