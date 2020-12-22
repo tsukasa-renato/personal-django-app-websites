@@ -352,7 +352,6 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     price_type = models.CharField(
         "How is the price calculated?",
         max_length=1,
-        default='1',
         null=True,
         blank=True,
         choices=(

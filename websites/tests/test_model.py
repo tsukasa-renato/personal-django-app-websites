@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from ..models import Websites, Categories, Products, Groups, Options
 
 
-class InitalDataTest(TestCase):
+class InitialDataTest(TestCase):
     """
     Register necessary initial data for the tests
     """
@@ -12,11 +12,11 @@ class InitalDataTest(TestCase):
         cls.website = Websites.objects.create(url='url', title="title")
         cls.category = Categories.objects.create(websites=cls.website, title="title")
         cls.product = Products.objects.create(websites=cls.website, categories=cls.category, title="title", price=1)
-        cls.group = Groups.objects.create(websites=cls.website, products=cls.product, title="title", price=1)
-        cls.option = Options.objects.create(websites=cls.website, groups=cls.group, title="title", price=1)
+        cls.group = Groups.objects.create(websites=cls.website, products=cls.product, title="title")
+        cls.option = Options.objects.create(websites=cls.website, groups=cls.group, title="title")
 
 
-class ProductsModelTest(InitalDataTest):
+class ProductsModelTest(InitialDataTest):
 
     def test_unique_constraints(self):
         """
@@ -109,7 +109,7 @@ class ProductsModelTest(InitalDataTest):
                                  ['<Products: title>', '<Products: title_>'])
 
 
-class GroupsModelTest(InitalDataTest):
+class GroupsModelTest(InitialDataTest):
 
     def test_unique_constraints(self):
         """
@@ -117,7 +117,7 @@ class GroupsModelTest(InitalDataTest):
         """
 
         with self.assertRaises(Exception):
-            Groups.objects.create(websites=self.website, products=self.product, title="title", price=1)
+            Groups.objects.create(websites=self.website, products=self.product, title="title")
 
     def test_check_min_and_max(self):
         """
@@ -125,10 +125,10 @@ class GroupsModelTest(InitalDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Groups.objects.create(websites=self.website, products=self.product, title="title_", price=1, minimum=2)
+            Groups.objects.create(websites=self.website, products=self.product, title="title_", minimum=2, maximum=1)
 
 
-class OptionsModelTest(InitalDataTest):
+class OptionsModelTest(InitialDataTest):
 
     def test_unique_constraints(self):
         """
@@ -136,7 +136,7 @@ class OptionsModelTest(InitalDataTest):
         """
 
         with self.assertRaises(Exception):
-            Options.objects.create(websites=self.website, groups=self.group, title="title", price=1)
+            Options.objects.create(websites=self.website, groups=self.group, title="title")
 
     def test_check_max_and_max(self):
         """
@@ -144,4 +144,4 @@ class OptionsModelTest(InitalDataTest):
         """
 
         with self.assertRaises(ValidationError):
-            Options.objects.create(websites=self.website, groups=self.group, title="title_", price=1, maximum=2)
+            Options.objects.create(websites=self.website, groups=self.group, title="title_", maximum=2)
