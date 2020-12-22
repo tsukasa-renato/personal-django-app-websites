@@ -145,6 +145,10 @@ class PriceType(models.Model):
     )
 
     def check_price(self):
+        if type(self.price_type) is not str and self.price_type is not None:
+            raise ValidationError("Price type needs be string or None - type received: " + str(type(self.price_type)))
+        if self.price_type not in [None, '1', '2', '3', '4', '5']:
+            raise ValidationError("Value invalid - type a valid value")
         if self.price_type not in ['4', '5', None] and self.get_real_price() is None:
             raise ValidationError("Enter a price or change the type price")
         if self.price_type not in ['1', '2', '3'] and self.get_real_price() is not None:

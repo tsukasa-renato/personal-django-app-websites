@@ -108,6 +108,15 @@ class ProductsModelTest(InitialDataTest):
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
                                  ['<Products: _title>', '<Products: title>'])
 
+    def test_if_price_type_is_str(self):
+        """
+        Register a product with price type using integer
+        """
+
+        with self.assertRaises(ValidationError):
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type=1,
+                                    price=2)
+
 
 class GroupsModelTest(InitialDataTest):
 
@@ -126,6 +135,37 @@ class GroupsModelTest(InitialDataTest):
 
         with self.assertRaises(ValidationError):
             Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=2, maximum=1)
+
+    def test_only_product_price_is_used(self):
+        """
+        Try register a group with price when price type of the product is 1
+        """
+
+        with self.assertRaises(ValidationError):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", price=1)
+
+    def test_group_without_price_when_group_price_is_required(self):
+        """
+        Try register a group without price when price type of the product isn't 1
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category,
+                                          title="title", price_type='4')
+
+        with self.assertRaises(ValidationError):
+            Groups.objects.create(websites=self.website, products=product, title="title")
+
+    def test_group_with_price_when_group_price_is_required(self):
+        """
+        Try register a group with price when price type of the product isn't 1
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category,
+                                          title="title", price_type='4')
+        Groups.objects.create(websites=self.website, products=product, title="title", price_type='1', price=1)
+
+        self.assertQuerysetEqual(Groups.objects.all().order_by('position'),
+                                 ['<Groups: _title>', '<Groups: title>'])
 
 
 class OptionsModelTest(InitialDataTest):
