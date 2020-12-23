@@ -7,9 +7,10 @@
 
 {% block content %}
 
+{% if website.is_available %}
+
 {% include 'partial/_top_navbar.html' %}
 
-{% if website.is_available %}
 <div class="container-fluid">
 
     {% if categories %}
@@ -38,7 +39,6 @@
     </div>
     {% endif %}
 
-
 </div>
 
 {% endif %}
@@ -63,6 +63,5 @@
 {% if website.reason %}
 <p> {{ website.reason }} </p>
 {% endif %}
-
 
 {% endblock %}

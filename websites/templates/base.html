@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ website.language }}">
+{% load filters %}
+<html lang="{{ website.language|html_format }}">
 <head>
     {% include 'partial/_head.html' %}
     {% block head %}
