@@ -4,6 +4,8 @@ from ..models import Websites, Categories, Products, Groups, Options, Banners, C
 from decimal import *
 
 
+# TODO: Test ShowProduct view
+
 class InitialDataTest(TestCase):
     """
     Register necessary initial data for the tests
@@ -96,4 +98,3 @@ class ShowProductsViewTest(InitialDataTest):
         self.assertContains(response, "facebook.com/example")
         self.assertContains(response, "instagram.com/example")
         self.assertContains(response, "twitter.com/example")
-

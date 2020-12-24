@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.views.generic.base import TemplateView
 from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
+from django.http import HttpResponse
 
 
 def list_products(website, category, search):
@@ -72,5 +73,6 @@ class ShowProduct(Website):
 
 class Cart(View):
 
-    def get(self, *args, **kwargs):
-        ...
+    def post(self, request):
+
+        return HttpResponse("<h1>In development</h1>")
