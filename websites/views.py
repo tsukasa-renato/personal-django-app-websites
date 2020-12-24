@@ -73,6 +73,6 @@ class ShowProduct(Website):
 
 class Cart(View):
 
-    def post(self, request):
+    def post(self, *args, **kwargs):
 
         return HttpResponse("<h1>In development</h1>")
