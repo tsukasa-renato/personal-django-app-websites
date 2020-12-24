@@ -30,7 +30,7 @@ class Website(TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        context['website'] = get_object_or_404(Websites, url=kwargs['url'])
+        context['website'] = get_object_or_404(Websites, url=str(context['url']))
         context['contact'] = Contacts.objects.filter(websites=context['website']).first()
         context['icon'] = Icons.objects.filter(websites=context['website']).first()
         context['color'] = Colors.objects.filter(websites=context['website']).first()
