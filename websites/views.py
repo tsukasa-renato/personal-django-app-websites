@@ -63,7 +63,8 @@ class ShowProduct(Website):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        context['product'] = get_object_or_404(Products, websites=context['website'], slug=context['selected_product'])
+        context['product'] = get_object_or_404(Products, websites=context['website'],
+                                               slug=str(context['selected_product']))
         context['groups'] = Groups.objects.filter(products=context['product']).order_by('position')
         context['options'] = Options.objects.filter(groups__in=context['groups']).select_related('groups').order_by(
             'position')
