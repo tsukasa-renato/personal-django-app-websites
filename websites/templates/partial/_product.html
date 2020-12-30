@@ -75,7 +75,11 @@
     <div class='row navbar mt-3'>
         <div class='col text-center text'>
             <h5 id="{{ product.slug }}_total">
-                {% money_format product.get_real_price website.currency website.language %}
+                {% if product.get_real_price %}
+                    {% money_format product.get_real_price website.currency website.language %}
+                {% else %}
+                    {% money_format 0 website.currency website.language %}
+                {% endif %}
             </h5>
             <button type='submit' class='btn btn-success'>
                 <b> + </b> Add to Cart
