@@ -8,7 +8,13 @@
     <div class="row mt-5">
 
         <div class="col-sm text-center" id="{{ product.slug }}_images">
-            <img src="{{ product.images.url }}"  style="max-height:400px;max-width:100%;">
+            {% if product.images %}
+                <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+                 style="max-height:400px;max-width:100%;">
+            {% else %}
+            <img src="{% static 'media/category.png' %}" alt="{{ product.title }}"
+                 style="max-height:400px;max-width:100%;">
+            {% endif %}
         </div>
 
         <div class="col-sm text-center">
