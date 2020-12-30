@@ -130,34 +130,6 @@ class Enable(models.Model):
         abstract = True
 
 
-class PriceType(models.Model):
-    price_type = models.CharField(
-        "How is the price calculated?",
-        max_length=1,
-        default='1',
-        choices=(
-            ('1', "Only use the product price"),
-            ('2', "Add the product price to the sum groups price"),
-            ('3', "Add the product price to the average groups price"),
-            ('4', "Sum all the groups price"),
-            ('5', "Average all the groups price"),
-        )
-    )
-
-    def check_price(self):
-        if type(self.price_type) is not str and self.price_type is not None:
-            raise ValidationError("Price type needs be string or None - type received: " + str(type(self.price_type)))
-        if self.price_type not in [None, '1', '2', '3', '4', '5']:
-            raise ValidationError("Value invalid - type a valid value")
-        if self.price_type not in ['4', '5', None] and self.get_real_price() is None:
-            raise ValidationError("Enter a price or change the type price")
-        if self.price_type not in ['1', '2', '3'] and self.get_real_price() is not None:
-            raise ValidationError("Remove the price or change the type price")
-
-    class Meta:
-        abstract = True
-
-
 class Websites(CreateUpdate, Enable):
 
     url = models.SlugField(max_length=30, unique=True, null=False, blank=False)
@@ -313,7 +285,7 @@ class Categories(CreateUpdate):
         super().save(*args, **kwargs)
 
 
-class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
+class Products(CreateUpdate, Enable, CommonInfo, Prices):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE)
@@ -321,6 +293,27 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
     slug = models.SlugField(max_length=200, null=False, blank=True)
     show_on_home = models.BooleanField("Show on homepage?", default=True)
     position = models.PositiveSmallIntegerField(default=1)
+
+    price_type = models.CharField(
+        "How is the price calculated?",
+        max_length=1,
+        default='1',
+        choices=(
+            ('1', "Only use the product price"),
+            ('2', "Add the product price to the sum groups price"),
+            ('3', "Sum all the groups price"),
+        )
+    )
+
+    def check_price(self):
+        if type(self.price_type) is not str:
+            raise ValidationError("Price type needs be string - type received: " + str(type(self.price_type)))
+        if self.price_type not in ['1', '2', '3']:
+            raise ValidationError("Value invalid - type a valid value")
+        if self.price_type not in ['3'] and self.get_real_price() is None:
+            raise ValidationError("Enter a price or change the type price")
+        if self.price_type not in ['1', '2'] and self.get_real_price() is not None:
+            raise ValidationError("Remove the price or change the type price")
 
     class Meta:
         verbose_name = 'Product'
@@ -343,7 +336,7 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices, PriceType):
         super().save(*args, **kwargs)
 
 
-class Groups(CreateUpdate, Prices, MinMax, PriceType):
+class Groups(CreateUpdate, MinMax):
 
     websites = models.ForeignKey(Websites, on_delete=models.CASCADE)
     products = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -359,13 +352,20 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
         null=True,
         blank=True,
         choices=(
-            ('1', "Only use the group price"),
-            ('2', "Add the group price to the sum options price"),
-            ('3', "Add the group price to the average options price"),
-            ('4', "Sum all the options price"),
-            ('5', "Average all the options price"),
+            ('1', "Sum all the options price"),
+            ('2', "Average all the options price"),
         )
     )
+
+    def check_price(self):
+        if type(self.price_type) is not str and self.price_type is not None:
+            raise ValidationError("Price type needs be string or None - type received: " + str(type(self.price_type)))
+        if self.price_type not in [None, '1', '2']:
+            raise ValidationError("Value invalid - type a valid value")
+        if self.products.price_type in ['1'] and self.price_type not in [None]:
+            raise ValidationError("Only product price is used, set price type to None")
+        if self.products.price_type not in ['1'] and self.price_type not in ['1', '2']:
+            raise ValidationError("Product requires the options price - price type can't be None")
 
     class Meta:
         verbose_name = 'Group'
@@ -377,23 +377,11 @@ class Groups(CreateUpdate, Prices, MinMax, PriceType):
     def __str__(self):
         return self.slug
 
-    def check_price(self):
-        if self.products.price_type == '1':
-            if self.price_type is not None:
-                raise ValidationError("Only the product price will be used, so group can't be priced")
-        else:
-            if self.price_type is None:
-                raise ValidationError("Products require the group price, so price type can't be None")
-
-        super().check_price()
-
     def save(self, *args, **kwargs):
 
-        self.check_promotional_price()
+        self.check_min_max()
 
         self.check_price()
-
-        self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
 
@@ -424,8 +412,6 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
 
     def check_price(self):
         if self.get_real_price():
-            if self.groups.price_type == '1':
-                raise ValidationError("Only the group price will be used")
             if self.groups.price_type is None:
                 raise ValidationError("Only the product price will be used")
 

@@ -43,8 +43,7 @@ class ProductsAdmin(admin.ModelAdmin):
 
 
 class GroupsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_price', 'get_promotional_price', 'price_type', 'maximum', 'minimum',
-                    'get_created_at', 'get_updated_at')
+    list_display = ('title', 'price_type', 'maximum', 'minimum', 'get_created_at', 'get_updated_at')
     actions_selection_counter = False
     show_full_result_count = False
     list_select_related = ('websites',)

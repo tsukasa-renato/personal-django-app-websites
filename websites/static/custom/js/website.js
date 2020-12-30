@@ -8,7 +8,7 @@ var div = $('.fixed-top');
        }
     });
 
-function returns_input_html(type, name, id, value, min, max, image, content){
+function returns_input_html(type, name, id, min, max, image, content){
 
     readonly = ""
     checked = ""
@@ -21,7 +21,7 @@ function returns_input_html(type, name, id, value, min, max, image, content){
 
     if (type != "number") {
         return '<div class="form-check mr-2"> ' +
-            '<input class="form-check-input" type='+type+' name='+name+' id='+id+' value='+value+
+            '<input class="form-check-input" type='+type+' name='+name+' id='+id+' value='+id+
             ' '+readonly+' '+checked+'> ' +
             '<label class="form-check-label btn-primary rounded p-1" for='+id+'> ' +
                 image +
@@ -38,29 +38,5 @@ function returns_input_html(type, name, id, value, min, max, image, content){
             content +
         '</label>' +
     '</div>';
-
-}
-
-function update_total_radio(previous_value, value){
-
-    return value - previous_value;
-
-}
-
-function update_total_checkbox(checkbox, value){
-    if (checkbox.is(":checked")) {
-        return value;
-    } else {
-        return -value;
-    }
-}
-
-function update_total_number(previous_value, number, value){
-
-    if ($.isNumeric(number)) {
-        return (parseInt(number) * value) - previous_value;
-    } else {
-        return 0
-    }
 
 }
