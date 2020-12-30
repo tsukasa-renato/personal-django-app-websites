@@ -37,20 +37,13 @@ class ProductsModelTest(InitialDataTest):
         with self.assertRaises(ValidationError):
             Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='2')
 
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='3')
-
     def test_fail_in_check_price_with_price(self):
         """
         Register a product with price_type in (4,5) and price=1
         """
 
         with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='4',
-                                    price=1)
-
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='5',
+            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='3',
                                     price=1)
 
     def test_success_in_check_price_with_price(self):
@@ -60,24 +53,20 @@ class ProductsModelTest(InitialDataTest):
 
         Products.objects.create(websites=self.website, categories=self.category, title="title2", price_type='2',
                                 price=1, position=2)
-        Products.objects.create(websites=self.website, categories=self.category, title="title3", price_type='3',
-                                price=1, position=3)
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: _title>', '<Products: title2>', '<Products: title3>'])
+                                 ['<Products: _title>', '<Products: title2>'])
 
     def test_success_in_check_price_without_price(self):
         """
         Register a product with price_type in (4,5) and price=None
         """
 
-        Products.objects.create(websites=self.website, categories=self.category, title="title2", price_type='4',
+        Products.objects.create(websites=self.website, categories=self.category, title="title2", price_type='3',
                                 position=1)
-        Products.objects.create(websites=self.website, categories=self.category, title="title3", price_type='5',
-                                position=2)
 
         self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: _title>', '<Products: title2>', '<Products: title3>'])
+                                 ['<Products: _title>', '<Products: title2>'])
 
     def test_fail_in_check_promotional_price_without_price(self):
         """
@@ -135,37 +124,6 @@ class GroupsModelTest(InitialDataTest):
 
         with self.assertRaises(ValidationError):
             Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=2, maximum=1)
-
-    def test_only_product_price_is_used(self):
-        """
-        Try register a group with price when price type of the product is 1
-        """
-
-        with self.assertRaises(ValidationError):
-            Groups.objects.create(websites=self.website, products=self.product, title="title", price=1)
-
-    def test_group_without_price_when_group_price_is_required(self):
-        """
-        Try register a group without price when price type of the product isn't 1
-        """
-
-        product = Products.objects.create(websites=self.website, categories=self.category,
-                                          title="title", price_type='4')
-
-        with self.assertRaises(ValidationError):
-            Groups.objects.create(websites=self.website, products=product, title="title")
-
-    def test_group_with_price_when_group_price_is_required(self):
-        """
-        Try register a group with price when price type of the product isn't 1
-        """
-
-        product = Products.objects.create(websites=self.website, categories=self.category,
-                                          title="title", price_type='4')
-        Groups.objects.create(websites=self.website, products=product, title="title", price_type='1', price=1)
-
-        self.assertQuerysetEqual(Groups.objects.all().order_by('position'),
-                                 ['<Groups: _title>', '<Groups: title>'])
 
 
 class OptionsModelTest(InitialDataTest):
