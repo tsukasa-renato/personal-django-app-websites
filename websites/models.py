@@ -54,8 +54,9 @@ class CommonInfo(models.Model):
 
 
 class Prices(models.Model):
-    price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    promotional_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField("price, only numbers", max_digits=12, decimal_places=2, null=True, blank=True)
+    promotional_price = models.DecimalField("promotional price, only numbers", max_digits=12, decimal_places=2,
+                                            null=True, blank=True)
 
     def get_price(self):
         """
@@ -90,9 +91,24 @@ class Prices(models.Model):
 
         return None
 
-    def check_promotional_price(self):
+    def check_price(self):
 
         if self.promotional_price is not None:
+
+            if self.price is not None:
+                if type(self.price) not in [int, float]:
+                    raise ValidationError("Price needs be positive integer or float - type received: " +
+                                          str(type(self.price)))
+
+                if type(self.promotional_price) not in [int, float]:
+                    raise ValidationError("Promotional price needs be positive integer or float - type received: " +
+                                          str(type(self.promotional_price)))
+
+                if self.price < 0:
+                    raise ValidationError("Price can't be negative")
+
+                if self.promotional_price < 0:
+                    raise ValidationError("Promotional price can't be negative")
 
             if self.price is None:
                 raise ValidationError("Price can't be None when the promotional_price is set")
@@ -115,6 +131,20 @@ class MinMax(models.Model):
         return self.minimum
 
     def check_min_max(self):
+        if type(self.minimum) is not int:
+            raise ValidationError("Minimum needs be positive integer - type received: " +
+                                  str(type(self.minimum)))
+
+        if type(self.maximum) is not int:
+            raise ValidationError("Maximum needs be positive integer - type received: " +
+                                  str(type(self.maximum)))
+
+        if self.minimum < 0:
+            raise ValidationError("Minimum can't be negative")
+
+        if self.maximum < 0:
+            raise ValidationError("Maximum can't be negative")
+
         if self.minimum > self.maximum:
             raise ValidationError("Minimum can't be less than the maximum")
 
@@ -305,15 +335,17 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices):
         )
     )
 
-    def check_price(self):
+    def check_price_type(self):
         if type(self.price_type) is not str:
             raise ValidationError("Price type needs be string - type received: " + str(type(self.price_type)))
         if self.price_type not in ['1', '2', '3']:
-            raise ValidationError("Value invalid - type a valid value")
-        if self.price_type not in ['3'] and self.get_real_price() is None:
-            raise ValidationError("Enter a price or change the type price")
-        if self.price_type not in ['1', '2'] and self.get_real_price() is not None:
-            raise ValidationError("Remove the price or change the type price")
+            raise ValidationError("Invalid value - type a valid value -> '1' '2' '3'")
+        if self.price_type in ['1', '2'] and self.get_real_price() is None:
+            raise ValidationError(f"Price type = {self.price_type} requires a price. Enter a price or change the type "
+                                  f"price")
+        if self.price_type in ['3'] and self.get_real_price() is not None:
+            raise ValidationError(f"Price type = {self.price_type} don't requires a price. Enter a price or change "
+                                  f"the type price")
 
     class Meta:
         verbose_name = 'Product'
@@ -329,7 +361,7 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices):
 
         self.check_price()
 
-        self.check_promotional_price()
+        self.check_price_type()
 
         self.slug = f'{slugify(self.title)}'
 
@@ -357,14 +389,14 @@ class Groups(CreateUpdate, MinMax):
         )
     )
 
-    def check_price(self):
+    def check_price_type(self):
         if type(self.price_type) is not str and self.price_type is not None:
             raise ValidationError("Price type needs be string or None - type received: " + str(type(self.price_type)))
         if self.price_type not in [None, '1', '2']:
-            raise ValidationError("Value invalid - type a valid value")
-        if self.products.price_type in ['1'] and self.price_type not in [None]:
+            raise ValidationError("Invalid value - type a valid value -> None '1' '2'")
+        if self.products.price_type in ['1'] and self.price_type in ['1', '2']:
             raise ValidationError("Only product price is used, set price type to None")
-        if self.products.price_type not in ['1'] and self.price_type not in ['1', '2']:
+        if self.products.price_type not in ['1'] and self.price_type in [None]:
             raise ValidationError("Product requires the options price - price type can't be None")
 
     class Meta:
@@ -379,9 +411,9 @@ class Groups(CreateUpdate, MinMax):
 
     def save(self, *args, **kwargs):
 
-        self.check_min_max()
+        self.check_price_type()
 
-        self.check_price()
+        self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
 
@@ -406,24 +438,23 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
     def __str__(self):
         return self.slug
 
-    def check_max_max(self):
+    def check_min_max(self):
+        super().check_min_max()
         if self.maximum > self.groups.maximum:
             raise ValidationError("Options' maximum can't be greater than Groups' maximum")
 
-    def check_price(self):
+    def check_price_type(self):
         if self.get_real_price():
             if self.groups.price_type is None:
                 raise ValidationError("Only the product price will be used")
 
     def save(self, *args, **kwargs):
 
-        self.check_promotional_price()
-
         self.check_price()
 
-        self.check_min_max()
+        self.check_price_type()
 
-        self.check_max_max()
+        self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
 
