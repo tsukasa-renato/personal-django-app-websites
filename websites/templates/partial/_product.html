@@ -135,7 +135,13 @@
             min = {{ option.minimum }}
             max = {{ option.maximum }}
 
-            if (max == min) number_elements{{ option.groups.pk }} += min;
+            if (max == min) {
+                number_elements{{ option.groups.pk }} += min;
+                {% if option.get_real_price %}
+                    total += min * {{ option.get_real_price }}
+                    $("#{{ product.slug }}_total").text(currency.format(total));
+                {% endif %}
+            }
 
             /*In radio type input, the name is the same for the options that group.*/
 
