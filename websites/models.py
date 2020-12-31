@@ -93,22 +93,22 @@ class Prices(models.Model):
 
     def check_price(self):
 
+        if self.price is not None:
+            if type(self.price) not in [int, float]:
+                raise ValidationError("Price needs be positive integer or float - type received: " +
+                                      str(type(self.price)))
+
+            if self.price < 0:
+                raise ValidationError("Price can't be negative")
+
         if self.promotional_price is not None:
 
-            if self.price is not None:
-                if type(self.price) not in [int, float]:
-                    raise ValidationError("Price needs be positive integer or float - type received: " +
-                                          str(type(self.price)))
+            if type(self.promotional_price) not in [int, float]:
+                raise ValidationError("Promotional price needs be positive integer or float - type received: " +
+                                      str(type(self.promotional_price)))
 
-                if type(self.promotional_price) not in [int, float]:
-                    raise ValidationError("Promotional price needs be positive integer or float - type received: " +
-                                          str(type(self.promotional_price)))
-
-                if self.price < 0:
-                    raise ValidationError("Price can't be negative")
-
-                if self.promotional_price < 0:
-                    raise ValidationError("Promotional price can't be negative")
+            if self.promotional_price < 0:
+                raise ValidationError("Promotional price can't be negative")
 
             if self.price is None:
                 raise ValidationError("Price can't be None when the promotional_price is set")
@@ -142,11 +142,11 @@ class MinMax(models.Model):
         if self.minimum < 0:
             raise ValidationError("Minimum can't be negative")
 
-        if self.maximum < 0:
-            raise ValidationError("Maximum can't be negative")
+        if self.maximum <= 0:
+            raise ValidationError("Maximum can't be negative or zero")
 
         if self.minimum > self.maximum:
-            raise ValidationError("Minimum can't be less than the maximum")
+            raise ValidationError("Minimum can't be greater than the maximum")
 
     class Meta:
         abstract = True
@@ -232,6 +232,7 @@ class Contacts(CreateUpdate):
 
     def __str__(self):
         return 'contacts'
+
 
 
 class Colors(CreateUpdate):
@@ -344,7 +345,7 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices):
             raise ValidationError(f"Price type = {self.price_type} requires a price. Enter a price or change the type "
                                   f"price")
         if self.price_type in ['3'] and self.get_real_price() is not None:
-            raise ValidationError(f"Price type = {self.price_type} don't requires a price. Enter a price or change "
+            raise ValidationError(f"Price type = {self.price_type} don't requires a price. Remove the price or change "
                                   f"the type price")
 
     class Meta:
@@ -447,6 +448,9 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
         if self.get_real_price():
             if self.groups.price_type is None:
                 raise ValidationError("Only the product price will be used")
+        else:
+            if self.groups.price_type is not None:
+                raise ValidationError("Product requires price will be used")
 
     def save(self, *args, **kwargs):
 

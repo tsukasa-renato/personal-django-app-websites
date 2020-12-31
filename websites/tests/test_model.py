@@ -7,6 +7,7 @@ class InitialDataTest(TestCase):
     """
     Register necessary initial data for the tests
     """
+
     @classmethod
     def setUpTestData(cls):
         cls.website = Websites.objects.create(url='url', title="_title")
@@ -26,85 +27,132 @@ class ProductsModelTest(InitialDataTest):
         with self.assertRaises(Exception):
             Products.objects.create(websites=self.website, categories=self.category, title="_title", price=1)
 
-    def test_fail_in_check_price_without_price(self):
+    def test_check_price_type_invalid_values(self):
         """
-        Register a product with price_type in (1,2,3) and price=None
-        """
-
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='1')
-
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='2')
-
-    def test_fail_in_check_price_with_price(self):
-        """
-        Register a product with price_type in (4,5) and price=1
+        Register products using invalid values for price type
         """
 
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='3',
-                                    price=1)
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type needs be string - type received: " + str(type(None))):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type=None)
 
-    def test_success_in_check_price_with_price(self):
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> '1' '2' '3'"):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type='Letters')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> '1' '2' '3'"):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type='*')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> '1' '2' '3'"):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type='4')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type needs be string - type received: " + str(type(1))):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type=1)
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type needs be string - type received: " + str(type(1.1))):
+            Products.objects.create(websites=self.website, categories=self.category, title="title",
+                                    price_type=1.1)
+
+    def test_check_price_type_valid_values(self):
         """
-        Register a product with price_type in (1,2,3) and price=1, price_type = 1 was registered in setUp
+        Register products using valid values for price type
         """
 
-        Products.objects.create(websites=self.website, categories=self.category, title="title2", price_type='2',
-                                price=1, position=2)
+        Products.objects.create(websites=self.website, categories=self.category, title="price type = 1",
+                                price=1, price_type='1')
+        Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                price=1, price_type='2')
+        Products.objects.create(websites=self.website, categories=self.category, title="price type = 3",
+                                price_type='3')
 
-        self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: _title>', '<Products: title2>'])
+        self.assertQuerysetEqual(Products.objects.all().order_by('pk'),
+                                 ['<Products: _title>', '<Products: price-type-1>', '<Products: price-type-2>',
+                                  '<Products: price-type-3>'])
 
-    def test_success_in_check_price_without_price(self):
+    def test_price_type_requires_a_price(self):
         """
-        Register a product with price_type in (4,5) and price=None
-        """
-
-        Products.objects.create(websites=self.website, categories=self.category, title="title2", price_type='3',
-                                position=1)
-
-        self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: _title>', '<Products: title2>'])
-
-    def test_fail_in_check_promotional_price_without_price(self):
-        """
-        Register a product without price, but with promotional price
+        Register products with price type 1 and 2 and without price
         """
 
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type='4',
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type = 1 requires a price. Enter a price or change the type price"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price type = 1",
+                                    price_type='1')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type = 2 requires a price. Enter a price or change the type price"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                    price_type='2')
+
+    def test_price_type_dont_requires_a_price(self):
+        """
+        Register products with price type 3 and with price
+        """
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type = 3 don't requires a price. Remove the price or change the type price"
+                                      ):
+            Products.objects.create(websites=self.website, categories=self.category, title="price type = 3",
+                                    price=1, price_type='3')
+
+    def test_get_real_price(self):
+        """
+        Register a product with price, other with price and promotional price, and other without price and call get
+        real price function
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price",
+                                          price=2, price_type='1')
+        self.assertEqual(product.get_real_price(), 2)
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="promotional price",
+                                          price=2, promotional_price=1, price_type='1')
+        self.assertEqual(product.get_real_price(), 1)
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="none price",
+                                          price_type='3')
+        self.assertEqual(product.get_real_price(), None)
+
+    def test_check_price(self):
+        """
+        Test check price function
+        """
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price needs be positive integer or float - type received: " + str(type('1'))
+                                      ):
+            Products.objects.create(websites=self.website, categories=self.category, title="price", price='1')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Promotional price needs be positive integer or float - type received: " +
+                                      str(type('1'))
+                                      ):
+            Products.objects.create(websites=self.website, categories=self.category, title="price", price=2,
+                                    promotional_price='1')
+
+        with self.assertRaisesMessage(ValidationError, "Price can't be negative"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price", price=-0.1)
+
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be negative"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price", price=2,
+                                    promotional_price=-0.1)
+
+        with self.assertRaisesMessage(ValidationError, "Price can't be None when the promotional_price is set"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price",
                                     promotional_price=1)
 
-    def test_fail_in_check_promotional_price_with_price(self):
-        """
-        Register a product with promotional price greater than price
-        """
-
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price=1,
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be less than price"):
+            Products.objects.create(websites=self.website, categories=self.category, title="price", price=1,
                                     promotional_price=2)
-
-    def test_success_in_check_promotional_price(self):
-        """
-        Register a product with promotional price
-        """
-
-        Products.objects.create(websites=self.website, categories=self.category, title="title", price=2,
-                                promotional_price=1)
-
-        self.assertQuerysetEqual(Products.objects.all().order_by('position'),
-                                 ['<Products: _title>', '<Products: title>'])
-
-    def test_if_price_type_is_str(self):
-        """
-        Register a product with price type using integer
-        """
-
-        with self.assertRaises(ValidationError):
-            Products.objects.create(websites=self.website, categories=self.category, title="title", price_type=1,
-                                    price=2)
 
 
 class GroupsModelTest(InitialDataTest):
@@ -117,12 +165,133 @@ class GroupsModelTest(InitialDataTest):
         with self.assertRaises(Exception):
             Groups.objects.create(websites=self.website, products=self.product, title="_title")
 
-    def test_check_min_and_max(self):
+    def test_check_price_type_invalid_values(self):
         """
-        Register a group with minimum value greater than maximum value
+        Register groups using invalid values for price type
         """
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> None '1' '2'"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title",
+                                  price_type='Letters')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> None '1' '2'"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title",
+                                  price_type='*')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Invalid value - type a valid value -> None '1' '2'"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title",
+                                  price_type='3')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type needs be string or None - type received: " + str(type(1))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title",
+                                  price_type=1)
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price type needs be string or None - type received: " + str(type(1.1))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title",
+                                  price_type=1.1)
+
+    def test_check_price_type_valid_values(self):
+        """
+        Register products using valid values for price type
+        """
+
+        Groups.objects.create(websites=self.website, products=self.product, title="price type = None",
+                              price_type=None)
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                          price=1, price_type='2')
+
+        Groups.objects.create(websites=self.website, products=product, title="price type = 1",
+                              price_type='1')
+        Groups.objects.create(websites=self.website, products=product, title="price type = 2",
+                              price_type='2')
+
+        self.assertQuerysetEqual(Groups.objects.all().order_by('pk'),
+                                 ['<Groups: _title>', '<Groups: price-type-none>', '<Groups: price-type-1>',
+                                  '<Groups: price-type-2>'])
+
+    def test_only_product_price_is_used_set_price_type_to_none(self):
+        """
+        Register groups with price type 1 and 2 when Product's price type is 1
+        """
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Only product price is used, set price type to None"):
+            Groups.objects.create(websites=self.website, products=self.product, title="price type = 1",
+                                  price_type='1')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Only product price is used, set price type to None"):
+            Groups.objects.create(websites=self.website, products=self.product, title="price type = 2",
+                                  price_type='2')
+
+    def test_product_requires_options_price_price_type_cant_be_none(self):
+        """
+        Register a group with price type None when Product's price type is 2 and 3
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                          price=1, price_type='2')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires the options price - price type can't be None"):
+            Groups.objects.create(websites=self.website, products=product, title="price type = None",
+                                  price_type=None)
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires the options price - price type can't be None"):
+            Groups.objects.create(websites=self.website, products=product, title="price type = None",
+                                  price_type=None)
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 3",
+                                          price_type='3')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires the options price - price type can't be None"):
+            Groups.objects.create(websites=self.website, products=product, title="price type = None",
+                                  price_type=None)
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires the options price - price type can't be None"):
+            Groups.objects.create(websites=self.website, products=product, title="price type = None",
+                                  price_type=None)
+
+    def test_check_min_max(self):
+        """
+        Test check min max function
+        """
+
+        with self.assertRaisesMessage(ValidationError, "Minimum needs be positive integer - type received: " +
+                                      str(type('1'))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", minimum='1')
+
+        with self.assertRaisesMessage(ValidationError, "Minimum needs be positive integer - type received: " +
+                                      str(type(1.1))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=1.1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum needs be positive integer - type received: " +
+                                      str(type('1'))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", maximum='1')
+
+        with self.assertRaisesMessage(ValidationError, "Maximum needs be positive integer - type received: " +
+                                      str(type(1.1))):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", maximum=1.1)
+
+        with self.assertRaisesMessage(ValidationError, "Minimum can't be negative"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=-1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum can't be negative or zero"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", maximum=-1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum can't be negative or zero"):
+            Groups.objects.create(websites=self.website, products=self.product, title="title", maximum=0)
+
+        with self.assertRaisesMessage(ValidationError, "Minimum can't be greater than the maximum"):
             Groups.objects.create(websites=self.website, products=self.product, title="title", minimum=2, maximum=1)
 
 
@@ -136,10 +305,125 @@ class OptionsModelTest(InitialDataTest):
         with self.assertRaises(Exception):
             Options.objects.create(websites=self.website, groups=self.group, title="_title")
 
-    def test_check_max_and_max(self):
+    def test_check_price_type(self):
         """
-        Register a group with minimum value greater than maximum value
+        Test check price type function of the option
         """
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesMessage(ValidationError,
+                                      "Only the product price will be used"):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", price=1)
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                          price=1, price_type='2')
+
+        group = Groups.objects.create(websites=self.website, products=product, title="price type = 1",
+                                      price_type='1')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires price will be used"):
+            Options.objects.create(websites=self.website, groups=group, title="title")
+
+        group = Groups.objects.create(websites=self.website, products=product, title="price type = 2",
+                                      price_type='2')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Product requires price will be used"):
+            Options.objects.create(websites=self.website, groups=group, title="title")
+
+    def test_get_real_price(self):
+        """
+        Register a product with price, other with price and promotional price, and other without price and call get
+        real price function
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                          price=1, price_type='2')
+
+        group = Groups.objects.create(websites=self.website, products=product, title="price type = 1",
+                                      price_type='1')
+
+        option = Options.objects.create(websites=self.website, groups=group, title="Price", price=2)
+        self.assertEqual(option.get_real_price(), 2)
+
+        option = Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=2,
+                                        promotional_price=1)
+        self.assertEqual(option.get_real_price(), 1)
+
+        option = Options.objects.create(websites=self.website, groups=self.group, title="None price")
+        self.assertEqual(option.get_real_price(), None)
+
+    def test_check_price(self):
+        """
+        Test check price function
+        """
+
+        product = Products.objects.create(websites=self.website, categories=self.category, title="price type = 2",
+                                          price=1, price_type='2')
+
+        group = Groups.objects.create(websites=self.website, products=product, title="price type = 1",
+                                      price_type='1')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Price needs be positive integer or float - type received: " + str(type('1'))
+                                      ):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price", price='2')
+
+        with self.assertRaisesMessage(ValidationError,
+                                      "Promotional price needs be positive integer or float - type received: " +
+                                      str(type('1'))
+                                      ):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=2,
+                                   promotional_price='1')
+
+        with self.assertRaisesMessage(ValidationError, "Price can't be negative"):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=-0.1)
+
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be negative"):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=2,
+                                   promotional_price=-0.1)
+
+        with self.assertRaisesMessage(ValidationError, "Price can't be None when the promotional_price is set"):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price",
+                                   promotional_price=1)
+
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be less than price"):
+            Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=1,
+                                   promotional_price=2)
+
+    def test_check_min_max(self):
+        """
+        Test check min max function
+        """
+
+        with self.assertRaisesMessage(ValidationError, "Minimum needs be positive integer - type received: " +
+                                      str(type('1'))):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", minimum='1')
+
+        with self.assertRaisesMessage(ValidationError, "Minimum needs be positive integer - type received: " +
+                                      str(type(1.1))):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", minimum=1.1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum needs be positive integer - type received: " +
+                                      str(type('1'))):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", maximum='1')
+
+        with self.assertRaisesMessage(ValidationError, "Maximum needs be positive integer - type received: " +
+                                      str(type(1.1))):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", maximum=1.1)
+
+        with self.assertRaisesMessage(ValidationError, "Minimum can't be negative"):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", minimum=-1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum can't be negative or zero"):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", maximum=-1)
+
+        with self.assertRaisesMessage(ValidationError, "Maximum can't be negative or zero"):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", maximum=0)
+
+        with self.assertRaisesMessage(ValidationError, "Minimum can't be greater than the maximum"):
+            Options.objects.create(websites=self.website, groups=self.group, title="title", minimum=2)
+
+        with self.assertRaisesMessage(ValidationError, "Options' maximum can't be greater than Groups' maximum"):
             Options.objects.create(websites=self.website, groups=self.group, title="title", maximum=2)
+
