@@ -7,9 +7,6 @@
 <div class="row mt-2">
 {% endif %}
 
-
-{% if product.is_available %}
-
     <div class="col-sm">
 
         <a href="{% url 'websites:product' url=website.url selected_product=product.slug %}"
@@ -43,8 +40,6 @@
         </a>
 
     </div>
-
-{% endif %}
 
 {% if forloop.last or forloop.counter == 4 %}
 </div>

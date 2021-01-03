@@ -234,7 +234,6 @@ class Contacts(CreateUpdate):
         return 'contacts'
 
 
-
 class Colors(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
