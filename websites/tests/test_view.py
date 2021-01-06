@@ -1,6 +1,6 @@
 from django.test import TestCase
 from websites.utils.utils import money_format
-from ..models import Websites, Contacts, Categories, Products
+from ..models import Websites, Contacts, Categories, Products, Groups, Options
 from decimal import *
 
 
@@ -285,3 +285,181 @@ class ShowProductsViewTest(TestCase):
         self.assertContains(response, "One Product")
         money = money_format(10.2, self.website.currency, self.website.language)
         self.assertContains(response, money)
+
+
+def create_product_with_group_1(website, category, price_type, price=None, option_price=None, group_price_type=None):
+
+    product = Products.objects.create(websites=website, categories=category, title='Product',
+                                      price=price, price_type=price_type)
+
+    radio = Groups.objects.create(websites=website, products=product, title="radio group",
+                                  maximum=1, minimum=1, price_type=group_price_type)
+    checkbox = Groups.objects.create(websites=website, products=product, title="checkbox group",
+                                     maximum=1, minimum=0, price_type=group_price_type)
+    numbers = Groups.objects.create(websites=website, products=product, title="numbers group",
+                                    maximum=10, minimum=0, price_type=group_price_type)
+
+    Options.objects.create(websites=website, groups=radio, title="Op1", price=option_price)
+    Options.objects.create(websites=website, groups=radio, title="Op2", price=option_price)
+    Options.objects.create(websites=website, groups=radio, title="Op3", price=option_price)
+    Options.objects.create(websites=website, groups=radio, title="Readonly", maximum=1, minimum=1,
+                           price=option_price)
+
+    Options.objects.create(websites=website, groups=checkbox, title="Op1", price=option_price)
+    Options.objects.create(websites=website, groups=checkbox, title="Op2", price=option_price)
+    Options.objects.create(websites=website, groups=checkbox, title="Op3", price=option_price)
+    Options.objects.create(websites=website, groups=checkbox, title="Readonly", maximum=1, minimum=1,
+                           price=option_price)
+
+    Options.objects.create(websites=website, groups=numbers, title="Op1", maximum=5, minimum=0, price=option_price)
+    Options.objects.create(websites=website, groups=numbers, title="Op2", maximum=5, minimum=0, price=option_price)
+    Options.objects.create(websites=website, groups=numbers, title="Op3", maximum=5, minimum=0, price=option_price)
+    Options.objects.create(websites=website, groups=numbers, title="Readonly", maximum=5, minimum=5,
+                           price=option_price)
+
+
+class ShowProductViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+
+        cls.website = Websites.objects.create(url='website', title="Website")
+        cls.category = Categories.objects.create(websites=cls.website, title="Category")
+
+    def test_product_404(self):
+        response = self.client.get('/website/p/product-404/')
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_product_200(self):
+
+        Products.objects.create(websites=self.website, categories=self.category, title='Product',
+                                price=10, price_type='1')
+
+        response = self.client.get('/website/p/product/')
+
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+        self.assertEqual(context['website'].title, self.website.title)
+        self.assertEqual(context['icon'], None)
+        self.assertEqual(context['color'], None)
+        self.assertEqual(context['contact'], None)
+        self.assertEqual(context['categories'][0].title, "Category")
+        self.assertEqual(context['product'].title, "Product")
+
+        templates = response.templates
+        self.assertEqual(templates[0].name, 'website.html')
+        self.assertEqual(templates[1].name, 'base.html')
+        self.assertEqual(templates[2].name, 'partial/_head.html')
+        self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
+        self.assertEqual(templates[4].name, 'partial/_categories.html')
+        self.assertEqual(templates[5].name, 'partial/_product.html')
+        self.assertEqual(templates[6].name, "partial/_credits.html")
+
+    def test_price_type_1(self):
+
+        create_product_with_group_1(self.website, self.category, '1', 30000)
+
+        response = self.client.get('/website/p/product/')
+
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+
+        self.assertEqual(context['groups'][0].title, "radio group")
+        self.assertEqual(context['groups'][1].title, "checkbox group")
+        self.assertEqual(context['groups'][2].title, "numbers group")
+
+        self.assertEqual(context['options'][0].title, "Op1")
+        self.assertEqual(context['options'][0].maximum, 1)
+        self.assertEqual(context['options'][0].minimum, 0)
+        self.assertEqual(context['options'][1].title, "Op2")
+        self.assertEqual(context['options'][1].maximum, 1)
+        self.assertEqual(context['options'][1].minimum, 0)
+        self.assertEqual(context['options'][2].title, "Op3")
+        self.assertEqual(context['options'][2].maximum, 1)
+        self.assertEqual(context['options'][2].minimum, 0)
+        self.assertEqual(context['options'][3].title, "Readonly")
+        self.assertEqual(context['options'][3].maximum, 1)
+        self.assertEqual(context['options'][3].minimum, 1)
+
+        self.assertEqual(context['options'][4].title, "Op1")
+        self.assertEqual(context['options'][4].maximum, 1)
+        self.assertEqual(context['options'][4].minimum, 0)
+        self.assertEqual(context['options'][5].title, "Op2")
+        self.assertEqual(context['options'][5].maximum, 1)
+        self.assertEqual(context['options'][5].minimum, 0)
+        self.assertEqual(context['options'][6].title, "Op3")
+        self.assertEqual(context['options'][6].maximum, 1)
+        self.assertEqual(context['options'][6].minimum, 0)
+        self.assertEqual(context['options'][7].title, "Readonly")
+        self.assertEqual(context['options'][7].maximum, 1)
+        self.assertEqual(context['options'][7].minimum, 1)
+
+        self.assertEqual(context['options'][8].title, "Op1")
+        self.assertEqual(context['options'][8].maximum, 5)
+        self.assertEqual(context['options'][8].minimum, 0)
+        self.assertEqual(context['options'][9].title, "Op2")
+        self.assertEqual(context['options'][9].maximum, 5)
+        self.assertEqual(context['options'][9].minimum, 0)
+        self.assertEqual(context['options'][10].title, "Op3")
+        self.assertEqual(context['options'][10].maximum, 5)
+        self.assertEqual(context['options'][10].minimum, 0)
+        self.assertEqual(context['options'][11].title, "Readonly")
+        self.assertEqual(context['options'][11].maximum, 5)
+        self.assertEqual(context['options'][11].minimum, 5)
+
+    def test_price_type_2(self):
+
+        create_product_with_group_1(self.website, self.category, '2', 30000, 200, '1')
+
+        response = self.client.get('/website/p/product/')
+
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+
+        self.assertEqual(context['groups'][0].title, "radio group")
+        self.assertEqual(context['groups'][1].title, "checkbox group")
+        self.assertEqual(context['groups'][2].title, "numbers group")
+
+        self.assertEqual(context['options'][0].title, "Op1")
+        self.assertEqual(context['options'][0].maximum, 1)
+        self.assertEqual(context['options'][0].minimum, 0)
+        self.assertEqual(context['options'][1].title, "Op2")
+        self.assertEqual(context['options'][1].maximum, 1)
+        self.assertEqual(context['options'][1].minimum, 0)
+        self.assertEqual(context['options'][2].title, "Op3")
+        self.assertEqual(context['options'][2].maximum, 1)
+        self.assertEqual(context['options'][2].minimum, 0)
+        self.assertEqual(context['options'][3].title, "Readonly")
+        self.assertEqual(context['options'][3].maximum, 1)
+        self.assertEqual(context['options'][3].minimum, 1)
+
+        self.assertEqual(context['options'][4].title, "Op1")
+        self.assertEqual(context['options'][4].maximum, 1)
+        self.assertEqual(context['options'][4].minimum, 0)
+        self.assertEqual(context['options'][5].title, "Op2")
+        self.assertEqual(context['options'][5].maximum, 1)
+        self.assertEqual(context['options'][5].minimum, 0)
+        self.assertEqual(context['options'][6].title, "Op3")
+        self.assertEqual(context['options'][6].maximum, 1)
+        self.assertEqual(context['options'][6].minimum, 0)
+        self.assertEqual(context['options'][7].title, "Readonly")
+        self.assertEqual(context['options'][7].maximum, 1)
+        self.assertEqual(context['options'][7].minimum, 1)
+
+        self.assertEqual(context['options'][8].title, "Op1")
+        self.assertEqual(context['options'][8].maximum, 5)
+        self.assertEqual(context['options'][8].minimum, 0)
+        self.assertEqual(context['options'][9].title, "Op2")
+        self.assertEqual(context['options'][9].maximum, 5)
+        self.assertEqual(context['options'][9].minimum, 0)
+        self.assertEqual(context['options'][10].title, "Op3")
+        self.assertEqual(context['options'][10].maximum, 5)
+        self.assertEqual(context['options'][10].minimum, 0)
+        self.assertEqual(context['options'][11].title, "Readonly")
+        self.assertEqual(context['options'][11].maximum, 5)
+        self.assertEqual(context['options'][11].minimum, 5)
+
