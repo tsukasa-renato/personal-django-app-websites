@@ -287,7 +287,7 @@ class ShowProductsViewTest(TestCase):
         self.assertContains(response, money)
 
 
-def create_product_with_group_1(website, category, price_type, price=None, option_price=None, group_price_type=None):
+def create_product_with_group(website, category, price_type, price=None, option_price=None, group_price_type=None):
 
     product = Products.objects.create(websites=website, categories=category, title='Product',
                                       price=price, price_type=price_type)
@@ -359,7 +359,7 @@ class ShowProductViewTest(TestCase):
 
     def test_price_type_1(self):
 
-        create_product_with_group_1(self.website, self.category, '1', 30000)
+        create_product_with_group(self.website, self.category, '1', 30000)
 
         response = self.client.get('/website/p/product/')
 
@@ -412,7 +412,7 @@ class ShowProductViewTest(TestCase):
 
     def test_price_type_2(self):
 
-        create_product_with_group_1(self.website, self.category, '2', 30000, 200, '1')
+        create_product_with_group(self.website, self.category, '2', 30000, 200, '1')
 
         response = self.client.get('/website/p/product/')
 
