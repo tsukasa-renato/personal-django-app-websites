@@ -4,3 +4,5 @@ django-debug-toolbar==3.2
 pillow==8.0
 tzlocal==2.1
 babel==2.9
+pytz~=2020.5
+selenium~=3.141.0

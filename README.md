@@ -23,7 +23,12 @@ Set username, email and password.
 ### Test
 Verify whether the project is OK, types:
 
-```python manage.py tests```
+```python manage.py tests websites.tests.test_model```
+```python manage.py tests websites.tests.test_view```
+
+Config the selenium to execute tests using selenium.
+
+```python manage.py tests websites.tests.test_selenium```
 
 ### Run the server
 Run server, types:

@@ -3,7 +3,7 @@
 
         {% if products.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ products.previous_page_number }}">
+            <a class="page-link" href="?page={{ products.previous_page_number }}" id="previous_page">
                 &laquo;
             </a>
         </li>
@@ -14,7 +14,7 @@
 
         <li {% if products.number == x %} class="page-item active" {% else %} class="page-item" {% endif %}>
 
-            <a class="page-link" href="?page={{ x }}">
+            <a class="page-link" href="?page={{ x }}" id="page{{ x }}">
                 {{ x }}
             </a>
 
@@ -25,7 +25,7 @@
 
         {% if products.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ products.next_page_number }}">
+            <a class="page-link" href="?page={{ products.next_page_number }}" id="next_page">
                 &raquo;
             </a>
         </li>

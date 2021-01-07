@@ -9,32 +9,32 @@
     {% endif %}
     <p>
         {% if contact.instagram %}
-        <a href="https://www.instagram.com/{{ contact.instagram }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.instagram.com/{{ contact.instagram }}" target="_blank" class="mr-1 mt-1" id="instagram">
             <img src="{% static 'media/instagram.png' %}" class="rounded" alt="instagram">
         </a>
         {% endif %}
         {% if contact.pinterest %}
-        <a href="https://www.pinterest.com/{{ contact.pinterest }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.pinterest.com/{{ contact.pinterest }}" target="_blank" class="mr-1 mt-1" id="pinterest">
             <img src="{% static 'media/pinterest.png' %}" class="rounded" alt="pinterest">
         </a>
         {% endif %}
         {% if contact.facebook %}
-        <a href="https://www.facebook.com/{{ contact.facebook }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.facebook.com/{{ contact.facebook }}" target="_blank" class="mr-1 mt-1" id="facebook">
             <img src="{% static 'media/facebook.png' %}" class="rounded" alt="facebook">
         </a>
         {% endif %}
         {% if contact.twitter %}
-        <a href="https://www.twitter.com/{{ contact.twitter }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.twitter.com/{{ contact.twitter }}" target="_blank" class="mr-1 mt-1" id="twitter">
             <img src="{% static 'media/twitter.png' %}" class="rounded" alt="twitter">
         </a>
         {% endif %}
         {% if contact.linkedin %}
-        <a href="https://www.linkedin.com/in/{{ contact.linkedin }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.linkedin.com/in/{{ contact.linkedin }}" target="_blank" class="mr-1 mt-1" id="linkedin">
             <img src="{% static 'media/linkedin.png' %}" class="rounded" alt="linkedin">
         </a>
         {% endif %}
         {% if contact.youtube %}
-        <a href="https://www.youtube.com/channel/{{ contact.youtube }}" target="_blank" class="mr-1 mt-1">
+        <a href="https://www.youtube.com/channel/{{ contact.youtube }}" target="_blank" class="mr-1 mt-1" id="youtube">
             <img src="{% static 'media/youtube.png' %}" class="rounded" alt="youtube">
         </a>
         {% endif %}
@@ -42,10 +42,10 @@
 </div>
 <div class="col-sm text-center">
     {% if contact.telephone %}
-    <h6 class="mr-1">Tel:<br> {{ contact.telephone }}</h6>
+    <h6 class="mr-1" id="telephone">Tel:<br> {{ contact.telephone }}</h6>
     {% endif %}
     {% if contact.email %}
-    <h6 class="mr-1">Email:<br> {{ contact.email }}</h6>
+    <h6 class="mr-1" id="email">Email:<br> {{ contact.email }}</h6>
     {% endif %}
 </div>
 <div class="col-sm text-center">
@@ -58,7 +58,7 @@
     {% endif %}
     <h6>
         <a href="https://api.whatsapp.com/send?phone={{ contacts.whatsapp }}&text=Olá,eu%20vou%20ser%20bem%20direto%20🙂%0ameu%20nome%20é:%0aGostaria%20que%20entregue%20se%20em:%0aMeu%20pedido%20é:"
-           target="_blank" class="text-white">
+           target="_blank" class="text-white" id="whatsapp">
             <img src="{% static 'media/whatsapp.png' %}" class="rounded mt-1" alt="whatsapp">
             {{ contact.whatsapp|smartphone_format }}
         </a>
