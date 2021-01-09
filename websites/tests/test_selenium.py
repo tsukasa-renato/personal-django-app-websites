@@ -1,6 +1,7 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from .scenarios import create_scenario_1
 from websites.models import Products
 from django.core.paginator import Paginator
@@ -87,7 +88,6 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
         products = Products.objects.filter(websites=self.website, is_available=True, show_on_home=True
                                            ).order_by('position')
         products = Paginator(products, 8)
-
         products = products.get_page(1)
 
         self.check_categories(self.categories)
@@ -131,7 +131,6 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         products = Products.objects.filter(categories=self.categories[1], is_available=True).order_by('position')
         products = Paginator(products, 8)
-
         products = products.get_page(1)
 
         self.check_categories(self.categories)
@@ -165,3 +164,21 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
         self.assertEqual(page1.text, '1')
         self.assertEqual(page2.text, '2')
         self.assertEqual(previous_page.text, '«')
+
+        search = self.selenium.find_element_by_id('search')
+
+        actions = ActionChains(self.selenium)
+        actions.click(search)
+        actions.send_keys("one")
+        actions.key_down(Keys.ENTER)
+        actions.perform()
+
+        products = Products.objects.filter(websites=self.website, is_available=True,
+                                           title__icontains='one').order_by('position')
+        products = Paginator(products, 8)
+        products = products.get_page(1)
+
+        self.check_categories(self.categories)
+        self.check_products(products)
+        self.check_others(self.website, self.contact)
+

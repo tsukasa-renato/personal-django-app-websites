@@ -235,8 +235,8 @@ class ShowProductsViewTest(TestCase):
         self.assertEqual(context['categories'][1].title, "Category 2")
 
         self.assertEqual(context['products'][0].title, "Promotional2")
-        self.assertEqual(context['products'][0].price, Decimal(str(10.2)))
-        self.assertEqual(context['products'][0].promotional_price, Decimal(str(5)))
+        self.assertEqual(context['products'][0].price, Decimal('10.2'))
+        self.assertEqual(context['products'][0].promotional_price, Decimal('5'))
 
         templates = response.templates
         self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
@@ -269,10 +269,10 @@ class ShowProductsViewTest(TestCase):
         self.assertEqual(context['categories'][1].title, "Category 2")
 
         self.assertEqual(context['products'][0].title, "Product One")
-        self.assertEqual(context['products'][0].price, Decimal(str(10.2)))
+        self.assertEqual(context['products'][0].price, Decimal('10.2'))
 
         self.assertEqual(context['products'][1].title, "One Product")
-        self.assertEqual(context['products'][1].price, Decimal(str(10.2)))
+        self.assertEqual(context['products'][1].price, Decimal('10.2'))
 
         templates = response.templates
         self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
