@@ -44,8 +44,5 @@ def create_scenario_1():
     Products.objects.create(websites=website, categories=categories[1], title="Promotional2",
                             price=10.2, promotional_price=5, show_on_home=False)
 
-    products = Products.objects.filter(websites=website, is_available=True, show_on_home=True).order_by('position')
-    products = Paginator(products, 8)
-
-    return website, contact, categories, products
+    return website, contact, categories
 
