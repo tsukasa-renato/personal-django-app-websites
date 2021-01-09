@@ -10,12 +10,12 @@
         {% endif %}
 
         {% if products.paginator.num_pages > 1 %}
-        {% for x in products.paginator.page_range %}
+        {% for num_page in products.paginator.page_range %}
 
-        <li {% if products.number == x %} class="page-item active" {% else %} class="page-item" {% endif %}>
+        <li {% if products.number == num_page %} class="page-item active" {% else %} class="page-item" {% endif %}>
 
-            <a class="page-link" href="?page={{ x }}" id="page{{ x }}">
-                {{ x }}
+            <a class="page-link" href="?page={{ num_page }}" id="page{{ num_page }}">
+                {{ num_page }}
             </a>
 
         </li>
