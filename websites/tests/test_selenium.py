@@ -2,10 +2,10 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from .scenarios import create_scenario_1
-from websites.models import Products
+from .scenarios import create_scenario_1, create_scenario_2
+from websites.models import Products, Groups, Options
 from django.core.paginator import Paginator
-
+import time
 
 class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
@@ -182,3 +182,104 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
         self.check_products(products)
         self.check_others(self.website, self.contact)
 
+
+class ShowProductViewTestSelenium(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.website, cls.categories = create_scenario_2()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(30)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def check_product(self, product):
+        element = self.selenium.find_element_by_id('product_image').find_element_by_tag_name('img')
+        self.assertEqual(element.get_attribute("src"), f'{self.live_server_url}/static/media/category.png')
+
+        element = self.selenium.find_element_by_id('product_title')
+        self.assertEqual(element.text, product.title)
+
+        element = self.selenium.find_element_by_id('product_description')
+        self.assertEqual(element.text, product.description)
+
+    def check_groups(self, groups):
+
+        for group in groups:
+
+            element = self.selenium.find_element_by_id(f'group_{group.slug}')
+            self.assertEqual(element.text, group.title)
+
+            if group.price_type:
+                text = '$200.00\n$200.00\n$200.00\n$200.00'
+            else:
+                text = 'Op1\nOp2\nOp3\nReadonly'
+
+            element = self.selenium.find_element_by_id(f'{group.slug}_options')
+            self.assertEqual(element.text, text)
+
+    def interact_with_options(self, groups):
+
+        for group in groups:
+
+            options = Options.objects.filter(groups=group).order_by('position')
+
+            for option in options:
+
+                element = self.selenium.find_element_by_id(f'{option.pk}')
+
+                actions = ActionChains(self.selenium)
+                actions.click(element)
+
+                if element.get_attribute('type') == 'number':
+                    actions.send_keys('2')
+
+                actions.perform()
+
+                if option.minimum != option.maximum and option.maximum > 1:
+                    element = self.selenium.find_element_by_id(f'{group.slug}_title')
+                    self.assertEqual(element.text, option.title)
+
+    def test_interactive(self):
+
+        products = Products.objects.filter(websites=self.website).order_by('position')
+
+        for product in products:
+
+            self.selenium.get('%s%s' % (self.live_server_url, f'/{self.website.url}/'))
+
+            groups = Groups.objects.filter(products=product).order_by('position')
+
+            element = self.selenium.find_element_by_id(product.slug)
+
+            actions = ActionChains(self.selenium)
+            actions.click(element)
+            actions.perform()
+
+            self.check_product(product)
+            self.check_groups(groups)
+
+            if product.price_type == '1':
+                total = '$30,000.00'
+            elif product.price_type == '2':
+                total = '$31,400.00'
+            else:
+                total = '$1,400.00'
+
+            element = self.selenium.find_element_by_id('product_total')
+            self.assertEqual(element.text, total)
+
+            self.interact_with_options(groups)
+
+            if product.price_type == '2':
+                total = '$33,200.00'
+            elif product.price_type == '3':
+                total = '$3,200.00'
+
+            element = self.selenium.find_element_by_id('product_total')
+            self.assertEqual(element.text, total)

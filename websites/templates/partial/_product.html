@@ -57,7 +57,7 @@
     </div>
 
     <div class="row justify-content-center">
-        <h4> {{ group.title }} </h4>
+        <h4 id="group_{{ group.slug }}"> {{ group.title }} </h4>
     </div>
 
     <div class="row justify-content-center"
@@ -145,7 +145,7 @@
 
             /*In radio type input, the name is the same for the options that group.*/
 
-            if (options_group.attr("name") == "radio") {
+            if ((options_group.attr("name") == "radio") && (min==0)) {
 
                 input_type = "radio";
                 name = "{{ option.groups }}";

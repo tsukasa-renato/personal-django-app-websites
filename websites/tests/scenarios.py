@@ -1,5 +1,4 @@
 from ..models import Websites, Contacts, Categories, Products, Groups, Options
-from django.core.paginator import Paginator
 
 
 def create_scenario_1():
@@ -45,4 +44,44 @@ def create_scenario_1():
                             price=10.2, promotional_price=5, show_on_home=False)
 
     return website, contact, categories
+
+
+def create_scenario_2():
+
+    website = Websites.objects.create(url='website2', title="Website")
+    category = Categories.objects.create(websites=website, title="Category")
+
+    product_price = 30000
+    option_price = None
+    group_type = None
+
+    for x in range(3):
+
+        if x > 0:
+            option_price = 200
+            group_type = '1'
+
+        if x == 2:
+            product_price = None
+
+        product = Products.objects.create(websites=website, categories=category, title=f'Product{x+1}',
+                                          description=f'Product with price type {x+1}',
+                                          price=product_price, price_type=str(x+1))
+
+        groups = (
+            ('radio group', 1, 1), ('checkbox group', 1, 0), ('numbers group', 5, 0),
+        )
+
+        for group in groups:
+            g = Groups.objects.create(websites=website, products=product, title=group[0],
+                                      maximum=group[1], minimum=group[2], price_type=group_type)
+
+            for y in range(3):
+                Options.objects.create(websites=website, groups=g, title=f'Op{y+1}', maximum=group[1],
+                                       price=option_price)
+
+            Options.objects.create(websites=website, groups=g, title="Readonly", maximum=group[1], minimum=group[1],
+                                   price=option_price)
+
+    return website, category
 
