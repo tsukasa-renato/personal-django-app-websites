@@ -4,8 +4,8 @@ from . import views
 app_name = 'websites'
 
 urlpatterns = [
-    path('<url>/', views.ShowProducts.as_view(), name='home'),
-    path('<url>/c/<selected_category>/', views.ShowProducts.as_view(), name='category'),
-    path('<url>/p/<selected_product>/', views.ShowProduct.as_view(), name='product'),
-    path('<url>/cart', views.Cart.as_view(), name='cart')
+    path('<slug:url>/', views.ShowProducts.as_view(), name='home'),
+    path('<slug:url>/c/<slug:selected_category>/', views.ShowProducts.as_view(), name='category'),
+    path('<slug:url>/p/<slug:selected_product>/', views.ShowProduct.as_view(), name='product'),
+    path('<slug:url>/cart', views.Cart.as_view(), name='cart')
 ]

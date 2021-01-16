@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from .scenarios import create_scenario_1, create_scenario_2
 from websites.models import Products, Groups, Options
 from django.core.paginator import Paginator
-import time
+
 
 class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
@@ -15,6 +15,8 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         cls.website, cls.contact, cls.categories = create_scenario_1()
         cls.selenium = WebDriver()
+        cls.selenium.get('chrome://settings/clearBrowserData')
+        cls.selenium.find_element_by_xpath('//settings-ui').send_keys(Keys.ENTER)
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -191,6 +193,8 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
 
         cls.website, cls.categories = create_scenario_2()
         cls.selenium = WebDriver()
+        cls.selenium.get('chrome://settings/clearBrowserData')
+        cls.selenium.find_element_by_xpath('//settings-ui').send_keys(Keys.ENTER)
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -212,7 +216,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
 
         for group in groups:
 
-            element = self.selenium.find_element_by_id(f'group_{group.slug}')
+            element = self.selenium.find_element_by_id(f'{group}')
             self.assertEqual(element.text, group.title)
 
             if group.price_type:
@@ -220,7 +224,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
             else:
                 text = 'Op1\nOp2\nOp3\nReadonly'
 
-            element = self.selenium.find_element_by_id(f'{group.slug}_options')
+            element = self.selenium.find_element_by_id(f'{group}_options')
             self.assertEqual(element.text, text)
 
     def interact_with_options(self, groups):
@@ -242,7 +246,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
                 actions.perform()
 
                 if option.minimum != option.maximum and option.maximum > 1:
-                    element = self.selenium.find_element_by_id(f'{group.slug}_title')
+                    element = self.selenium.find_element_by_id(f'{group}_title')
                     self.assertEqual(element.text, option.title)
 
     def test_interactive(self):

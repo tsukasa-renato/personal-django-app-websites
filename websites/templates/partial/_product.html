@@ -5,6 +5,8 @@
 <form method="post" action="{% url 'websites:cart' url=website.url %}" id="options_form">
     {% csrf_token %}
 
+    <input type="hidden" name="product" value="{{ product.pk }}" />
+
     <div class="row mt-5">
 
         <div class="col-sm text-center" id="product_image">
@@ -24,7 +26,9 @@
             </h5>
 
             <p class="overflow-auto" style="max-height:300px;" id="product_description">
-                {{ product.description|safe }}
+                {% if product.description %}
+                    {{ product.description|safe }}
+                {% endif %}
             </p>
 
         </div>
@@ -38,17 +42,17 @@
     {% for group in groups %}
     <div class="row mt-5">
 
-        <div class="col-sm text-center" id="{{ group.slug }}_images">
+        <div class="col-sm text-center" id="{{ group }}_image">
             <!-- Option title selected -->
         </div>
 
         <div class="col-sm text-center">
 
-            <h5 id="{{ group.slug }}_title">
+            <h5 id="{{ group }}_title">
                 <!-- Option title selected -->
             </h5>
 
-            <p class="overflow-auto" style="max-height:300px;" id="{{ group.slug }}_description">
+            <p class="overflow-auto" style="max-height:300px;" id="{{ group }}_description">
                 <!-- Option description selected -->
             </p>
 
@@ -57,12 +61,10 @@
     </div>
 
     <div class="row justify-content-center">
-        <h4 id="group_{{ group.slug }}"> {{ group.title }} </h4>
+        <h4 id="{{ group }}"> {{ group.title }} </h4>
     </div>
 
-    <div class="row justify-content-center"
-         {% if group.maximum == 1 and group.minimum == 1 %} name="radio" {% endif %}
-         id="{{ group.slug }}_options">
+    <div class="row justify-content-center" id="{{ group }}_options">
         <!-- Options -->
     </div>
 
@@ -75,11 +77,7 @@
     <div class='row navbar mt-3'>
         <div class='col text-center text'>
             <h5 id="product_total">
-                {% if product.get_real_price %}
-                    {% money_format product.get_real_price website.currency website.language %}
-                {% else %}
-                    {% money_format 0 website.currency website.language %}
-                {% endif %}
+                <!-- Total -->
             </h5>
             <button type='submit' class='btn btn-success'>
                 <b> + </b> Add to Cart
@@ -104,8 +102,8 @@
         {% endif %}
 
         {% for group in groups %}
-            number_elements{{ group.pk }} = 0
-            group_total{{ group.pk }} = 0
+            {{ group }}_selected_option = 0
+            {{ group }}_total = 0
         {% endfor %}
 
         {% for option in options %}
@@ -124,7 +122,7 @@
             /*Creating an icon rounded for the option.*/
             {% if option.images %}
                 image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
-                        "alt='{{ option.slug }}' style='width: 30px;height: 30px;'>";
+                        "alt='{{ option }}' style='width: 30px;height: 30px;'>";
             {% else %}
                 image = ""
             {% endif %}
@@ -134,40 +132,27 @@
             min = {{ option.minimum }}
             max = {{ option.maximum }}
 
-            if (max == min) {
-                number_elements{{ option.groups.pk }} += min;
-                {% if option.get_real_price %}
-                    total += min * {{ option.get_real_price }}
-                    $("#product_total").text(currency.format(total));
-                {% endif %}
-            }
-
             /*In radio type input, the name is the same for the options that group.*/
 
-            if ((options_group.attr("name") == "radio") && (min==0)) {
+            input_type = "{{ option.check_input_type }}";
 
-                input_type = "radio";
+            if (input_type == "radio") {
+
                 name = "{{ option.groups }}";
 
             } else {
 
                 name = "{{ option.pk }}"
 
-                if ({{ option.maximum }} == 1) {
+                if (input_type == "number") {
 
-                    input_type = "checkbox";
-
-                } else {
-
-                    input_type = "number";
                     quantity{{ option.pk }} = min
-                    option_total{{ option.pk }} = 0
+                    option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
 
                 }
-
             }
 
-            html_input = returns_input_html(input_type, name, "{{ option.pk }}", min, max, image, content);
+            html_input = returns_html_input(input_type, name, "{{ option.pk }}", min, max, image, content);
 
             options_group.append(function() {
 
@@ -177,66 +162,70 @@
 
             $("#{{ option.pk }}").click(function(){
 
-                $("#{{ option.groups }}_title").text("{{ option.title }}");
-                $("#{{ option.groups }}_description").empty();
-                $("#{{ option.groups }}_images").empty();
-
-                {% if option.description %}
-                    $("#{{ option.groups }}_description").text("{{ option.description }}");
-                {% endif %}
+                image = ""
+                desc = ""
 
                 {% if option.images %}
-                $("#{{ option.groups }}_images").html("<img src='{{ option.images.url }}' class='img-fluid' " +
-                        "alt='{{ option.slug }}' style='max-height:400px;max-width:100%;'>");
+                    image = "{{ option.images.url }}"
                 {% endif %}
+
+                {% if option.description %}
+                    desc = "{{ option.description }}"
+                {% endif %}
+
+                change_option_info("{{ option.groups }}", "{{ option.title }}", desc, image);
+
+                {% if option.minimum == option.maximum %}
+
+                    $(this).prop('checked', true);
+
+                {% else %}
 
                 {% if option.get_real_price %}
 
-                    total -= group_total{{ option.groups.pk }}
+                    total -= {{ option.groups }}_total
 
                     if ($(this).is(':radio')) {
 
-                        group_total{{ option.groups.pk }} = {{ option.get_real_price }}
+                        {{ option.groups }}_selected_option = 1
+                        {{ option.groups }}_total = {{ option.get_real_price }}
 
                     } else if ($(this).is(':checkbox')) {
 
                         if ($(this).is(":checked")) {
 
-                            number_elements{{ option.groups.pk }} += 1
-                            group_total{{ option.groups.pk }} += {{ option.get_real_price }};
+                            {{ option.groups }}_selected_option += 1
+                            {{ option.groups }}_total += {{ option.get_real_price }};
 
                         } else {
 
-                            number_elements{{ option.groups.pk }} -= 1
-                            group_total{{ option.groups.pk }} -= {{ option.get_real_price }};
+                            {{ option.groups }}_selected_option -= 1
+                            {{ option.groups }}_total -= {{ option.get_real_price }};
 
                         }
 
-                        {% if option.groups.type_price == '2' %}
-                            group_total{{ option.groups.pk }} /= number_elements{{ option.groups.pk }}
-                        {% endif %}
-
                     } else {
 
-                        number_elements{{ option.groups.pk }} -= quantity{{ option.pk }}
-                        group_total{{ option.groups.pk }} -= option_total{{ option.pk }}
+                        {{ option.groups }}_selected_option -= quantity{{ option.pk }}
+                        {{ option.groups }}_total -= option_total{{ option.pk }}
 
-                        quantity{{ option.pk }} = $(this).val()
+                        quantity{{ option.pk }} = parseInt($(this).val())
                         option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
 
-                        number_elements{{ option.groups.pk }} += quantity{{ option.pk }}
-                        group_total{{ option.groups.pk }} += option_total{{ option.pk }}
-
-                        {% if option.groups.type_price == '2' %}
-                            group_total{{ option.groups.pk }} /= number_elements{{ option.groups.pk }}
-                        {% endif %}
-
+                        {{ option.groups }}_selected_option += quantity{{ option.pk }}
+                        {{ option.groups }}_total += option_total{{ option.pk }}
 
                     }
 
-                    total += group_total{{ option.groups.pk }}
+                    {% if option.groups.type_price == '2' %}
+                        {{ option.groups }}_total /= {{ option.groups }}_selected_option
+                    {% endif %}
+
+                    total += {{ option.groups }}_total
 
                     $("#product_total").text(currency.format(total));
+
+                {% endif %}
 
                 {% endif %}
 
@@ -244,7 +233,15 @@
 
             });
 
+            {{ option.groups }}_selected_option += min;
+
+            {% if option.get_real_price %}
+                total += min * {{ option.get_real_price }}
+            {% endif %}
+
         {% endfor %}
+
+        $("#product_total").text(currency.format(total));
 
         $("#options_form").submit(function(e) {
 
@@ -258,7 +255,6 @@
             {% endfor %}
 
         });
-
 
     });
 </script>

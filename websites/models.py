@@ -451,6 +451,16 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
             if self.groups.price_type is not None:
                 raise ValidationError("Product requires price will be used")
 
+    def check_input_type(self):
+
+        if self.groups.maximum == 1 and self.groups.minimum == 1 and self.minimum == 0:
+            return 'radio'
+
+        if self.maximum == 1:
+            return 'checkbox'
+
+        return 'number'
+
     def save(self, *args, **kwargs):
 
         self.check_price()
