@@ -1,10 +1,21 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.core.paginator import Paginator
-from django.views.generic.base import TemplateView
 from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
-from django.http import HttpResponse
+
+
+def website_configs(url):
+
+    context = {}
+    url = str(url)
+    context['website'] = get_object_or_404(Websites, url=url)
+    context['icon'] = Icons.objects.filter(websites=context['website']).first()
+    context['color'] = Colors.objects.filter(websites=context['website']).first()
+    context['contact'] = Contacts.objects.filter(websites=context['website']).first()
+    context['categories'] = Categories.objects.filter(websites=context['website']).order_by('position')
+
+    return context
 
 
 def list_products(website, category, search):
@@ -23,61 +34,54 @@ def list_products(website, category, search):
                                    show_on_home=True).order_by('position')
 
 
-class Website(TemplateView):
+def get_product(context, selected_product):
 
-    template_name = "website.html"
+    slug = str(selected_product)
+    context['product'] = get_object_or_404(Products, websites=context['website'], is_available=True, slug=slug)
+    context['groups'] = Groups.objects.filter(products=context['product']).order_by('position')
+    context['options'] = Options.objects.filter(groups__in=context['groups']).select_related('groups').order_by(
+        'position')
 
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-        url = str(context['url'])
-        context['website'] = get_object_or_404(Websites, url=url)
-        context['icon'] = Icons.objects.filter(websites=context['website']).first()
-        context['color'] = Colors.objects.filter(websites=context['website']).first()
-        context['contact'] = Contacts.objects.filter(websites=context['website']).first()
-        context['categories'] = Categories.objects.filter(websites=context['website']).order_by('position')
-
-        return context
+    return context
 
 
-class ShowProducts(Website):
+class ShowProducts(View):
 
-    def get_context_data(self, **kwargs):
+    def get(self, *args, **kwargs):
 
-        context = super().get_context_data(**kwargs)
+        context = website_configs(kwargs['url'])
         context['banners'] = Banners.objects.filter(websites=context['website']).order_by('position')
 
-        category = str(context['selected_category']) if 'selected_category' in context else ''
+        context['selected_category'] = str(kwargs['selected_category']) if 'selected_category' in kwargs else ''
         search = self.request.GET.get('search')
 
-        context['products'] = list_products(website=context['website'], category=category, search=search)
+        context['products'] = list_products(website=context['website'], category=context['selected_category'],
+                                            search=search)
 
         if context['products']:
             paginator = Paginator(context['products'], 8)
             page_number = self.request.GET.get('page')
             context['products'] = paginator.get_page(page_number)
 
-        return context
+        return render(self.request, 'website.html', context)
 
 
-class ShowProduct(Website):
+class ShowProduct(View):
 
-    def get_context_data(self, **kwargs):
+    def get(self, *args, **kwargs):
 
-        context = super().get_context_data(**kwargs)
-        slug = str(context['selected_product'])
-        context['product'] = get_object_or_404(Products, websites=context['website'], is_available=True, slug=slug)
-        context['groups'] = Groups.objects.filter(products=context['product']).order_by('position')
-        context['options'] = Options.objects.filter(groups__in=context['groups']).select_related('groups').order_by(
-            'position')
+        context = website_configs(kwargs['url'])
+        context = get_product(context, kwargs['selected_product'])
 
-        return context
+        return render(self.request, 'website.html', context)
 
 
 class Cart(View):
 
     def post(self, *args, **kwargs):
 
+        context = website_configs(kwargs['url'])
+
         print(self.request.POST)
 
-        return HttpResponse("<h1>In development</h1>")
+        return render(self.request, 'website.html', context)

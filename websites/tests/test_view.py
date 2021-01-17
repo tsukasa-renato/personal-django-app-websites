@@ -1,7 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from websites.utils.utils import money_format
 from ..models import Websites, Contacts, Categories, Products, Groups, Options
 from decimal import *
+
+# TestCase self.client hasn't get method
 
 
 class WebsiteViewTest(TestCase):
@@ -12,17 +14,22 @@ class WebsiteViewTest(TestCase):
 
     def test_incorrect_url(self):
 
-        response = self.client.get('/Website/')
+        client = Client()
+
+        response = client.get('/Website/')
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get('/websites/')
+        response = client.get('/websites/')
         self.assertEqual(response.status_code, 404)
 
     def test_website(self):
         """
         Using the correct url check status, context, templates names, and html code
         """
-        response = self.client.get('/website/')
+
+        client = Client()
+
+        response = client.get('/website/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -52,7 +59,9 @@ class WebsiteViewTest(TestCase):
                                 facebook='example', instagram='example', twitter='example', linkedin='example',
                                 whatsapp='7873923408')
 
-        response = self.client.get('/website/')
+        client = Client()
+
+        response = client.get('/website/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -88,7 +97,9 @@ class WebsiteViewTest(TestCase):
         Categories.objects.create(websites=self.website, title="Category 3", position=4)
         Categories.objects.create(websites=self.website, title="Category 4", position=3)
 
-        response = self.client.get('/website/')
+        client = Client()
+
+        response = client.get('/website/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -143,7 +154,9 @@ class ShowProductsViewTest(TestCase):
 
     def test_products_on_home(self):
 
-        response = self.client.get('/website/')
+        client = Client()
+
+        response = client.get('/website/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -170,7 +183,9 @@ class ShowProductsViewTest(TestCase):
 
     def test_products_on_home_page_2(self):
 
-        response = self.client.get('/website/?page=2')
+        client = Client()
+
+        response = client.get('/website/?page=2')
 
         self.assertEqual(response.status_code, 200)
 
@@ -198,7 +213,9 @@ class ShowProductsViewTest(TestCase):
 
     def test_products_by_category(self):
 
-        response = self.client.get('/website/c/category-2/')
+        client = Client()
+
+        response = client.get('/website/c/category-2/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -225,7 +242,9 @@ class ShowProductsViewTest(TestCase):
 
     def test_products_by_category_page_2(self):
 
-        response = self.client.get('/website/c/category-2/?page=2')
+        client = Client()
+
+        response = client.get('/website/c/category-2/?page=2')
 
         self.assertEqual(response.status_code, 200)
 
@@ -253,13 +272,17 @@ class ShowProductsViewTest(TestCase):
 
     def test_category_error_404(self):
 
-        response = self.client.get('/website/c/category-3/')
+        client = Client()
+
+        response = client.get('/website/c/category-3/')
 
         self.assertEqual(response.status_code, 404)
 
     def test_products_by_search(self):
 
-        response = self.client.get('/website/?search=One')
+        client = Client()
+
+        response = client.get('/website/?search=One')
 
         self.assertEqual(response.status_code, 200)
 
@@ -327,7 +350,10 @@ class ShowProductViewTest(TestCase):
         cls.category = Categories.objects.create(websites=cls.website, title="Category")
 
     def test_product_404(self):
-        response = self.client.get('/website/p/product-404/')
+
+        client = Client()
+
+        response = client.get('/website/p/product-404/')
 
         self.assertEqual(response.status_code, 404)
 
@@ -336,7 +362,9 @@ class ShowProductViewTest(TestCase):
         Products.objects.create(websites=self.website, categories=self.category, title='Product',
                                 price=10, price_type='1')
 
-        response = self.client.get('/website/p/product/')
+        client = Client()
+
+        response = client.get('/website/p/product/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -361,7 +389,9 @@ class ShowProductViewTest(TestCase):
 
         create_product_with_group(self.website, self.category, '1', 30000)
 
-        response = self.client.get('/website/p/product/')
+        client = Client()
+
+        response = client.get('/website/p/product/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -414,7 +444,9 @@ class ShowProductViewTest(TestCase):
 
         create_product_with_group(self.website, self.category, '2', 30000, 200, '1')
 
-        response = self.client.get('/website/p/product/')
+        client = Client()
+
+        response = client.get('/website/p/product/')
 
         self.assertEqual(response.status_code, 200)
 
