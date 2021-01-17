@@ -123,10 +123,17 @@
             {% if option.images %}
                 image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
                         "alt='{{ option }}' style='width: 30px;height: 30px;'>";
+                image_url = {{ option.images.url }}
             {% else %}
                 image = ""
+                image_url = ""
             {% endif %}
 
+            {% if option.description %}
+                desc = {{ option.description }}
+            {% else %}
+                desc = ""
+            {% endif %}
 
             {% if option.check_input_type == 'radio' %}
 
@@ -147,7 +154,8 @@
 
                 $("#{{ option.pk }}").click(function(){
 
-                    change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
+                    change_option_info("{{ option.groups|remove_dash }}",
+                                    "{{ option.title }}", desc, image_url)
 
                     {% if option.get_real_price %}
 
@@ -193,7 +201,8 @@
 
                 $("#{{ option.pk }}").click(function(){
 
-                    change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
+                    change_option_info("{{ option.groups|remove_dash }}",
+                                    "{{ option.title }}", desc, image_url)
 
                     {% if option.minimum == option.maximum %}
 
@@ -265,7 +274,8 @@
 
                 $("#{{ option.pk }}").click(function(){
 
-                change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
+                change_option_info("{{ option.groups|remove_dash }}",
+                                    "{{ option.title }}", desc, image_url)
 
                     {% if option.minimum < option.maximum  %}
 

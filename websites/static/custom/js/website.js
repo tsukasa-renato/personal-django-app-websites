@@ -52,37 +52,3 @@ function change_option_info(html, title, description, image) {
                 "alt="+title+" style='max-height:400px;max-width:100%;'>");
     }
 }
-
-function update_total(element, selected_option, total, price, quantity=0, option_total=0) {
-    if (element.is(':radio')) {
-
-        selected_option = 1
-        total = price
-
-    } else if (element.is(':checkbox')) {
-
-        if (element.is(":checked")) {
-
-            selected_option += 1
-            total += price;
-
-        } else {
-
-            selected_option -= 1
-            total -= price;
-
-        }
-
-    } else {
-
-        selected_option -= quantity
-        total -= option_total
-
-        quantity = parseInt(element.val())
-        option_total = price * quantity
-
-        selected_option += quantity
-        total += option_total
-
-    }
-}
