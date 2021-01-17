@@ -15,8 +15,6 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         cls.website, cls.contact, cls.categories = create_scenario_1()
         cls.selenium = WebDriver()
-        cls.selenium.get('chrome://settings/clearBrowserData')
-        cls.selenium.find_element_by_xpath('//settings-ui').send_keys(Keys.ENTER)
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -193,8 +191,6 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
 
         cls.website, cls.categories = create_scenario_2()
         cls.selenium = WebDriver()
-        cls.selenium.get('chrome://settings/clearBrowserData')
-        cls.selenium.find_element_by_xpath('//settings-ui').send_keys(Keys.ENTER)
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -216,7 +212,9 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
 
         for group in groups:
 
-            element = self.selenium.find_element_by_id(f'{group}')
+            element_id = str(group).replace('-', '')
+
+            element = self.selenium.find_element_by_id(f'{element_id}')
             self.assertEqual(element.text, group.title)
 
             if group.price_type:
@@ -224,7 +222,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
             else:
                 text = 'Op1\nOp2\nOp3\nReadonly'
 
-            element = self.selenium.find_element_by_id(f'{group}_options')
+            element = self.selenium.find_element_by_id(f'{element_id}_options')
             self.assertEqual(element.text, text)
 
     def interact_with_options(self, groups):
@@ -232,6 +230,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
         for group in groups:
 
             options = Options.objects.filter(groups=group).order_by('position')
+            element_id = str(group).replace('-', '')
 
             for option in options:
 
@@ -246,7 +245,7 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
                 actions.perform()
 
                 if option.minimum != option.maximum and option.maximum > 1:
-                    element = self.selenium.find_element_by_id(f'{group}_title')
+                    element = self.selenium.find_element_by_id(f'{element_id}_title')
                     self.assertEqual(element.text, option.title)
 
     def test_interactive(self):
@@ -281,9 +280,9 @@ class ShowProductViewTestSelenium(StaticLiveServerTestCase):
             self.interact_with_options(groups)
 
             if product.price_type == '2':
-                total = '$33,200.00'
+                total = '$33,400.00'
             elif product.price_type == '3':
-                total = '$3,200.00'
+                total = '$3,400.00'
 
             element = self.selenium.find_element_by_id('product_total')
             self.assertEqual(element.text, total)

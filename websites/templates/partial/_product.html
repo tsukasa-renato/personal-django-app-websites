@@ -42,17 +42,17 @@
     {% for group in groups %}
     <div class="row mt-5">
 
-        <div class="col-sm text-center" id="{{ group }}_image">
+        <div class="col-sm text-center" id="{{ group|remove_dash }}_image">
             <!-- Option title selected -->
         </div>
 
         <div class="col-sm text-center">
 
-            <h5 id="{{ group }}_title">
+            <h5 id="{{ group|remove_dash }}_title">
                 <!-- Option title selected -->
             </h5>
 
-            <p class="overflow-auto" style="max-height:300px;" id="{{ group }}_description">
+            <p class="overflow-auto" style="max-height:300px;" id="{{ group|remove_dash }}_description">
                 <!-- Option description selected -->
             </p>
 
@@ -61,10 +61,10 @@
     </div>
 
     <div class="row justify-content-center">
-        <h4 id="{{ group }}"> {{ group.title }} </h4>
+        <h4 id="{{ group|remove_dash }}"> {{ group.title }} </h4>
     </div>
 
-    <div class="row justify-content-center" id="{{ group }}_options">
+    <div class="row justify-content-center" id="{{ group|remove_dash }}_options">
         <!-- Options -->
     </div>
 
@@ -102,13 +102,13 @@
         {% endif %}
 
         {% for group in groups %}
-            {{ group }}_selected_option = 0
-            {{ group }}_total = 0
+            {{ group|remove_dash }}_selected_option = 0
+            {{ group|remove_dash }}_total = 0
         {% endfor %}
 
         {% for option in options %}
 
-            options_group = $("#{{ option.groups }}_options");
+            options_group = $("#{{ option.groups|remove_dash }}_options");
 
             /*The get_real_price method checks if the option is in the promotion and returns the promotional_price
             else it returns normal price else returns None.*/
@@ -127,116 +127,193 @@
                 image = ""
             {% endif %}
 
-            /*Used for number type input and to check whether the input is read-only.*/
 
-            min = {{ option.minimum }}
-            max = {{ option.maximum }}
+            {% if option.check_input_type == 'radio' %}
 
-            /*In radio type input, the name is the same for the options that group.*/
+                options_group.append(function() {
 
-            input_type = "{{ option.check_input_type }}";
+                    return  '<div class="form-check mr-2"> ' +
 
-            if (input_type == "radio") {
+                            '<input class="form-check-input" type="radio" name="{{ option.groups }}" ' +
+                            'id="{{ option.pk }}" value="{{ option.pk }}">' +
 
-                name = "{{ option.groups }}";
+                            '<label class="form-check-label btn-primary rounded p-1" for="{{ option.pk }}"> ' +
+                                image +
+                                content +
+                            '</label> ' +
 
-            } else {
+                        '</div>';
+                });
 
-                name = "{{ option.pk }}"
+                $("#{{ option.pk }}").click(function(){
 
-                if (input_type == "number") {
+                    change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
 
-                    quantity{{ option.pk }} = min
-                    option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
+                    {% if option.get_real_price %}
 
-                }
-            }
+                    total -= {{ option.groups|remove_dash }}_total
 
-            html_input = returns_html_input(input_type, name, "{{ option.pk }}", min, max, image, content);
+                    {{ option.groups|remove_dash }}_selected_option = 1
+                    {{ option.groups|remove_dash }}_total = {{ option.get_real_price }}
 
-            options_group.append(function() {
-
-                return  html_input;
-
-            });
-
-            $("#{{ option.pk }}").click(function(){
-
-                image = ""
-                desc = ""
-
-                {% if option.images %}
-                    image = "{{ option.images.url }}"
-                {% endif %}
-
-                {% if option.description %}
-                    desc = "{{ option.description }}"
-                {% endif %}
-
-                change_option_info("{{ option.groups }}", "{{ option.title }}", desc, image);
-
-                {% if option.minimum == option.maximum %}
-
-                    $(this).prop('checked', true);
-
-                {% else %}
-
-                {% if option.get_real_price %}
-
-                    total -= {{ option.groups }}_total
-
-                    if ($(this).is(':radio')) {
-
-                        {{ option.groups }}_selected_option = 1
-                        {{ option.groups }}_total = {{ option.get_real_price }}
-
-                    } else if ($(this).is(':checkbox')) {
-
-                        if ($(this).is(":checked")) {
-
-                            {{ option.groups }}_selected_option += 1
-                            {{ option.groups }}_total += {{ option.get_real_price }};
-
-                        } else {
-
-                            {{ option.groups }}_selected_option -= 1
-                            {{ option.groups }}_total -= {{ option.get_real_price }};
-
-                        }
-
-                    } else {
-
-                        {{ option.groups }}_selected_option -= quantity{{ option.pk }}
-                        {{ option.groups }}_total -= option_total{{ option.pk }}
-
-                        quantity{{ option.pk }} = parseInt($(this).val())
-                        option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
-
-                        {{ option.groups }}_selected_option += quantity{{ option.pk }}
-                        {{ option.groups }}_total += option_total{{ option.pk }}
-
-                    }
-
-                    {% if option.groups.type_price == '2' %}
-                        {{ option.groups }}_total /= {{ option.groups }}_selected_option
-                    {% endif %}
-
-                    total += {{ option.groups }}_total
+                    total += {{ option.groups|remove_dash }}_total
 
                     $("#product_total").text(currency.format(total));
 
+                    {% endif %}
+
+
+                });
+
+            {% endif %}
+
+            {% if option.check_input_type == 'checkbox' %}
+
+                checked = ""
+
+                {% if option.minimum == option.maximum %}
+                    checked = "checked"
                 {% endif %}
 
+
+                options_group.append(function() {
+
+                    return  '<div class="form-check mr-2"> ' +
+
+                            '<input class="form-check-input" type="checkbox" name="{{ option.pk }}" ' +
+                            'id="{{ option.pk }}" value="{{ option.pk }}"' + checked +  '>' +
+
+                            '<label class="form-check-label btn-primary rounded p-1" for="{{ option.pk }}"> ' +
+                                image +
+                                content +
+                            '</label> ' +
+
+                        '</div>';
+                });
+
+                $("#{{ option.pk }}").click(function(){
+
+                    change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
+
+                    {% if option.minimum == option.maximum %}
+
+                        $(this).prop('checked', true);
+
+                    {% else %}
+
+                        {% if option.get_real_price %}
+
+                            total -= {{ option.groups|remove_dash }}_total
+
+                            if ($(this).is(":checked")) {
+
+                                {{ option.groups|remove_dash }}_selected_option += 1
+                                {{ option.groups|remove_dash }}_total += {{ option.get_real_price }};
+
+                            } else {
+
+                                {{ option.groups|remove_dash }}_selected_option -= 1
+                                {{ option.groups|remove_dash }}_total -= {{ option.get_real_price }};
+
+                            }
+
+                            {% if option.groups.type_price == '2' %}
+                                {{ option.groups|remove_dash }}_total /= {{ option.groups|remove_dash }}_selected_option
+                            {% endif %}
+
+                            total += {{ option.groups|remove_dash }}_total
+
+                            $("#product_total").text(currency.format(total));
+
+                        {% endif %}
+
+                    {% endif %}
+
+                });
+
+            {% endif %}
+
+            {% if option.check_input_type == 'number' %}
+
+                {% if option.get_real_price %}
+                    quantity{{ option.pk }} = {{ option.minimum }}
+                    option_total{{ option.pk }} = {{ option.minimum }} * {{ option.get_real_price }}
                 {% endif %}
 
-                console.log(currency.format(total));
+                readonly = ""
 
-            });
+                {% if option.minimum == option.maximum %}
+                    readonly = "readonly"
+                {% endif %}
 
-            {{ option.groups }}_selected_option += min;
+
+                options_group.append(function() {
+
+                    return  '<div class="form-check mr-2"> ' +
+
+                            '<input class="form-control-input mr-1" type="number" name="{{ option.pk }}" ' +
+                            'id="{{ option.pk }}" value="{{ option.minimum }}" min="{{ option.minimum }}" ' +
+                            'max="{{ option.maximum }}" style="width:50px;" ' + readonly + '>' +
+
+                            '<label class="form-control-input btn-primary rounded p-1" for="{{ option.pk }}">' +
+                                image +
+                                content +
+                            '</label>' +
+
+                        '</div>';
+                });
+
+                $("#{{ option.pk }}").click(function(){
+
+                change_option_info("{{ option.groups|remove_dash }}", "{{ option.title }}", "{{ option.description }}", "")
+
+                    {% if option.minimum < option.maximum  %}
+
+                        {% if option.get_real_price %}
+
+                        total -= {{ option.groups|remove_dash }}_total
+
+                        {{ option.groups|remove_dash }}_selected_option -= quantity{{ option.pk }}
+                        {{ option.groups|remove_dash }}_total -= option_total{{ option.pk }}
+
+                        quantity{{ option.pk }} = parseInt($(this).val())
+
+                        if (Number.isInteger(quantity{{ option.pk }})) {
+                            option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
+                        } else {
+                            quantity{{ option.pk }} = 0
+                            option_total{{ option.pk }} = 0
+                        }
+
+                        {{ option.groups|remove_dash }}_selected_option += quantity{{ option.pk }}
+                        {{ option.groups|remove_dash }}_total += option_total{{ option.pk }}
+
+                        {% if option.groups.type_price == '2' %}
+                            {{ option.groups|remove_dash }}_total /= {{ option.groups|remove_dash }}_selected_option
+                        {% endif %}
+
+                        total += {{ option.groups|remove_dash }}_total
+
+                        $("#product_total").text(currency.format(total));
+
+                        {% endif %}
+
+                    {% endif %}
+
+                });
+
+                $("#{{ option.pk }}").keyup(function(){
+
+                    $("#{{ option.pk }}").click()
+
+                });
+
+            {% endif %}
+
+            {{ option.groups|remove_dash }}_selected_option += {{ option.minimum }};
 
             {% if option.get_real_price %}
-                total += min * {{ option.get_real_price }}
+                total += {{ option.minimum }} * {{ option.get_real_price }}
             {% endif %}
 
         {% endfor %}
@@ -248,7 +325,7 @@
             {% for group in groups %}
 
                 if (( {{ group.maximum }} < number_elements{{ group.pk }} ) || ({{ group.minimum }} > number_elements{{ group.pk }})) {
-                    $("#{{ group.slug }}_options").focus();
+                    alert("Maximum < number of selected options or < minimum, see {{ group.title }}");
                     e.preventDefault();
                 }
 

@@ -2,6 +2,7 @@ from django.db import models
 from websites.utils import utils, choices
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+import decimal
 
 # TODO: Create validations for the websites model
 # TODO: Create validations for the contacts model
@@ -94,7 +95,7 @@ class Prices(models.Model):
     def check_price(self):
 
         if self.price is not None:
-            if type(self.price) not in [int, float]:
+            if type(self.price) not in [int, float, decimal.Decimal]:
                 raise ValidationError("Price needs be positive integer or float - type received: " +
                                       str(type(self.price)))
 
@@ -312,6 +313,9 @@ class Categories(CreateUpdate):
 
         self.slug = f'{slugify(self.title)}'
 
+        if self.slug == '-':
+            self.slug = f'category{self.pk}'
+
         super().save(*args, **kwargs)
 
 
@@ -365,6 +369,9 @@ class Products(CreateUpdate, Enable, CommonInfo, Prices):
 
         self.slug = f'{slugify(self.title)}'
 
+        if self.slug == '-':
+            self.slug = f'product{self.pk}'
+
         super().save(*args, **kwargs)
 
 
@@ -416,6 +423,9 @@ class Groups(CreateUpdate, MinMax):
         self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
+
+        if self.slug == '-':
+            self.slug = f'group{self.pk}'
 
         super().save(*args, **kwargs)
 
@@ -470,5 +480,8 @@ class Options(CreateUpdate, CommonInfo, Prices, MinMax):
         self.check_min_max()
 
         self.slug = f'{slugify(self.title)}'
+
+        if self.slug == '-':
+            self.slug = f'option{self.pk}'
 
         super().save(*args, **kwargs)

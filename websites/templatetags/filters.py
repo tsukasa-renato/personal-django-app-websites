@@ -24,3 +24,12 @@ def smartphone_format(number):
 def html_format(language):
     return language.replace('_', '-')
 
+
+@register.filter
+def remove_dash(text):
+    """
+    Variable name can't have - in javascript
+    """
+    text = str(text)
+    return text.replace('-', '')
+
