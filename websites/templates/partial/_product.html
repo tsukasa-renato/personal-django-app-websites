@@ -289,7 +289,14 @@
                         quantity{{ option.pk }} = parseInt($(this).val())
 
                         if (Number.isInteger(quantity{{ option.pk }})) {
+
+                            if (quantity{{ option.pk }} > {{ option.maximum }}) {
+                                quantity{{ option.pk }} = {{ option.maximum }}
+                                $(this).val(quantity{{ option.pk }})
+                            }
+
                             option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
+
                         } else {
                             quantity{{ option.pk }} = 0
                             option_total{{ option.pk }} = 0
@@ -334,8 +341,13 @@
 
             {% for group in groups %}
 
-                if (( {{ group.maximum }} < number_elements{{ group.pk }} ) || ({{ group.minimum }} > number_elements{{ group.pk }})) {
-                    alert("Maximum < number of selected options or < minimum, see {{ group.title }}");
+                if ( {{ group.maximum }} < number_elements{{ group.pk }} ) {
+                    alert("In {{ group.title }} group, you can choose a maximum of {{ group.maximum }} options");
+                    e.preventDefault();
+                }
+
+                if ({{ group.minimum }} > number_elements{{ group.pk }}) {
+                    alert("In {{ group.title }} group, you must choose a minimum of {{ option.minimum }} options");
                     e.preventDefault();
                 }
 
