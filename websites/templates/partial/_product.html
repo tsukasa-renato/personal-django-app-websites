@@ -341,12 +341,12 @@
 
             {% for group in groups %}
 
-                if ( {{ group.maximum }} < number_elements{{ group.pk }} ) {
+                if ( {{ group.maximum }} < {{ group|remove_dash }}_selected_option ) {
                     alert("In {{ group.title }} group, you can choose a maximum of {{ group.maximum }} options");
                     e.preventDefault();
                 }
 
-                if ({{ group.minimum }} > number_elements{{ group.pk }}) {
+                if ({{ group.minimum }} > {{ group|remove_dash }}_selected_option) {
                     alert("In {{ group.title }} group, you must choose a minimum of {{ option.minimum }} options");
                     e.preventDefault();
                 }
