@@ -19,9 +19,17 @@
     </div>
     {% endif %}
 
+    {% if cart %}
+
+    {% include 'partial/_cart.html' %}
+
+    {% else %}
+
     {% if product %}
 
     {% include 'partial/_product.html' %}
+
+    {% endif %}
 
     {% endif %}
 

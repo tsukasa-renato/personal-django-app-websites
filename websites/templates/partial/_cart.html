@@ -1,0 +1,64 @@
+{% load static %}
+{% load filters %}
+
+<div class="row justify-content-center mt-5 ml-5 mr-5 p-3" style="background-color:#9AFFEC">
+    <div class="col-sm text-center">
+        {% if product.images %}
+            <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+             style="max-height:400px;max-width:100%;">
+        {% else %}
+            <img src="{% static 'media/category.png' %}" alt="{{ product.title }}"
+                style="max-height:400px;max-width:100%;">
+        {% endif %}
+    </div>
+    <div class="col-sm text-center">
+        <h5> PRODUCT TITLE </h5>
+        <p> PRICE $$ </p>
+    </div>
+    <div class="col-sm text-center">
+        <h5> QUANTITY _ </h5>
+    </div>
+    <div class="col-sm text-center">
+        <h5> TOTAL PRICE $$ </h5>
+    </div>
+    <div class="col-sm text-center">
+        <button class='btn btn-warning'>
+            Edit
+        </button>
+        <button class='btn btn-danger'>
+            Remove
+        </button>
+    </div>
+</div>
+<div class="row justify-content-center ml-5 mr-5" style="background-color:#ACFFEF">
+    <h5> GROUP TITLE </h5>
+</div>
+<div class="row justify-content-center ml-5 mr-5 p-3" style="background-color:#ACFFEF">
+    <div class="col-sm text-center">
+        {% if product.images %}
+            <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+             style="max-height:400px;max-width:100%;">
+        {% else %}
+            <img src="{% static 'media/category.png' %}" alt="{{ product.title }}"
+                style="max-height:400px;max-width:100%;">
+        {% endif %}
+    </div>
+    <div class="col text-center">
+        <h6> OPTION TITLE </h6>
+        <p> PRICE $$ </p>
+    </div>
+    <div class="col text-center">
+        <h6> Quantity _ </h6>
+    </div>
+ </div>
+
+<div class="row justify-content-center mt-5 ml-5 mr-5">
+    <div class="col text-center">
+    <h5> Total 10,000 $$ </h5>
+    </div>
+    <div class="col text-center">
+    <button class='btn btn-success'>
+            BUY
+    </button>
+    </div>
+</div>
