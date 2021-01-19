@@ -3,6 +3,7 @@ from django.views.generic import View
 from django.core.paginator import Paginator
 from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
+from django.http import HttpResponseBadRequest
 
 
 def website_configs(context):
@@ -88,12 +89,121 @@ class Cart(View):
 
         context = website_configs(context)
 
-        context['cart'] = self.request.POST
+        request = self.request.POST
 
-        print(context['cart']['product'])
+        aux = {'product': get_object_or_404(Products, pk=request['product'])}
 
-        context['product'] = get_object_or_404(Products, pk=context['cart']['product'])
+        if aux['product'].websites != context['website']:
+            return HttpResponseBadRequest("Bad Request")
 
-        context = get_product_groups_options(context)
+        context['cart'] = {}
+
+        context['cart']['product'] = {
+            'image': aux['product'].images.url if aux['product'].images else '',
+            'title': aux['product'].title,
+            'quantity': 1,
+            'price': aux['product'].get_real_price() if aux['product'].get_real_price() else '',
+            'total': aux['product'].get_real_price() if aux['product'].get_real_price() else 0,
+        }
+
+        aux = get_product_groups_options(aux)
+
+        for option in aux['options']:
+
+            group = str(option.groups)
+
+            if group not in context['cart']:
+                context['cart'][group] = []
+                aux[group] = 0
+
+            if option.check_input_type() == 'radio':
+
+                keyword = f'{option.groups}'
+
+                if keyword in request:
+
+                    if request[keyword] != str(option.pk):
+                        return HttpResponseBadRequest("Bad Request")
+
+                    context['cart'][group].append({
+                        'image': option.images.url if option.images else '',
+                        'title': option.title,
+                        'price': option.get_real_price() if option.get_real_price() else '',
+                        'quantity': 1,
+                    })
+
+                    aux[group] += 1
+                    context['cart']['product']['total'] += option.get_real_price() if option.get_real_price() else 0
+
+            else:
+
+                keyword = f'{option.pk}'
+
+                if option.check_input_type() == 'checkbox':
+
+                    if keyword in request:
+
+                        if request[keyword] != str(option.pk):
+                            return HttpResponseBadRequest("Bad Request")
+
+                        context['cart'][group].append({
+                            'image': option.images.url if option.images else '',
+                            'title': option.title,
+                            'price': option.get_real_price() if option.get_real_price() else '',
+                            'quantity': 1,
+                        })
+
+                        aux[group] += 1
+                        context['cart']['product']['total'] += option.get_real_price() if option.get_real_price() else 0
+
+                elif option.check_input_type() == 'number':
+
+                    if keyword in request:
+
+                        quantity = int(request[keyword])
+
+                        if option.minimum > quantity or quantity > option.maximum:
+                            return HttpResponseBadRequest("Bad Request")
+
+                        if quantity > 0:
+                            context['cart'][group].append({
+                                'image': option.images.url if option.images else '',
+                                'title': option.title,
+                                'price': option.get_real_price() if option.get_real_price() else '',
+                                'quantity': quantity,
+                            })
+
+                            aux[group] += quantity
+                            context['cart']['product']['total'] += (option.get_real_price() * quantity) \
+                                if option.get_real_price() else 0
+
+                if keyword not in request:
+
+                    if option.minimum > 0:
+                        return HttpResponseBadRequest("Bad Request")
+
+        context['cart']['groups'] = []
+
+        for group in aux['groups']:
+
+            keyword = str(group)
+
+            if aux[keyword] < group.minimum or aux[keyword] > group.maximum:
+                return HttpResponseBadRequest("Bad Request")
+
+            context['cart']['groups'].append({
+                'title': group.title,
+                'slug': group.slug,
+                'options': context['cart'][group.slug],
+            })
+
+        if 'cart-quantity' not in context:
+            context['cart_quantity'] = 0
+
+        if 'total' not in context['cart']:
+            context['cart']['total'] = 0
+
+        context['cart_quantity'] += 1
+        context['cart']['total'] += context['cart']['product']['total']
 
         return render(self.request, 'website.html', context)

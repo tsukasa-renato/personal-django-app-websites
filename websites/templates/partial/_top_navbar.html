@@ -49,7 +49,15 @@
                     <img src="{% static 'media/cart.png' %}">
                     {% endif %}
 
-                    <span class="badge badge-light">0</span>
+                    <span class="badge badge-light">
+
+                        {% if cart_quantity %}
+                            {{ cart_quantity }}
+                        {% else %}
+                            0
+                        {% endif %}
+
+                    </span>
                 </a>
             </li>
         </ul>
