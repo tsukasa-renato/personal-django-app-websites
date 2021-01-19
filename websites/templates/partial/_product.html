@@ -141,7 +141,7 @@
 
                     return  '<div class="form-check mr-2"> ' +
 
-                            '<input class="form-check-input" type="radio" name="{{ option.groups }}" ' +
+                            '<input class="form-check-input" type="radio" name="{{ option.groups|remove_dash }}" ' +
                             'id="{{ option.pk }}" value="{{ option.pk }}">' +
 
                             '<label class="form-check-label btn-primary rounded p-1" for="{{ option.pk }}"> ' +

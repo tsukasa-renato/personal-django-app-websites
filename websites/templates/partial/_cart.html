@@ -1,27 +1,30 @@
 {% load static %}
 {% load filters %}
 
+
+{% for product in cart.products %}
+
 <div class="row justify-content-center mt-5 ml-5 mr-5 p-3" style="background-color:#9AFFEC">
     <div class="col-sm text-center">
         {% if cart.product.image %}
-            <img class="card-img-top" src="{{ cart.product.image }}" alt="{{ cart.product.title }}"
+            <img class="card-img-top" src="{{ cart.product.image }}" alt="{{ product.model.title }}"
              style="max-height:400px;max-width:100%;">
         {% else %}
-            <img src="{% static 'media/category.png' %}" alt="{{ product.title }}"
+            <img src="{% static 'media/category.png' %}" alt="{{ product.model.title }}"
                 style="max-height:400px;max-width:100%;">
         {% endif %}
     </div>
     <div class="col-sm text-center">
-        <h5> {{ cart.product.title }} </h5>
-        {% if cart.product.price %}
-        <p> {% money_format cart.product.price website.currency website.language %} </p>
+        <h5> {{ product.model.title }} </h5>
+        {% if product.model.price %}
+        <p> {% money_format product.model.price website.currency website.language %} </p>
         {% endif %}
     </div>
     <div class="col-sm text-center">
-        <h5> Quantity: {{ cart.product.quantity }} </h5>
+        <h5> Quantity: {{ product.quantity }} </h5>
     </div>
     <div class="col-sm text-center">
-        <h5> Total: {% money_format cart.product.total website.currency website.language %} </h5>
+        <h5> Total: {% money_format product.total website.currency website.language %} </h5>
     </div>
     <div class="col-sm text-center">
         <button class='btn btn-warning'>
@@ -33,23 +36,23 @@
     </div>
 </div>
 
-{% for group in cart.groups %}
+{% for group in product.groups %}
     <div class="row justify-content-center ml-5 mr-5 border border-white" style="background-color:#ACFFEF">
-        <h5> {{ group.title }} </h5>
+        <h5> {{ group.model.title }} </h5>
     </div>
 
     {% for option in group.options %}
     <div class="row justify-content-center ml-5 mr-5 p-3 border border-white" style="background-color:#ACFFEF">
         <div class="col-sm text-center">
-            {% if option.image %}
-                <img class="card-img-top" src="{{ product.images.url }}" alt="{{ product.images.name }}"
+            {% if option.model.image %}
+                <img class="card-img-top" src="{{ option.model.images.url }}" alt="{{ option.model.images.name }}"
                  style="max-height:400px;max-width:100%;">
             {% endif %}
         </div>
         <div class="col text-center">
-            <h6> {{ option.title }} </h6>
-            {% if option.price %}
-            <p> {% money_format option.price website.currency website.language %} </p>
+            <h6> {{ option.model.title }} </h6>
+            {% if option.model.get_real_price %}
+            <p> {% money_format option.model.get_real_price website.currency website.language %} </p>
             {% endif %}
         </div>
         <div class="col text-center">
@@ -57,6 +60,8 @@
         </div>
      </div>
     {% endfor %}
+
+{% endfor %}
 
 {% endfor %}
 

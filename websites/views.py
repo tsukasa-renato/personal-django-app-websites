@@ -81,6 +81,112 @@ class ShowProduct(View):
         return render(self.request, 'website.html', context)
 
 
+def check_request(request, website):
+
+    product = get_object_or_404(Products, pk=request['product'])
+
+    if product.websites != website:
+        return HttpResponseBadRequest("Bad Request")
+
+    product = {
+        'model': product,
+        'quantity': 1,
+        'total': product.get_real_price() if product.get_real_price() else 0,
+        'groups': []
+    }
+
+    aux = get_product_groups_options({'product': product['model']})
+
+    for option in aux['options']:
+
+        group = str(option.groups).replace('-', '')
+
+        if group not in aux:
+            aux[group] = {
+                'options': [],
+                'total': 0,
+                'quantity': 0
+            }
+
+        if option.check_input_type() == 'radio':
+
+            keyword = group
+
+            if keyword in request:
+
+                if request[keyword] != str(option.pk):
+                    return HttpResponseBadRequest("Bad Request")
+
+                aux[group]['options'].append({
+                    'model': option,
+                    'quantity': 1,
+                })
+
+                aux[group]['quantity'] += 1
+                aux[group]['total'] += option.get_real_price() if option.get_real_price() else 0
+
+        else:
+
+            keyword = f'{option.pk}'
+
+            if option.check_input_type() == 'checkbox':
+
+                if keyword in request:
+
+                    if request[keyword] != str(option.pk):
+                        return HttpResponseBadRequest("Bad Request")
+
+                    aux[group]['options'].append({
+                        'model': option,
+                        'quantity': 1,
+                    })
+
+                    aux[group]['quantity'] += 1
+                    aux[group]['total'] += option.get_real_price() if option.get_real_price() else 0
+
+            elif option.check_input_type() == 'number':
+
+                if keyword in request:
+
+                    quantity = int(request[keyword])
+
+                    if option.minimum > quantity or quantity > option.maximum:
+                        return HttpResponseBadRequest("Bad Request")
+
+                    if quantity > 0:
+                        aux[group]['options'].append({
+                            'model': option,
+                            'quantity': quantity,
+                        })
+
+                        aux[group]['quantity'] += 1
+                        aux[group]['total'] += option.get_real_price() * quantity if option.get_real_price() else 0
+
+            if keyword not in request:
+
+                if option.minimum > 0:
+                    return HttpResponseBadRequest("Bad Request")
+
+    for group in aux['groups']:
+
+        keyword = str(group).replace('-', '')
+
+        if aux[keyword]['quantity'] < group.minimum or aux[keyword]['quantity'] > group.maximum:
+            return HttpResponseBadRequest("Bad Request")
+
+        if group.price_type == '2':
+            aux[keyword]['total'] /= aux[keyword]['quantity']
+
+        product['groups'].append({
+            'model': group,
+            'options': aux[keyword]['options'],
+        })
+
+        product['total'] += aux[keyword]['total']
+
+    return product
+
+
 class Cart(View):
 
     def post(self, *args, **kwargs):
@@ -89,121 +195,16 @@ class Cart(View):
 
         context = website_configs(context)
 
-        request = self.request.POST
-
-        aux = {'product': get_object_or_404(Products, pk=request['product'])}
-
-        if aux['product'].websites != context['website']:
-            return HttpResponseBadRequest("Bad Request")
-
-        context['cart'] = {}
-
-        context['cart']['product'] = {
-            'image': aux['product'].images.url if aux['product'].images else '',
-            'title': aux['product'].title,
-            'quantity': 1,
-            'price': aux['product'].get_real_price() if aux['product'].get_real_price() else '',
-            'total': aux['product'].get_real_price() if aux['product'].get_real_price() else 0,
+        context['cart'] = {
+            'products': [],
+            'quantity': 0,
+            'total': 0
         }
 
-        aux = get_product_groups_options(aux)
+        product = check_request(self.request.POST, context['website'])
 
-        for option in aux['options']:
-
-            group = str(option.groups)
-
-            if group not in context['cart']:
-                context['cart'][group] = []
-                aux[group] = 0
-
-            if option.check_input_type() == 'radio':
-
-                keyword = f'{option.groups}'
-
-                if keyword in request:
-
-                    if request[keyword] != str(option.pk):
-                        return HttpResponseBadRequest("Bad Request")
-
-                    context['cart'][group].append({
-                        'image': option.images.url if option.images else '',
-                        'title': option.title,
-                        'price': option.get_real_price() if option.get_real_price() else '',
-                        'quantity': 1,
-                    })
-
-                    aux[group] += 1
-                    context['cart']['product']['total'] += option.get_real_price() if option.get_real_price() else 0
-
-            else:
-
-                keyword = f'{option.pk}'
-
-                if option.check_input_type() == 'checkbox':
-
-                    if keyword in request:
-
-                        if request[keyword] != str(option.pk):
-                            return HttpResponseBadRequest("Bad Request")
-
-                        context['cart'][group].append({
-                            'image': option.images.url if option.images else '',
-                            'title': option.title,
-                            'price': option.get_real_price() if option.get_real_price() else '',
-                            'quantity': 1,
-                        })
-
-                        aux[group] += 1
-                        context['cart']['product']['total'] += option.get_real_price() if option.get_real_price() else 0
-
-                elif option.check_input_type() == 'number':
-
-                    if keyword in request:
-
-                        quantity = int(request[keyword])
-
-                        if option.minimum > quantity or quantity > option.maximum:
-                            return HttpResponseBadRequest("Bad Request")
-
-                        if quantity > 0:
-                            context['cart'][group].append({
-                                'image': option.images.url if option.images else '',
-                                'title': option.title,
-                                'price': option.get_real_price() if option.get_real_price() else '',
-                                'quantity': quantity,
-                            })
-
-                            aux[group] += quantity
-                            context['cart']['product']['total'] += (option.get_real_price() * quantity) \
-                                if option.get_real_price() else 0
-
-                if keyword not in request:
-
-                    if option.minimum > 0:
-                        return HttpResponseBadRequest("Bad Request")
-
-        context['cart']['groups'] = []
-
-        for group in aux['groups']:
-
-            keyword = str(group)
-
-            if aux[keyword] < group.minimum or aux[keyword] > group.maximum:
-                return HttpResponseBadRequest("Bad Request")
-
-            context['cart']['groups'].append({
-                'title': group.title,
-                'slug': group.slug,
-                'options': context['cart'][group.slug],
-            })
-
-        if 'cart-quantity' not in context:
-            context['cart_quantity'] = 0
-
-        if 'total' not in context['cart']:
-            context['cart']['total'] = 0
-
-        context['cart_quantity'] += 1
-        context['cart']['total'] += context['cart']['product']['total']
+        context['cart']['products'].append(product)
+        context['cart']['total'] += product['total']
+        context['cart']['quantity'] += product['quantity']
 
         return render(self.request, 'website.html', context)
