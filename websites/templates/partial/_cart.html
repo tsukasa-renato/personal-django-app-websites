@@ -6,18 +6,18 @@
 
 <div class="row justify-content-center mt-5 ml-5 mr-5 p-3" style="background-color:#9AFFEC">
     <div class="col-sm text-center">
-        {% if cart.product.image %}
-            <img class="card-img-top" src="{{ cart.product.image }}" alt="{{ product.model.title }}"
+        {% if product.images %}
+            <img class="card-img-top" src="{{ product.images }}" alt="{{ product.title }}"
              style="max-height:400px;max-width:100%;">
         {% else %}
-            <img src="{% static 'media/category.png' %}" alt="{{ product.model.title }}"
+            <img src="{% static 'media/category.png' %}" alt="{{ product.title }}"
                 style="max-height:400px;max-width:100%;">
         {% endif %}
     </div>
     <div class="col-sm text-center">
-        <h5> {{ product.model.title }} </h5>
-        {% if product.model.price %}
-        <p> {% money_format product.model.price website.currency website.language %} </p>
+        <h5> {{ product.title }} </h5>
+        {% if product.price %}
+        <p> {% money_format product.price website.currency website.language %} </p>
         {% endif %}
     </div>
     <div class="col-sm text-center">
@@ -38,21 +38,21 @@
 
 {% for group in product.groups %}
     <div class="row justify-content-center ml-5 mr-5 border border-white" style="background-color:#ACFFEF">
-        <h5> {{ group.model.title }} </h5>
+        <h5> {{ group.title }} </h5>
     </div>
 
     {% for option in group.options %}
     <div class="row justify-content-center ml-5 mr-5 p-3 border border-white" style="background-color:#ACFFEF">
         <div class="col-sm text-center">
             {% if option.model.image %}
-                <img class="card-img-top" src="{{ option.model.images.url }}" alt="{{ option.model.images.name }}"
+                <img class="card-img-top" src="{{ option.images.url }}" alt="{{ option.images.name }}"
                  style="max-height:400px;max-width:100%;">
             {% endif %}
         </div>
         <div class="col text-center">
-            <h6> {{ option.model.title }} </h6>
-            {% if option.model.get_real_price %}
-            <p> {% money_format option.model.get_real_price website.currency website.language %} </p>
+            <h6> {{ option.title }} </h6>
+            {% if option.price %}
+            <p> {% money_format option.price website.currency website.language %} </p>
             {% endif %}
         </div>
         <div class="col text-center">

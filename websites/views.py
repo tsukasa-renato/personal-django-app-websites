@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from .models import Websites, Categories, Products, Groups, Options, \
     Banners, Contacts, Icons, Colors
 from django.http import HttpResponseBadRequest
-
+from decimal import Decimal
 
 def website_configs(context):
 
@@ -62,6 +62,9 @@ class ShowProducts(View):
             page_number = self.request.GET.get('page')
             context['products'] = paginator.get_page(page_number)
 
+        if 'cart' in self.request.session:
+            context['cart'] = {'quantity': self.request.session['cart']['quantity']}
+
         return render(self.request, 'website.html', context)
 
 
@@ -78,24 +81,30 @@ class ShowProduct(View):
 
         context = get_product_groups_options(context)
 
+        if 'cart' in self.request.session:
+            context['cart'] = {'quantity': self.request.session['cart']['quantity']}
+
         return render(self.request, 'website.html', context)
 
 
-def check_request(request, website):
+def check_request_for_cart(request, website):
 
     product = get_object_or_404(Products, pk=request['product'])
+
+    aux = get_product_groups_options({'product': product})
 
     if product.websites != website:
         return HttpResponseBadRequest("Bad Request")
 
+    total = product.get_real_price() if product.get_real_price() else 0
+
     product = {
-        'model': product,
+        'images': product.images.url if product.images else '',
+        'title': product.title,
         'quantity': 1,
-        'total': product.get_real_price() if product.get_real_price() else 0,
+        'price': str(product.get_real_price()) if product.get_real_price() else '',
         'groups': []
     }
-
-    aux = get_product_groups_options({'product': product['model']})
 
     for option in aux['options']:
 
@@ -108,6 +117,8 @@ def check_request(request, website):
                 'quantity': 0
             }
 
+        quantity = 0
+
         if option.check_input_type() == 'radio':
 
             keyword = group
@@ -117,13 +128,7 @@ def check_request(request, website):
                 if request[keyword] != str(option.pk):
                     return HttpResponseBadRequest("Bad Request")
 
-                aux[group]['options'].append({
-                    'model': option,
-                    'quantity': 1,
-                })
-
-                aux[group]['quantity'] += 1
-                aux[group]['total'] += option.get_real_price() if option.get_real_price() else 0
+                quantity = 1
 
         else:
 
@@ -136,13 +141,7 @@ def check_request(request, website):
                     if request[keyword] != str(option.pk):
                         return HttpResponseBadRequest("Bad Request")
 
-                    aux[group]['options'].append({
-                        'model': option,
-                        'quantity': 1,
-                    })
-
-                    aux[group]['quantity'] += 1
-                    aux[group]['total'] += option.get_real_price() if option.get_real_price() else 0
+                    quantity = 1
 
             elif option.check_input_type() == 'number':
 
@@ -153,19 +152,21 @@ def check_request(request, website):
                     if option.minimum > quantity or quantity > option.maximum:
                         return HttpResponseBadRequest("Bad Request")
 
-                    if quantity > 0:
-                        aux[group]['options'].append({
-                            'model': option,
-                            'quantity': quantity,
-                        })
-
-                        aux[group]['quantity'] += 1
-                        aux[group]['total'] += option.get_real_price() * quantity if option.get_real_price() else 0
-
             if keyword not in request:
 
                 if option.minimum > 0:
                     return HttpResponseBadRequest("Bad Request")
+
+        if quantity > 0:
+            aux[group]['options'].append({
+                'images': option.images.url if option.images else '',
+                'title': option.title,
+                'price': str(option.get_real_price()) if option.get_real_price() else '',
+                'quantity': 1,
+            })
+
+            aux[group]['quantity'] += quantity
+            aux[group]['total'] += option.get_real_price() * quantity if option.get_real_price() else 0
 
     for group in aux['groups']:
 
@@ -178,16 +179,36 @@ def check_request(request, website):
             aux[keyword]['total'] /= aux[keyword]['quantity']
 
         product['groups'].append({
-            'model': group,
+            'title': group.title,
             'options': aux[keyword]['options'],
         })
 
-        product['total'] += aux[keyword]['total']
+        total += aux[keyword]['total']
+        aux[keyword]['total'] = str(aux[keyword]['total'])
+
+    product['total'] = str(total)
 
     return product
 
 
 class Cart(View):
+
+    def get(self, *args, **kwargs):
+
+        context = {'url': str(kwargs['url'])}
+
+        context = website_configs(context)
+
+        if 'cart' in self.request.session:
+            context['cart'] = self.request.session['cart']
+        else:
+            context['cart'] = {
+                'products': [],
+                'quantity': 0,
+                'total': 0
+            }
+
+        return render(self.request, 'website.html', context)
 
     def post(self, *args, **kwargs):
 
@@ -195,16 +216,28 @@ class Cart(View):
 
         context = website_configs(context)
 
-        context['cart'] = {
-            'products': [],
-            'quantity': 0,
-            'total': 0
-        }
+        if 'cart' not in self.request.session:
+            self.request.session['cart'] = {
+                'products': [],
+                'quantity': 0,
+            }
 
-        product = check_request(self.request.POST, context['website'])
+            total = 0
+        else:
+            self.request.session.modified = True
+            total = Decimal(self.request.session['cart']['total'])
 
-        context['cart']['products'].append(product)
-        context['cart']['total'] += product['total']
-        context['cart']['quantity'] += product['quantity']
+        product = check_request_for_cart(self.request.POST, context['website'])
+
+        self.request.session['cart']['products'].append(product)
+
+        total += Decimal(product['total'])
+
+        self.request.session['cart']['total'] = str(total)
+        self.request.session['cart']['quantity'] += product['quantity']
+
+        context['cart'] = self.request.session['cart']
+
+        print(self.request.session['cart'])
 
         return render(self.request, 'website.html', context)
