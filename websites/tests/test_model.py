@@ -17,8 +17,37 @@ class WebsiteTests(TestCase):
 
         for x, v in enumerate(values):
             website = Websites.objects.create(url=v, title="title")
-            color = Colors.objects.create(websites=website, navbar=v, category=v, active=v, footer=v, text=v)
+            color = Colors.objects.create(websites=website, navbar=v, category=v, active=v, footer=v, text=v,
+                                          title=v, title_hover=v)
             self.assertEqual(color.navbar, compare[x])
+            self.assertEqual(color.category, compare[x])
+            self.assertEqual(color.active, compare[x])
+            self.assertEqual(color.footer, compare[x])
+            self.assertEqual(color.text, compare[x])
+            self.assertEqual(color.title, compare[x])
+            self.assertEqual(color.title_hover, compare[x])
+
+        # Invalid values
+        with self.assertRaisesMessage(ValidationError, "Navbar error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, navbar='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Category error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, category='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Active error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, active='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Footer error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, footer='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Text error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, text='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Title error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, title='Z')
+
+        with self.assertRaisesMessage(ValidationError, "Title hover error: invalid hexadecimal"):
+            Colors.objects.create(websites=website, title_hover='Z')
 
 
 class InitialDataTest(TestCase):

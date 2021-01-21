@@ -1,9 +1,13 @@
-from ..models import Websites, Contacts, Categories, Products, Groups, Options
+from ..models import Websites, Colors, Contacts, Categories, Products, Groups, Options
+
+"""
+Here are the test scenarios
+"""
 
 
-def check_info_test_case():
+def check_info():
     """
-    The scenario created to check website information, in this case, we'll add contact, 6 categories
+    This scenario was created to check website information, so we'll add contact, 6 categories
     """
 
     website = Websites.objects.create(url='checkinfo', title="Check Info")
@@ -15,6 +19,17 @@ def check_info_test_case():
                             facebook='checkinfofacebook', instagram='checkinfoinstagram', twitter='checkinfotwitter',
                             linkedin='checkinfolinkedin', pinterest='checkinfopinterest', youtube='checkinfoyoutube',
                             whatsapp='7873923408', social_media_text='Follow us :D', whatsapp_text='Whatsapp:')
+
+
+def colors():
+    """
+    This scenario was created to check whether colors is working, so we'll add colors for the website
+    """
+
+    website = Websites.objects.create(url='colors', title="Colors")
+
+    Colors.objects.create(websites=website, navbar='FF44E7', category='FF4444', active='7044FF', footer='44F8FF',
+                          text='44FFA8', title='FCFF44', title_hover='D50E04')
 
 
 def create_scenario_1():

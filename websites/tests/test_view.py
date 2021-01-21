@@ -1,8 +1,8 @@
 from django.test import TestCase, Client
 from websites.utils.utils import money_format
-from ..models import Websites, Contacts, Categories, Products, Groups, Options
+from ..models import Websites, Categories, Products, Groups, Options
 from decimal import *
-from .scenarios import check_info_test_case
+from .scenarios import check_info, colors
 
 # TestCase self.client hasn't get method
 
@@ -54,7 +54,7 @@ class WebsiteViewTest(TestCase):
 
     def test_check_info(self):
 
-        check_info_test_case()
+        check_info()
 
         client = Client()
 
@@ -105,6 +105,34 @@ class WebsiteViewTest(TestCase):
         self.assertContains(response, "Category 4")
         self.assertContains(response, "Category 5")
         self.assertContains(response, "Category 6")
+
+    def test_colors(self):
+
+        colors()
+
+        client = Client()
+
+        response = client.get('/colors/')
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+        self.assertEqual(context['website'].title, "Colors")
+        self.assertEqual(context['color'].navbar, "ff44e7")
+        self.assertEqual(context['color'].category, "ff4444")
+        self.assertEqual(context['color'].active, "7044ff")
+        self.assertEqual(context['color'].footer, "44f8ff")
+        self.assertEqual(context['color'].text, "44ffa8")
+        self.assertEqual(context['color'].title, "fcff44")
+        self.assertEqual(context['color'].title_hover, "d50e04")
+
+        self.assertContains(response, "Colors")
+        self.assertContains(response, "color: #ff44e7;")
+        self.assertContains(response, "color: #ff4444;")
+        self.assertContains(response, "color: #7044ff;")
+        self.assertContains(response, "color: #44f8ff;")
+        self.assertContains(response, "color: #44ffa8;")
+        self.assertContains(response, "color: #fcff44;")
+        self.assertContains(response, "color: #d50e04;")
 
 
 class ShowProductsViewTest(TestCase):
