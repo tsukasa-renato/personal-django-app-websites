@@ -1,7 +1,9 @@
 from django.db import models
-from websites.utils import utils, choices
+from .utils.utils import custom_datetime, money_format, hexadecimal
+from .utils.choices import currencies, timezones, languages
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 import decimal
 
 # TODO: Create validations for the websites model
@@ -29,7 +31,7 @@ class CreateUpdate(models.Model):
         """
         Formats the created_at in the time zone registered on the website
         """
-        return utils.custom_datetime(self.created_at, self.websites.timezone)
+        return custom_datetime(self.created_at, self.websites.timezone)
     get_created_at.short_description = 'Created at'
     get_created_at.admin_order_field = 'created_at'
 
@@ -37,7 +39,7 @@ class CreateUpdate(models.Model):
         """
         Formats the updated_at in the time zone registered on the website
         """
-        return utils.custom_datetime(self.updated_at, self.websites.timezone)
+        return custom_datetime(self.updated_at, self.websites.timezone)
     get_updated_at.short_description = 'Updated at'
     get_updated_at.admin_order_field = 'updated_at'
 
@@ -64,7 +66,7 @@ class Prices(models.Model):
         Formats the price in the currency informed in website
         """
         if self.price is not None:
-            return utils.money_format(self.price, self.websites.currency, self.websites.language)
+            return money_format(self.price, self.websites.currency, self.websites.language)
         return ''
     get_price.short_description = 'Price'
     get_price.admin_order_field = 'price'
@@ -74,7 +76,7 @@ class Prices(models.Model):
         Formats the promotional price in the currency informed in website
         """
         if self.promotional_price is not None:
-            return utils.money_format(self.promotional_price, self.websites.currency, self.websites.language)
+            return money_format(self.promotional_price, self.websites.currency, self.websites.language)
         return ''
     get_promotional_price.short_description = 'Promotional price'
     get_promotional_price.admin_order_field = 'promotional_price'
@@ -170,26 +172,26 @@ class Websites(CreateUpdate, Enable):
     timezone = models.CharField(
         max_length=30,
         default='UTC',
-        choices=choices.choice_timezones()
+        choices=timezones()
     )
 
     currency = models.CharField(
         max_length=3,
         default='USD',
-        choices=choices.choice_currencies()
+        choices=currencies()
     )
 
     language = models.CharField(
         max_length=11,
         default='en_US',
-        choices=choices.choice_language()
+        choices=languages()
     )
 
     def get_created_at(self):
         """
         Formats the created_at in the time zone registered on the website
         """
-        return utils.custom_datetime(self.created_at, self.timezone)
+        return custom_datetime(self.created_at, self.timezone)
     get_created_at.short_description = 'Created at'
     get_created_at.admin_order_field = 'created_at'
 
@@ -197,7 +199,7 @@ class Websites(CreateUpdate, Enable):
         """
         Formats the updated_at in the time zone registered on the website
         """
-        return utils.custom_datetime(self.updated_at, self.timezone)
+        return custom_datetime(self.updated_at, self.timezone)
     get_updated_at.short_description = 'Updated at'
     get_updated_at.admin_order_field = 'updated_at'
 
@@ -222,6 +224,7 @@ class Contacts(CreateUpdate):
     twitter = models.CharField("twitter.com/", max_length=50, null=True, blank=True)
     linkedin = models.CharField("linkedin.com/in/", max_length=50, null=True, blank=True)
     youtube = models.CharField("youtube.com/channel/", max_length=100, null=True, blank=True)
+
     whatsapp = models.CharField("Whatsapp, only numbers (e.g. DD999555566)", max_length=20, null=True, blank=True)
 
     social_media_text = models.CharField("Type a message (e.g. follow us)", max_length=50, null=True, blank=True)
@@ -239,13 +242,13 @@ class Colors(CreateUpdate):
 
     websites = models.OneToOneField(Websites, on_delete=models.CASCADE, primary_key=True)
 
-    navbar = models.CharField(max_length=6, null=True, blank=True)
-    category = models.CharField(max_length=6, null=True, blank=True)
-    active = models.CharField(max_length=6, null=True, blank=True)
-    footer = models.CharField(max_length=6, null=True, blank=True)
-    text = models.CharField(max_length=6, null=True, blank=True)
-    title = models.CharField(max_length=6, null=True, blank=True)
-    title_hover = models.CharField(max_length=6, null=True, blank=True)
+    navbar = models.CharField("Navbar color (hexadecimal): ", max_length=6, null=True, blank=True)
+    category = models.CharField("Categories bar color (hexadecimal):", max_length=6, null=True, blank=True)
+    active = models.CharField("Active category color (hexadecimal): ", max_length=6, null=True, blank=True)
+    footer = models.CharField("Footer color (hexadecimal): ", max_length=6, null=True, blank=True)
+    text = models.CharField("Text color (hexadecimal): ", max_length=6, null=True, blank=True)
+    title = models.CharField("Title color (hexadecimal): ", max_length=6, null=True, blank=True)
+    title_hover = models.CharField("Mouse hover color (hexadecimal): ", max_length=6, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Color'
@@ -253,6 +256,45 @@ class Colors(CreateUpdate):
 
     def __str__(self):
         return 'colors'
+
+    def save(self, *args, **kwargs):
+
+        if self.navbar is not None:
+            self.navbar = hexadecimal(self.navbar)
+            if not self.navbar:
+                raise ValidationError("Navbar error: invalid hexadecimal")
+
+        if self.category is not None:
+            self.category = hexadecimal(self.category)
+            if not self.category:
+                raise ValidationError("Category error: invalid hexadecimal")
+
+        if self.active is not None:
+            self.active = hexadecimal(self.active)
+            if not self.active:
+                raise ValidationError("Active error: invalid hexadecimal")
+
+        if self.footer is not None:
+            self.footer = hexadecimal(self.footer)
+            if not self.footer:
+                raise ValidationError("Footer error: invalid hexadecimal")
+
+        if self.text is not None:
+            self.text = hexadecimal(self.text)
+            if not self.text:
+                raise ValidationError("Text error: invalid hexadecimal")
+
+        if self.title is not None:
+            self.title = hexadecimal(self.title)
+            if not self.title:
+                raise ValidationError("Title error: invalid hexadecimal")
+
+        if self.title_hover is not None:
+            self.title_hover = hexadecimal(self.title_hover)
+            if not self.title_hover:
+                raise ValidationError("Title hover error: invalid hexadecimal")
+
+        super().save(*args, **kwargs)
 
 
 class Icons(CreateUpdate):

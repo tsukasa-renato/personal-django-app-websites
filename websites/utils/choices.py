@@ -1,4 +1,4 @@
-def choice_currencies():
+def currencies():
     return ('AED', 'AED'), ('AFN', 'AFN'), ('ALL', 'ALL'), ('AMD', 'AMD'), ('ANG', 'ANG'), ('AOA', 'AOA'), (
         'ARS', 'ARS'), ('AUD', 'AUD'), ('AWG', 'AWG'), ('AZN', 'AZN'), ('BAM', 'BAM'), ('BBD', 'BBD'), ('BDT', 'BDT'), (
                'BGN', 'BGN'), ('BHD', 'BHD'), ('BND', 'BND'), ('BOB', 'BOB'), ('BRL', 'BRL'), ('BSD', 'BSD'), (
@@ -22,7 +22,7 @@ def choice_currencies():
                'ZAR', 'ZAR'), ('ZMW', 'ZMW')
 
 
-def choice_timezones():
+def timezones():
     return (('Africa/Abidjan', 'Africa/Abidjan'), ('Africa/Accra', 'Africa/Accra'),
             ('Africa/Addis_Ababa', 'Africa/Addis_Ababa'), ('Africa/Algiers', 'Africa/Algiers'),
             ('Africa/Asmara', 'Africa/Asmara'), ('Africa/Bamako', 'Africa/Bamako'), ('Africa/Bangui', 'Africa/Bangui'),
@@ -242,7 +242,7 @@ def choice_timezones():
             ('US/Hawaii', 'US/Hawaii'), ('US/Mountain', 'US/Mountain'), ('US/Pacific', 'US/Pacific'), ('UTC', 'UTC'))
 
 
-def choice_language():
+def languages():
     return ('af_NA', "Afrikaans (Namibia)"), ('af_ZA', "Afrikaans (South Africa)"), ('af', "Afrikaans"), (
     'ak_GH', "Akan (Ghana)"), ('ak', "Akan"), ('sq_AL', "Albanian (Albania)"), ('sq', "Albanian"), (
            'am_ET', "Amharic (Ethiopia)"), ('am', "Amharic"), ('ar_DZ', "Arabic (Algeria)"), (

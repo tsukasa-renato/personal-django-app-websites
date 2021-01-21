@@ -18,3 +18,17 @@ def money_format(money, currency, language):
 
 def smartphone_format(number):
     return f'({number[0:2]}) {number[2:]}'
+
+
+def hexadecimal(value):
+
+    for x in range(len(value)):
+
+        if not value[x].isnumeric() and value[x].lower() not in ['a', 'b', 'c', 'd', 'e', 'f']:
+            return False
+
+    if len(value) < 6:
+        n = 6 - len(value)
+        value = '0'*n + value
+
+    return value.lower()

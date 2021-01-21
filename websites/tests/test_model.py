@@ -1,6 +1,24 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from ..models import Websites, Categories, Products, Groups, Options
+from ..models import Websites, Colors, Categories, Products, Groups, Options
+
+
+class WebsiteTests(TestCase):
+    """
+    Test the following models: websites, colors, icons, banners, contacts
+    """
+
+    def test_colors(self):
+
+        # Valid values
+        values = ('a', 'A', 'f', 'F', '0', '9', 'ab', 'AB', '01', '98', 'AbFe', '0AbDe2', 'fff555')
+        compare = ('00000a', '00000a', '00000f', '00000f', '000000', '000009', '0000ab', '0000ab',
+                   '000001', '000098', '00abfe', '0abde2', 'fff555')
+
+        for x, v in enumerate(values):
+            website = Websites.objects.create(url=v, title="title")
+            color = Colors.objects.create(websites=website, navbar=v, category=v, active=v, footer=v, text=v)
+            self.assertEqual(color.navbar, compare[x])
 
 
 class InitialDataTest(TestCase):
