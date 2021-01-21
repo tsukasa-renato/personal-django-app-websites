@@ -2,8 +2,13 @@ from django.test import TestCase, Client
 from websites.utils.utils import money_format
 from ..models import Websites, Contacts, Categories, Products, Groups, Options
 from decimal import *
+from .scenarios import check_info_test_case
 
 # TestCase self.client hasn't get method
+
+"""
+For the tests with the views, we'll check the status code, context sent, template name rendered, HTML content.
+"""
 
 
 class WebsiteViewTest(TestCase):
@@ -12,29 +17,26 @@ class WebsiteViewTest(TestCase):
     def setUpTestData(cls):
         cls.website = Websites.objects.create(url='website', title="Website")
 
-    def test_incorrect_url(self):
+    def test_url(self):
 
         client = Client()
 
-        response = client.get('/Website/')
+        Websites.objects.create(url='testurl', title="Test Url")
+
+        response = client.get('/Test Url/')
         self.assertEqual(response.status_code, 404)
 
-        response = client.get('/websites/')
+        response = client.get('/TESTURL/')
         self.assertEqual(response.status_code, 404)
 
-    def test_website(self):
-        """
-        Using the correct url check status, context, templates names, and html code
-        """
+        response = client.get('/testurl1/')
+        self.assertEqual(response.status_code, 404)
 
-        client = Client()
-
-        response = client.get('/website/')
-
+        response = client.get('/testurl/')
         self.assertEqual(response.status_code, 200)
 
         context = response.context
-        self.assertEqual(context['website'].title, "Website")
+        self.assertEqual(context['website'].title, "Test Url")
         self.assertEqual(context['icon'], None)
         self.assertEqual(context['color'], None)
         self.assertEqual(context['contact'], None)
@@ -48,76 +50,61 @@ class WebsiteViewTest(TestCase):
         self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
         self.assertEqual(templates[4].name, "partial/_credits.html")
 
-        self.assertContains(response, "Website")
+        self.assertContains(response, "Test Url")
 
-    def test_contact(self):
-        """
-        Register a contact for the website and check status, context, templates, and html code
-        """
+    def test_check_info(self):
 
-        Contacts.objects.create(websites=self.website, telephone='7873923408', email='example@email.com',
-                                facebook='example', instagram='example', twitter='example', linkedin='example',
-                                whatsapp='7873923408')
+        check_info_test_case()
 
         client = Client()
 
-        response = client.get('/website/')
-
+        response = client.get('/checkinfo/')
         self.assertEqual(response.status_code, 200)
 
         context = response.context
+        self.assertEqual(context['website'].title, "Check Info")
         self.assertEqual(context['contact'].telephone, '7873923408')
-        self.assertEqual(context['contact'].email, 'example@email.com')
-        self.assertEqual(context['contact'].facebook, 'example')
-        self.assertEqual(context['contact'].instagram, 'example')
-        self.assertEqual(context['contact'].twitter, 'example')
-        self.assertEqual(context['contact'].linkedin, 'example')
+        self.assertEqual(context['contact'].email, 'checkinfo@gmail.com')
+        self.assertEqual(context['contact'].facebook, 'checkinfofacebook')
+        self.assertEqual(context['contact'].instagram, 'checkinfoinstagram')
+        self.assertEqual(context['contact'].twitter, 'checkinfotwitter')
+        self.assertEqual(context['contact'].linkedin, 'checkinfolinkedin')
+        self.assertEqual(context['contact'].pinterest, 'checkinfopinterest')
+        self.assertEqual(context['contact'].youtube, 'checkinfoyoutube')
         self.assertEqual(context['contact'].whatsapp, '7873923408')
-
-        templates = response.templates
-        self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
-        self.assertEqual(templates[4].name, 'partial/_contact.html')
-        self.assertEqual(templates[5].name, 'partial/_credits.html')
-
-        self.assertContains(response, "Website")
-        self.assertContains(response, "example@email.com")
-        self.assertContains(response, "7873923408")
-        self.assertContains(response, "facebook.com/example")
-        self.assertContains(response, "instagram.com/example")
-        self.assertContains(response, "twitter.com/example")
-        self.assertContains(response, "linkedin.com/in/example")
-
-    def test_categories(self):
-        """
-        Register categories and check status, context, templates, html code
-        """
-
-        Categories.objects.create(websites=self.website, title="Category 1", position=1)
-        Categories.objects.create(websites=self.website, title="Category 2", position=2)
-        Categories.objects.create(websites=self.website, title="Category 3", position=4)
-        Categories.objects.create(websites=self.website, title="Category 4", position=3)
-
-        client = Client()
-
-        response = client.get('/website/')
-
-        self.assertEqual(response.status_code, 200)
-
-        context = response.context
+        self.assertEqual(context['contact'].social_media_text, 'Follow us :D')
+        self.assertEqual(context['contact'].whatsapp_text, 'Whatsapp:')
         self.assertEqual(context['categories'][0].title, "Category 1")
         self.assertEqual(context['categories'][1].title, "Category 2")
-        self.assertEqual(context['categories'][2].title, "Category 4")
-        self.assertEqual(context['categories'][3].title, "Category 3")
+        self.assertEqual(context['categories'][2].title, "Category 3")
+        self.assertEqual(context['categories'][3].title, "Category 4")
+        self.assertEqual(context['categories'][4].title, "Category 5")
+        self.assertEqual(context['categories'][5].title, "Category 6")
 
         templates = response.templates
+        self.assertEqual(templates[0].name, 'website.html')
+        self.assertEqual(templates[1].name, 'base.html')
+        self.assertEqual(templates[2].name, 'partial/_head.html')
         self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
         self.assertEqual(templates[4].name, 'partial/_categories.html')
-        self.assertEqual(templates[5].name, 'partial/_credits.html')
+        self.assertEqual(templates[5].name, 'partial/_contact.html')
+        self.assertEqual(templates[6].name, 'partial/_credits.html')
 
+        self.assertContains(response, "Check Info")
+        self.assertContains(response, "checkinfo@gmail.com")
+        self.assertContains(response, "7873923408")
+        self.assertContains(response, "facebook.com/checkinfofacebook")
+        self.assertContains(response, "instagram.com/checkinfoinstagram")
+        self.assertContains(response, "twitter.com/checkinfotwitter")
+        self.assertContains(response, "linkedin.com/in/checkinfolinkedin")
+        self.assertContains(response, "youtube.com/channel/checkinfoyoutube")
+        self.assertContains(response, "pinterest.com/checkinfopinterest")
         self.assertContains(response, "Category 1")
         self.assertContains(response, "Category 2")
         self.assertContains(response, "Category 3")
         self.assertContains(response, "Category 4")
+        self.assertContains(response, "Category 5")
+        self.assertContains(response, "Category 6")
 
 
 class ShowProductsViewTest(TestCase):

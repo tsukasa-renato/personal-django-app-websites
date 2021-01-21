@@ -1,6 +1,22 @@
 from ..models import Websites, Contacts, Categories, Products, Groups, Options
 
 
+def check_info_test_case():
+    """
+    The scenario created to check website information, in this case, we'll add contact, 6 categories
+    """
+
+    website = Websites.objects.create(url='checkinfo', title="Check Info")
+
+    for x in range(6):
+        Categories.objects.create(websites=website, title=f'Category {x+1}')
+
+    Contacts.objects.create(websites=website, telephone='7873923408', email='checkinfo@gmail.com',
+                            facebook='checkinfofacebook', instagram='checkinfoinstagram', twitter='checkinfotwitter',
+                            linkedin='checkinfolinkedin', pinterest='checkinfopinterest', youtube='checkinfoyoutube',
+                            whatsapp='7873923408', social_media_text='Follow us :D', whatsapp_text='Whatsapp:')
+
+
 def create_scenario_1():
     """
     The scenario created for testing, with a website, contacts, four categories, 9 products for the first category,
