@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from websites.utils.utils import money_format
 from ..models import Websites, Categories, Products, Groups, Options
 from decimal import *
-from .scenarios import check_info, colors, images
+from .scenarios import check_info, colors, images, products
 
 # BUG: TestCase self.client hasn't get method
 
@@ -130,7 +130,6 @@ class WebsiteViewTest(TestCase):
         self.assertContains(response, "color: #fcff44;")
         self.assertContains(response, "color: #d50e04;")
 
-"""
     # You need to download images from the internet
     def test_images(self):
 
@@ -167,7 +166,7 @@ class WebsiteViewTest(TestCase):
         self.assertContains(response, 'src="/media/images/home.png"')
         self.assertContains(response, 'src="/media/images/banner-1.jpg"')
         self.assertContains(response, 'src="/media/images/banner-2.jpg"')
-"""
+
 
 class ShowProductsViewTest(TestCase):
 
@@ -200,6 +199,44 @@ class ShowProductsViewTest(TestCase):
 
         Products.objects.create(websites=cls.website, categories=cls.c2, title="Promotional2", price=10.2,
                                 promotional_price=5, show_on_home=False)
+
+    def test_products_on_home_2(self):
+
+        products()
+
+        client = Client()
+
+        response = client.get('/products/')
+
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+
+        for x in range(4):
+            self.assertEqual(context['categories'][x].title, f'Category {x+1}')
+
+        y = 0
+        for x in range(2):
+
+            self.assertEqual(context['products'][y].title, f'Category 1 Product {x + 1}')
+            self.assertEqual(context['products'][y].price, Decimal(x+1))
+
+            y += 1
+
+            self.assertEqual(context['products'][y].title, f'Category 1 Promotional {x + 1}')
+            self.assertEqual(context['products'][y].price, Decimal(x+1))
+            self.assertEqual(context['products'][y].promotional_price, Decimal(f'{x}.{x}'))
+
+            y += 1
+
+            if y == 8:
+                break
+
+            self.assertEqual(context['products'][y].title, f'Category 1 Price type 3 {x + 1}')
+            self.assertEqual(context['products'][y].price, None)
+            self.assertEqual(context['products'][y].price_type, '3')
+
+            y += 1
 
     def test_products_on_home(self):
 

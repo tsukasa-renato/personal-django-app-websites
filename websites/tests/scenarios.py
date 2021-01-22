@@ -49,6 +49,41 @@ def images():
     Categories.objects.create(websites=website, title="Category 1")
 
 
+def products():
+    """
+    The scenario created to test list product, with a website, 4 categories, 27 products for the first two categories,
+    9 products has promotional price and 9 products without price (price_type=3). Also is tested the 'available'
+    and 'show_home' field. The promotional price test the floating point problem.
+    """
+    website = Websites.objects.create(url='products', title="Products")
+
+    categories = []
+
+    for x in range(4):
+        categories.append(Categories.objects.create(websites=website, title=f"Category {x+1}"))
+
+    for x in range(9):
+        Products.objects.create(websites=website, categories=categories[0],
+                                title=f'{categories[0].title} Product {x+1}', price=x+1)
+
+        Products.objects.create(websites=website, categories=categories[0],
+                                title=f'{categories[0].title} Promotional {x+1}', price=x+1,
+                                promotional_price=float(f'{x}.{x}'))
+
+        Products.objects.create(websites=website, categories=categories[0],
+                                title=f'{categories[0].title} Price type 3 {x+1}', price_type='3')
+
+        Products.objects.create(websites=website, categories=categories[1], show_on_home=False,
+                                title=f'{categories[1].title} Product {x+1}', price=x+1)
+
+        Products.objects.create(websites=website, categories=categories[1], show_on_home=False,
+                                title=f'{categories[1].title} Promotional {x+1}', price=x+1,
+                                promotional_price=float(f'{x}.{x}'))
+
+        Products.objects.create(websites=website, categories=categories[1], show_on_home=False,
+                                title=f'{categories[1].title} Price type 3 {x+1}', price_type='3')
+
+
 def create_scenario_1():
     """
     The scenario created for testing, with a website, contacts, four categories, 9 products for the first category,

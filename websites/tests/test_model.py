@@ -49,7 +49,6 @@ class WebsiteTests(TestCase):
         with self.assertRaisesMessage(ValidationError, "Title hover error: invalid hexadecimal"):
             Colors.objects.create(websites=website, title_hover='Z')
 
-"""
     # You need to download the images from the internet
     def test_images(self):
 
@@ -70,7 +69,6 @@ class WebsiteTests(TestCase):
 
         banner = Banners.objects.create(websites=website, images='images/banner-2.jpg')
         self.assertEqual(banner.images.url, '/media/images/banner-2.jpg')
-"""
 
 
 class InitialDataTest(TestCase):
@@ -220,7 +218,7 @@ class ProductsModelTest(InitialDataTest):
             Products.objects.create(websites=self.website, categories=self.category, title="price",
                                     promotional_price=1)
 
-        with self.assertRaisesMessage(ValidationError, "Promotional price can't be less than price"):
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be greater than price"):
             Products.objects.create(websites=self.website, categories=self.category, title="price", price=1,
                                     promotional_price=2)
 
@@ -457,7 +455,7 @@ class OptionsModelTest(InitialDataTest):
             Options.objects.create(websites=self.website, groups=group, title="Promotional price",
                                    promotional_price=1)
 
-        with self.assertRaisesMessage(ValidationError, "Promotional price can't be less than price"):
+        with self.assertRaisesMessage(ValidationError, "Promotional price can't be greater than price"):
             Options.objects.create(websites=self.website, groups=group, title="Promotional price", price=1,
                                    promotional_price=2)
 

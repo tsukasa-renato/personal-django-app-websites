@@ -117,7 +117,7 @@ class Prices(models.Model):
                 raise ValidationError("Price can't be None when the promotional_price is set")
 
             if self.price < self.promotional_price:
-                raise ValidationError("Promotional price can't be less than price")
+                raise ValidationError("Promotional price can't be greater than price")
 
     class Meta:
         abstract = True
