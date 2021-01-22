@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 .idea
 media
+# CopyRight Images :/
+websites/tests/images
 # C extensions
 *.so
 

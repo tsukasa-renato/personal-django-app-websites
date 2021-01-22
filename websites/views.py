@@ -6,6 +6,7 @@ from .models import Websites, Categories, Products, Groups, Options, \
 from django.http import HttpResponseBadRequest
 from decimal import Decimal
 
+
 def website_configs(context):
 
     context['website'] = get_object_or_404(Websites, url=context['url'])

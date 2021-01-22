@@ -14,8 +14,8 @@
 <script src="{% static 'custom/js/website.js' %}"></script>
 <link rel="stylesheet" href="{% static 'custom/css/website.css' %}">
 
-{% if icons %}
-<link rel="shortcut icon" href="{{ icons.shortcut.url }}" type="image/x-icon">
+{% if icon %}
+<link rel="shortcut icon" href="{{ icon.shortcut.url }}" type="image/x-icon">
 {% else %}
 <link rel="shortcut icon" href="{% static 'media/link.png' %}" type="image/x-icon">
 {% endif %}

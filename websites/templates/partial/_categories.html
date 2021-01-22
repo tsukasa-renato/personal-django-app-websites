@@ -5,8 +5,8 @@
         href="{% url 'websites:home' url=website.url %}" id="home_category">
 
     <figure class="figure" style="width:80px;height:60px;">
-        {% if website.home_images %}
-        <img src="{{ icon.home }}" class="figure-img img-fluid rounded"
+        {% if website.home %}
+        <img src="{{ icon.home.url }}" class="figure-img img-fluid rounded"
              alt="{{ website.home }}"
              style="height:50px;width:50px;">
         {% else %}

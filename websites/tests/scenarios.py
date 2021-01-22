@@ -1,4 +1,4 @@
-from ..models import Websites, Colors, Contacts, Categories, Products, Groups, Options
+from ..models import Websites, Colors, Icons, Banners, Contacts, Categories, Products, Groups, Options
 
 """
 Here are the test scenarios
@@ -30,6 +30,23 @@ def colors():
 
     Colors.objects.create(websites=website, navbar='FF44E7', category='FF4444', active='7044FF', footer='44F8FF',
                           text='44FFA8', title='FCFF44', title_hover='D50E04')
+
+
+def images():
+    """
+    This scenario was created to check whether images is working, so we'll use icons and banners for the website
+    """
+
+    website = Websites.objects.create(url='images', title="Images")
+
+    Icons.objects.create(websites=website, shortcut='images/shortcut.png', account='images/account.png',
+                         cart='images/cart.png', search='images/search.png', home='images/home.png')
+
+    Banners.objects.create(websites=website, images='images/banner-1.jpg')
+
+    Banners.objects.create(websites=website, images='images/banner-2.jpg')
+
+    Categories.objects.create(websites=website, title="Category 1")
 
 
 def create_scenario_1():

@@ -22,7 +22,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
-    def check_others(self, website, contact):
+    def check_contact(self, website, contact):
         """
             Check top navbar and contact elements' information
         """
@@ -92,7 +92,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         self.check_categories(self.categories)
         self.check_products(products)
-        self.check_others(self.website, self.contact)
+        self.check_contact(self.website, self.contact)
 
         page1 = self.selenium.find_element_by_id('page1')
         page2 = self.selenium.find_element_by_id('page2')
@@ -113,7 +113,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         self.check_categories(self.categories)
         self.check_products(products)
-        self.check_others(self.website, self.contact)
+        self.check_contact(self.website, self.contact)
 
         previous_page = self.selenium.find_element_by_id('previous_page')
         page1 = self.selenium.find_element_by_id('page1')
@@ -135,7 +135,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         self.check_categories(self.categories)
         self.check_products(products)
-        self.check_others(self.website, self.contact)
+        self.check_contact(self.website, self.contact)
 
         page1 = self.selenium.find_element_by_id('page1')
         page2 = self.selenium.find_element_by_id('page2')
@@ -155,7 +155,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         self.check_categories(self.categories)
         self.check_products(products)
-        self.check_others(self.website, self.contact)
+        self.check_contact(self.website, self.contact)
 
         previous_page = self.selenium.find_element_by_id('previous_page')
         page1 = self.selenium.find_element_by_id('page1')
@@ -180,7 +180,7 @@ class ShowProductsViewTestSelenium(StaticLiveServerTestCase):
 
         self.check_categories(self.categories)
         self.check_products(products)
-        self.check_others(self.website, self.contact)
+        self.check_contact(self.website, self.contact)
 
 
 class ShowProductViewTestSelenium(StaticLiveServerTestCase):

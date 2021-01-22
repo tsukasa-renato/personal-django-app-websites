@@ -2,9 +2,9 @@ from django.test import TestCase, Client
 from websites.utils.utils import money_format
 from ..models import Websites, Categories, Products, Groups, Options
 from decimal import *
-from .scenarios import check_info, colors
+from .scenarios import check_info, colors, images
 
-# TestCase self.client hasn't get method
+# BUG: TestCase self.client hasn't get method
 
 """
 For the tests with the views, we'll check the status code, context sent, template name rendered, HTML content.
@@ -12,10 +12,6 @@ For the tests with the views, we'll check the status code, context sent, templat
 
 
 class WebsiteViewTest(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.website = Websites.objects.create(url='website', title="Website")
 
     def test_url(self):
 
@@ -126,14 +122,52 @@ class WebsiteViewTest(TestCase):
         self.assertEqual(context['color'].title_hover, "d50e04")
 
         self.assertContains(response, "Colors")
-        self.assertContains(response, "color: #ff44e7;")
-        self.assertContains(response, "color: #ff4444;")
-        self.assertContains(response, "color: #7044ff;")
-        self.assertContains(response, "color: #44f8ff;")
+        self.assertContains(response, "background-color: #ff44e7;")
+        self.assertContains(response, "background-color: #ff4444;")
+        self.assertContains(response, "background-color: #7044ff;")
+        self.assertContains(response, "background-color: #44f8ff;")
         self.assertContains(response, "color: #44ffa8;")
         self.assertContains(response, "color: #fcff44;")
         self.assertContains(response, "color: #d50e04;")
 
+"""
+    # You need to download images from the internet
+    def test_images(self):
+
+        images()
+
+        client = Client()
+
+        response = client.get('/images/')
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context
+        self.assertEqual(context['website'].title, "Images")
+        self.assertEqual(context['icon'].shortcut.url, "/media/images/shortcut.png")
+        self.assertEqual(context['icon'].account.url, "/media/images/account.png")
+        self.assertEqual(context['icon'].cart.url, "/media/images/cart.png")
+        self.assertEqual(context['icon'].search.url, "/media/images/search.png")
+        self.assertEqual(context['icon'].home.url, "/media/images/home.png")
+        self.assertEqual(context['banners'][0].images.url, "/media/images/banner-1.jpg")
+        self.assertEqual(context['banners'][1].images.url, "/media/images/banner-2.jpg")
+
+        templates = response.templates
+        self.assertEqual(templates[0].name, 'website.html')
+        self.assertEqual(templates[1].name, 'base.html')
+        self.assertEqual(templates[2].name, 'partial/_head.html')
+        self.assertEqual(templates[3].name, 'partial/_top_navbar.html')
+        self.assertEqual(templates[4].name, 'partial/_categories.html')
+        self.assertEqual(templates[5].name, 'partial/_banners.html')
+
+        self.assertContains(response, "Images")
+        self.assertContains(response, 'href="/media/images/shortcut.png"')
+        self.assertContains(response, 'src="/media/images/account.png"')
+        self.assertContains(response, 'src="/media/images/cart.png"')
+        self.assertContains(response, 'src="/media/images/search.png"')
+        self.assertContains(response, 'src="/media/images/home.png"')
+        self.assertContains(response, 'src="/media/images/banner-1.jpg"')
+        self.assertContains(response, 'src="/media/images/banner-2.jpg"')
+"""
 
 class ShowProductsViewTest(TestCase):
 

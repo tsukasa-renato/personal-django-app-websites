@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from ..models import Websites, Colors, Categories, Products, Groups, Options
+from ..models import Websites, Colors, Icons, Banners, Categories, Products, Groups, Options
 
 
 class WebsiteTests(TestCase):
@@ -48,6 +48,29 @@ class WebsiteTests(TestCase):
 
         with self.assertRaisesMessage(ValidationError, "Title hover error: invalid hexadecimal"):
             Colors.objects.create(websites=website, title_hover='Z')
+
+"""
+    # You need to download the images from the internet
+    def test_images(self):
+
+        # Create folder in websites/tests/ and you download images from the internet
+
+        website = Websites.objects.create(url='images', title="Images")
+        icon = Icons.objects.create(websites=website, shortcut='images/shortcut.png', account='images/account.png',
+                                    cart='images/cart.png', search='images/search.png', home='images/home.png')
+
+        self.assertEqual(icon.shortcut.url, '/media/images/shortcut.png')
+        self.assertEqual(icon.account.url, '/media/images/account.png')
+        self.assertEqual(icon.cart.url, '/media/images/cart.png')
+        self.assertEqual(icon.search.url, '/media/images/search.png')
+        self.assertEqual(icon.home.url, '/media/images/home.png')
+
+        banner = Banners.objects.create(websites=website, images='images/banner-1.jpg')
+        self.assertEqual(banner.images.url, '/media/images/banner-1.jpg')
+
+        banner = Banners.objects.create(websites=website, images='images/banner-2.jpg')
+        self.assertEqual(banner.images.url, '/media/images/banner-2.jpg')
+"""
 
 
 class InitialDataTest(TestCase):
