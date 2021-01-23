@@ -49,10 +49,7 @@ class WebsiteTests(TestCase):
         with self.assertRaisesMessage(ValidationError, "Title hover error: invalid hexadecimal"):
             Colors.objects.create(websites=website, title_hover='Z')
 
-    # You need to download the images from the internet
     def test_images(self):
-
-        # Create folder in websites/tests/ and you download images from the internet
 
         website = Websites.objects.create(url='images', title="Images")
         icon = Icons.objects.create(websites=website, shortcut='images/shortcut.png', account='images/account.png',

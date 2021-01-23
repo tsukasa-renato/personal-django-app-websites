@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 import decimal
 
-# TODO: Create validations for the websites model
-# TODO: Create validations for the contacts model
+# TODO: Create validations for the url
+# TODO: Create validations for the whatsapp
 
 
 # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.FileField.upload_to

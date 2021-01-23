@@ -31,6 +31,10 @@ def colors():
     Colors.objects.create(websites=website, navbar='FF44E7', category='FF4444', active='7044FF', footer='44F8FF',
                           text='44FFA8', title='FCFF44', title_hover='D50E04')
 
+    category = Categories.objects.create(websites=website, title="Category 1")
+
+    Products.objects.create(websites=website, categories=category, title="Product", price=1000)
+
 
 def images():
     """
@@ -84,87 +88,35 @@ def products():
                                 title=f'{categories[1].title} Price type 3 {x+1}', price_type='3')
 
 
-def create_scenario_1():
-    """
-    The scenario created for testing, with a website, contacts, four categories, 9 products for the first category,
-    and 9 products for the second category
-    """
-    website = Websites.objects.create(url='website', title="Website")
+def product_type(price_type):
 
-    categories = [
-        Categories.objects.create(websites=website, title="Category 1"),
-        Categories.objects.create(websites=website, title="Category 2"),
-        Categories.objects.create(websites=website, title="Category 3"),
-        Categories.objects.create(websites=website, title="Category 4")
-    ]
+    price = 30000 if price_type != '3' else None
 
-    contact = Contacts.objects.create(websites=website, telephone='7873923408', email='example@email.com',
-                                      facebook='example', instagram='example', twitter='example', linkedin='example',
-                                      whatsapp='7873923408')
+    website = Websites.objects.create(url='products', title="Products")
 
-    aux = (
-        ("Product One", 10.2), ("Product Two", 10.2), ("Product Three", 10.2), ("Product Four", 10.2),
-        ("Product Five", 10.2), ("Product Six", 10.2), ("Product Seven", 10.2), ("Product Eight", 10.2),
-    )
-
-    for product in aux:
-        Products.objects.create(websites=website, categories=categories[0],
-                                title=product[0], price=product[1])
-
-    Products.objects.create(websites=website, categories=categories[0], title="Promotional",
-                            price=10.2, promotional_price=5)
-
-    aux = (
-        ("One Product", 10.2), ("Two Product", 10.2), ("Three Product", 10.2), ("Four Product", 10.2),
-        ("Five Product", 10.2), ("Six Product", 10.2), ("Seven Product", 10.2), ("Eight Product", 10.2),
-    )
-
-    for product in aux:
-        Products.objects.create(websites=website, categories=categories[1], title=product[0],
-                                price=product[1], show_on_home=False)
-
-    Products.objects.create(websites=website, categories=categories[1], title="Promotional2",
-                            price=10.2, promotional_price=5, show_on_home=False)
-
-    return website, contact, categories
-
-
-def create_scenario_2():
-
-    website = Websites.objects.create(url='website2', title="Website")
     category = Categories.objects.create(websites=website, title="Category")
 
-    product_price = 30000
-    option_price = None
-    group_type = None
+    product = Products.objects.create(websites=website, categories=category, title=f'Product',
+                                      price=price, price_type=price_type)
+
+    size = ((1, 1), (0, 1), (0, 10))
+
+    if price_type != '1':
+        price_type = '1'
+        price = 200
+    else:
+        price_type = None
+        price = None
 
     for x in range(3):
 
+        group = Groups.objects.create(websites=website, products=product, title=f'group {x + 1}',
+                                      maximum=size[x][1], minimum=size[x][0], price_type=price_type)
+
+        for y in range(3):
+            Options.objects.create(websites=website, groups=group, title=f'option {y+1}', price=price,
+                                   maximum=size[x][1], minimum=0)
+
         if x > 0:
-            option_price = 200
-            group_type = '1'
-
-        if x == 2:
-            product_price = None
-
-        product = Products.objects.create(websites=website, categories=category, title=f'Product{x+1}',
-                                          description=f'Product with price type {x+1}',
-                                          price=product_price, price_type=str(x+1))
-
-        groups = (
-            ('radio group', 1, 1), ('checkbox group', 1, 0), ('numbers group', 5, 0),
-        )
-
-        for group in groups:
-            g = Groups.objects.create(websites=website, products=product, title=group[0],
-                                      maximum=group[1], minimum=group[2], price_type=group_type)
-
-            for y in range(3):
-                Options.objects.create(websites=website, groups=g, title=f'Op{y+1}', maximum=group[1],
-                                       price=option_price)
-
-            Options.objects.create(websites=website, groups=g, title="Readonly", maximum=group[1], minimum=group[1],
-                                   price=option_price)
-
-    return website, category
-
+            Options.objects.create(websites=website, groups=group, title="Readonly", maximum=size[x][1],
+                                   minimum=size[x][1], price=price)

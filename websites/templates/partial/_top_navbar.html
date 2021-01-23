@@ -18,7 +18,7 @@
                       action="{% url 'websites:home' url=website.url %}">
                     <input class="form-control border-0" type="search" placeholder=""
                            aria-label="Search" name="search" id="search">
-                    <button class="btn btn-transparent border-0" type="submit">
+                    <button id="navbar_search" class="btn btn-transparent border-0" type="submit">
 
                         {% if icon.search %}
                         <img src="{{ icon.search.url }}">
@@ -30,7 +30,7 @@
                 </form>
             </li>
             <li class="nav-item">
-                <a href="" class="nav-link">
+                <a href="" id="navbar_account" class="nav-link">
 
                     {% if icon.account %}
                     <img src="{{ icon.account.url }}">
@@ -41,7 +41,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'websites:cart' url=website.url %}" class="nav-link">
+                <a href="{% url 'websites:cart' url=website.url %}" id="navbar_cart" class="nav-link">
 
                     {% if icon.cart %}
                     <img src="{{ icon.cart.url }}">
