@@ -14,7 +14,7 @@ class WebsiteTest(StaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.selenium = WebDriver('/home/tsukasa/Documents/chromedriver')
+        cls.selenium = WebDriver('websites/tests/Webdriver/chromedriver')
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -86,7 +86,7 @@ class ShowProductsTest(StaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.selenium = WebDriver('/home/tsukasa/Documents/chromedriver')
+        cls.selenium = WebDriver('websites/tests/Webdriver/chromedriver')
         cls.selenium.implicitly_wait(30)
 
     @classmethod
@@ -259,7 +259,7 @@ class ShowProductTest(StaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.selenium = WebDriver('/home/tsukasa/Documents/chromedriver')
+        cls.selenium = WebDriver('websites/tests/Webdriver/chromedriver')
         cls.selenium.implicitly_wait(30)
 
     @classmethod
