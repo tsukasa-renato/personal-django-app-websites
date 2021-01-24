@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from .scenarios import check_info, colors, images, products, product_type
-from websites.models import Websites
 from websites.utils.utils import money_format
 from decimal import Decimal
 
@@ -87,7 +86,7 @@ class ShowProductsTest(StaticLiveServerTestCase):
         super().setUpClass()
 
         cls.selenium = WebDriver('websites/tests/Webdriver/chromedriver')
-        cls.selenium.implicitly_wait(30)
+        cls.selenium.implicitly_wait(120)
 
     @classmethod
     def tearDownClass(cls):
@@ -209,7 +208,6 @@ class ShowProductsTest(StaticLiveServerTestCase):
         actions.click(category_2)
         actions.perform()
 
-
         self.check_categories()
 
         self.check_products(2)
@@ -260,7 +258,7 @@ class ShowProductTest(StaticLiveServerTestCase):
         super().setUpClass()
 
         cls.selenium = WebDriver('websites/tests/Webdriver/chromedriver')
-        cls.selenium.implicitly_wait(30)
+        cls.selenium.implicitly_wait(120)
 
     @classmethod
     def tearDownClass(cls):
@@ -294,35 +292,28 @@ class ShowProductTest(StaticLiveServerTestCase):
             element = self.selenium.find_element_by_id(f'group{x + 1}_options')
             self.assertEqual(element.text, text)
 
-    def interact_with_options(self, options):
+    def interact_with_options(self):
 
-        group = 1
-        aux = 1
+        for x in range(3):
 
-        for option in options:
+            for y in range(3):
+                element = self.selenium.find_element_by_id(f'group{x + 1}option{y + 1}')
+                self.click_option(element)
+                element = self.selenium.find_element_by_id(f'group{x + 1}_title')
+                self.assertEqual(element.text, f'option {y + 1}')
 
-            if (aux == 4 and group == 1) or aux == 5:
-                group += 1
-                aux = 1
-
-            element = self.selenium.find_element_by_id(f'{option}')
-
-            actions = ActionChains(self.selenium)
-            actions.click(element)
-
-            if element.get_attribute('type') == 'number':
-                actions.send_keys('2')
-
-            actions.perform()
-
-            element = self.selenium.find_element_by_id(f'group{group}_title')
-
-            if aux == 4:
+            if x > 0:
+                element = self.selenium.find_element_by_id(f'group{x + 1}readonly')
+                self.click_option(element)
+                element = self.selenium.find_element_by_id(f'group{x + 1}_title')
                 self.assertEqual(element.text, f'Readonly')
-            else:
-                self.assertEqual(element.text, f'option {aux}')
 
-            aux += 1
+    def click_option(self, element):
+        actions = ActionChains(self.selenium)
+        actions.click(element)
+        if element.get_attribute('type') == 'number':
+            actions.send_keys('2')
+        actions.perform()
 
     def test_product_1(self):
 
@@ -346,7 +337,7 @@ class ShowProductTest(StaticLiveServerTestCase):
         element = self.selenium.find_element_by_id('product_total')
         self.assertEqual(element.text, total)
 
-        self.interact_with_options(range(12)[1:])
+        self.interact_with_options()
 
         total = '$30,000.00'
 
@@ -375,7 +366,7 @@ class ShowProductTest(StaticLiveServerTestCase):
         element = self.selenium.find_element_by_id('product_total')
         self.assertEqual(element.text, total)
 
-        self.interact_with_options(range(23)[12:])
+        self.interact_with_options()
 
         total = '$34,200.00'
 
@@ -404,7 +395,7 @@ class ShowProductTest(StaticLiveServerTestCase):
         element = self.selenium.find_element_by_id('product_total')
         self.assertEqual(element.text, total)
 
-        self.interact_with_options(range(34)[23:])
+        self.interact_with_options()
 
         total = '$4,200.00'
 

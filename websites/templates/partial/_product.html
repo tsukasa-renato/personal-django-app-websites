@@ -142,9 +142,11 @@
                     return  '<div class="form-check mr-2"> ' +
 
                             '<input class="form-check-input" type="radio" name="{{ option.groups|remove_dash }}" ' +
-                            'id="{{ option.pk }}" value="{{ option.pk }}">' +
+                            'id="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"' +
+                            ' value="{{ option.pk }}">' +
 
-                            '<label class="form-check-label btn-primary rounded p-1" for="{{ option.pk }}"> ' +
+                            '<label class="form-check-label btn-primary rounded p-1" ' +
+                            'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"> ' +
                                 image +
                                 content +
                             '</label> ' +
@@ -152,7 +154,7 @@
                         '</div>';
                 });
 
-                $("#{{ option.pk }}").click(function(){
+                $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                     change_option_info("{{ option.groups|remove_dash }}",
                                     "{{ option.title }}", desc, image_url)
@@ -189,9 +191,11 @@
                     return  '<div class="form-check mr-2"> ' +
 
                             '<input class="form-check-input" type="checkbox" name="{{ option.pk }}" ' +
-                            'id="{{ option.pk }}" value="{{ option.pk }}"' + checked +  '>' +
+                            'id="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"' +
+                             'value="{{ option.pk }}"' + checked +  '>' +
 
-                            '<label class="form-check-label btn-primary rounded p-1" for="{{ option.pk }}"> ' +
+                            '<label class="form-check-label btn-primary rounded p-1" ' +
+                            'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"> ' +
                                 image +
                                 content +
                             '</label> ' +
@@ -199,7 +203,7 @@
                         '</div>';
                 });
 
-                $("#{{ option.pk }}").click(function(){
+                $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                     change_option_info("{{ option.groups|remove_dash }}",
                                     "{{ option.title }}", desc, image_url)
@@ -261,10 +265,12 @@
                     return  '<div class="form-check mr-2"> ' +
 
                             '<input class="form-control-input mr-1" type="number" name="{{ option.pk }}" ' +
-                            'id="{{ option.pk }}" value="{{ option.minimum }}" min="{{ option.minimum }}" ' +
+                            'id="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"' +
+                            ' value="{{ option.minimum }}" min="{{ option.minimum }}" ' +
                             'max="{{ option.maximum }}" style="width:50px;" ' + readonly + '>' +
 
-                            '<label class="form-control-input btn-primary rounded p-1" for="{{ option.pk }}">' +
+                            '<label class="form-control-input btn-primary rounded p-1" ' +
+                            'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}">' +
                                 image +
                                 content +
                             '</label>' +
@@ -272,7 +278,7 @@
                         '</div>';
                 });
 
-                $("#{{ option.pk }}").click(function(){
+                $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                 change_option_info("{{ option.groups|remove_dash }}",
                                     "{{ option.title }}", desc, image_url)
@@ -319,9 +325,9 @@
 
                 });
 
-                $("#{{ option.pk }}").keyup(function(){
+                $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").keyup(function(){
 
-                    $("#{{ option.pk }}").click()
+                    $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click();
 
                 });
 
