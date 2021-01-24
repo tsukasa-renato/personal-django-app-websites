@@ -78,8 +78,12 @@ WSGI_APPLICATION = 'linkrevolution.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'linkrevolution',
+        'USER': 'tsukasa',
+        'PASSWORD': 'examplePASS123',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -124,7 +128,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'testserver']
+ALLOWED_HOSTS = ['127.0.0.1', 'testserver', 'localhost']
 
 INTERNAL_IPS = [
     # ...
