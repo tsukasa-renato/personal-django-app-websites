@@ -16,7 +16,7 @@ class WebsiteTests(TestCase):
                    '000001', '000098', '00abfe', '0abde2', 'fff555')
 
         for x, v in enumerate(values):
-            website = Websites.objects.create(url=v, title="title")
+            website = Websites.objects.create(url=f'website{x}', title="title")
             color = Colors.objects.create(websites=website, navbar=v, category=v, active=v, footer=v, text=v,
                                           title=v, title_hover=v)
             self.assertEqual(color.navbar, compare[x])

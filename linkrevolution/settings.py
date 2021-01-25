@@ -78,12 +78,10 @@ WSGI_APPLICATION = 'linkrevolution.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'linkrevolution',
-        'USER': 'tsukasa',
-        'PASSWORD': 'examplePASS123',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'read_default_file': '/etc/mysql/my.cnf',
+        },
     }
 }
 
