@@ -44,4 +44,4 @@ This project was proposed just to explore the Django tool, and just as an effort
 In the case of the product, for example, the project considers a product as a result of a set of customizable options, each product can have many groups and each group can have many options.
 The products, groups, options have some parameters that set how the price will be calculated, in other words, these parameters are combined to generate the final price (e.g. price type field).
 You can see the website adapting as you will registering banners, categories, products, and others.
-This project intends to be simple, no authentication or payment systems were created, the database used is the PostgreSQL, the focus was on the logic of the products, validations, and tests.
+This project intends to be simple, no authentication or payment systems were created, the database used is the SQLite, the focus was on the logic of the products, validations, and tests.
