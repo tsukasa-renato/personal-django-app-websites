@@ -20,7 +20,7 @@
 
 {% for category in categories %}
 
-<a {% if selected_category == category %} class="btn categories active" {% else %} class="btn categories" {% endif %}
+<a {% if selected_category == category.slug %} class="btn categories active" {% else %} class="btn categories" {% endif %}
         href="{% url 'websites:category' url=website.url selected_category=category.slug %}" id="{{ category.slug }}">
 
     {% if category.icon %}
