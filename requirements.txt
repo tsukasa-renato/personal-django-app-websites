@@ -7,3 +7,5 @@ babel==2.9
 pytz~=2020.5
 selenium~=3.141.0
 mysqlclient
+requests==2.25.1
+djangorestframework==3.12.2
