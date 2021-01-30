@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'websites',
+    'rest_framework',
+    'debug_toolbar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -79,9 +80,9 @@ WSGI_APPLICATION = 'linkrevolution.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'linkrevolution',
-        'USER': 'tsukasa',
-        'PASSWORD': 'examplePASS123',
+        'NAME': 'linkrevolution',  # YOUR DATABASE
+        'USER': 'tsukasa',  # YOUR USER
+        'PASSWORD': 'examplePASS123',  # YOUR PASSWORD
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -135,3 +136,8 @@ INTERNAL_IPS = [
     '127.0.0.1',
     # ...
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
