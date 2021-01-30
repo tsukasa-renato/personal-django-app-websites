@@ -5,7 +5,7 @@
 <form method="post" action="{% url 'websites:cart' url=website.url %}" id="options_form">
     {% csrf_token %}
 
-    <input type="hidden" name="product" value="{{ product.pk }}" />
+    <input type="hidden" name="product" value="{{ product.slug }}" />
 
     <div class="row mt-5">
 
