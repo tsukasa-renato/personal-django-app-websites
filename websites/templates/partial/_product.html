@@ -7,6 +7,10 @@
 
     <input type="hidden" name="product" value="{{ product.slug }}" />
 
+    {% if position or position == 0 %}
+    <input type="hidden" name="position" value="{{ position }}" />
+    {% endif %}
+
     <div class="row mt-5">
 
         <div class="col-sm text-center" id="product_image">
