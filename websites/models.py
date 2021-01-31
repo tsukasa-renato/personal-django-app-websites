@@ -248,6 +248,8 @@ class Colors(CreateUpdate):
     text = models.CharField("Text color (hexadecimal): ", max_length=6, null=True, blank=True)
     title = models.CharField("Title color (hexadecimal): ", max_length=6, null=True, blank=True)
     title_hover = models.CharField("Mouse hover color (hexadecimal): ", max_length=6, null=True, blank=True)
+    cart = models.CharField("Cart color (hexadecimal): ", max_length=6, null=True, blank=True)
+    subcart = models.CharField("Cart option color (hexadecimal): ", max_length=6, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Color'
@@ -292,6 +294,16 @@ class Colors(CreateUpdate):
             self.title_hover = hexadecimal(self.title_hover)
             if not self.title_hover:
                 raise ValidationError("Title hover error: invalid hexadecimal")
+
+        if self.cart is not None:
+            self.cart = hexadecimal(self.cart)
+            if not self.cart:
+                raise ValidationError("Cart error: invalid hexadecimal")
+
+        if self.subcart is not None:
+            self.subcart = hexadecimal(self.subcart)
+            if not self.subcart:
+                raise ValidationError("Subcart error: invalid hexadecimal")
 
         super().save(*args, **kwargs)
 
