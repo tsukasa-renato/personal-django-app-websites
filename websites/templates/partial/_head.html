@@ -99,4 +99,20 @@
     {% endif %}
 }
 
+.cart {
+    {% if color.cart %}
+        background-color:#{{ color.cart }};
+    {% else %}
+        background-color:#9AFFEC;
+    {% endif %}
+}
+
+.subcart{
+    {% if color.cart %}
+        background-color:#{{ color.subcart }};
+    {% else %}
+        background-color:#ACFFEF;
+    {% endif %}
+}
+
 </style>

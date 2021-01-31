@@ -1,10 +1,11 @@
+
 {% load static %}
 {% load filters %}
 
 
 {% for product in cart.products %}
 
-<div class="row justify-content-center mt-5 ml-5 mr-5 p-3" style="background-color:#9AFFEC">
+<div class="row justify-content-center cart mt-5 ml-5 mr-5 p-3">
     <div class="col-sm text-center">
         {% if product.images %}
             <img class="card-img-top" src="{{ product.images }}" alt="{{ product.title }}"
@@ -27,7 +28,8 @@
         <h5> Total: {% money_format product.total website.currency website.language %} </h5>
     </div>
     <div class="col-sm text-center">
-        <a class='btn btn-warning'>
+        <a href="{% url 'websites:product-edit' url=website.url selected_product=product.slug position=forloop.counter0 %}"
+           class='btn btn-warning'>
             Edit
         </a>
         <a href="{% url 'websites:cart-remove' url=website.url position=forloop.counter0 %}"
@@ -38,12 +40,12 @@
 </div>
 
 {% for group in product.groups %}
-    <div class="row justify-content-center ml-5 mr-5 border border-white" style="background-color:#ACFFEF">
+    <div class="row justify-content-center subcart ml-5 mr-5 border border-white">
         <h5> {{ group.title }} </h5>
     </div>
 
     {% for option in group.options %}
-    <div class="row justify-content-center ml-5 mr-5 p-3 border border-white" style="background-color:#ACFFEF">
+    <div class="row justify-content-center subcart ml-5 mr-5 p-3 border border-white">
         <div class="col-sm text-center">
             {% if option.model.image %}
                 <img class="card-img-top" src="{{ option.images.url }}" alt="{{ option.images.name }}"
