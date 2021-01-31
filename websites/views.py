@@ -60,6 +60,7 @@ def check_request_for_cart(request, context):
     product = {
         'images': context['product'].images.url if context['product'].images else '',
         'title': context['product'].title,
+        'slug': context['product'].slug,
         'quantity': 1,
         'price': str(context['product'].get_real_price()) if context['product'].get_real_price() else '',
         'groups': []
@@ -181,6 +182,8 @@ class ShowProduct(View):
         if 'cart' in self.request.session:
             context['cart'] = {'quantity': self.request.session['cart']['quantity']}
 
+        context['position'] = kwargs['position'] if 'position' in kwargs else ''
+
         return render(self.request, 'website.html', context)
 
 
@@ -240,7 +243,18 @@ class Cart(View):
 
         product = check_request_for_cart(self.request.POST, context)
 
-        self.request.session['cart']['products'].append(product)
+        if 'position' in self.request.POST:
+
+            position = int(self.request.POST['position'])
+
+            total -= Decimal(self.request.session['cart']['products'][position]['total'])
+            self.request.session['cart']['quantity'] -= self.request.session['cart']['products'][position]['quantity']
+
+            self.request.session['cart']['products'][position] = product
+
+        else:
+
+            self.request.session['cart']['products'].append(product)
 
         total += Decimal(product['total'])
 
