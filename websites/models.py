@@ -3,7 +3,6 @@ from .utils.utils import custom_datetime, money_format, hexadecimal
 from .utils.choices import currencies, timezones, languages
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator
 import decimal
 
 # TODO: Create validations for the url
@@ -106,7 +105,7 @@ class Prices(models.Model):
 
         if self.promotional_price is not None:
 
-            if type(self.promotional_price) not in [int, float]:
+            if type(self.promotional_price) not in [int, float, decimal.Decimal]:
                 raise ValidationError("Promotional price needs be positive integer or float - type received: " +
                                       str(type(self.promotional_price)))
 

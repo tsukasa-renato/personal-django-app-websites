@@ -27,12 +27,13 @@
         <h5> Total: {% money_format product.total website.currency website.language %} </h5>
     </div>
     <div class="col-sm text-center">
-        <button class='btn btn-warning'>
+        <a class='btn btn-warning'>
             Edit
-        </button>
-        <button class='btn btn-danger'>
+        </a>
+        <a href="{% url 'websites:cart-remove' url=website.url position=forloop.counter0 %}"
+           class='btn btn-danger text-white'>
             Remove
-        </button>
+        </a>
     </div>
 </div>
 
