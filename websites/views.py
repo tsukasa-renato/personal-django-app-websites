@@ -193,8 +193,26 @@ class Cart(View):
         context = website_configs(context)
 
         if 'cart' in self.request.session:
+
+            if 'position' in kwargs:
+
+                self.request.session.modified = True
+
+                position = int(kwargs['position'])
+                product = self.request.session['cart']['products'][position]
+
+                total = Decimal(self.request.session['cart']['total'])
+                total -= Decimal(product['total'])
+
+                self.request.session['cart']['total'] = str(total)
+                self.request.session['cart']['quantity'] -= product['quantity']
+
+                del self.request.session['cart']['products'][position]
+
             context['cart'] = self.request.session['cart']
+
         else:
+
             context['cart'] = {
                 'products': [],
                 'quantity': 0,
