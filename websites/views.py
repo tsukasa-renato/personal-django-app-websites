@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import View
 from django.core.paginator import Paginator
 from .models import Websites, Categories, Products, Groups, Options, \
@@ -108,7 +108,7 @@ def check_request_for_cart(request, context):
         if quantity > 0:
 
             context[group]['options'].append({
-                'images': option.images.url if option.images else '',
+                'image': option.images.url if option.images else '',
                 'title': option.title,
                 'price': str(option.get_real_price()) if option.get_real_price() else '',
                 'quantity': quantity,
@@ -203,7 +203,32 @@ class Cart(View):
 
         if 'cart' in self.request.session:
 
-            if 'position' in kwargs:
+            context['cart'] = self.request.session['cart']
+
+        else:
+
+            context['cart'] = {
+                'products': [],
+                'quantity': 0,
+                'total': 0
+            }
+
+        return render(self.request, 'website.html', context)
+
+    def post(self, *args, **kwargs):
+
+        context = kwargs
+
+        return render(self.request, 'website.html', context)
+
+
+class CartActions(View):
+
+    def get(self, *args, **kwargs):
+
+        if 'cart' in self.request.session:
+
+            if 'position' in kwargs and len(self.request.session['cart']['products']) > 0:
 
                 self.request.session.modified = True
 
@@ -218,17 +243,7 @@ class Cart(View):
 
                 del self.request.session['cart']['products'][position]
 
-            context['cart'] = self.request.session['cart']
-
-        else:
-
-            context['cart'] = {
-                'products': [],
-                'quantity': 0,
-                'total': 0
-            }
-
-        return render(self.request, 'website.html', context)
+        return redirect('websites:cart', url=kwargs['url'])
 
     def post(self, *args, **kwargs):
 
@@ -272,4 +287,4 @@ class Cart(View):
 
         context['cart'] = self.request.session['cart']
 
-        return render(self.request, 'website.html', context)
+        return redirect('websites:cart', url=context['url'])

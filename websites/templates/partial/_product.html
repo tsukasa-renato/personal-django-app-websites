@@ -2,7 +2,7 @@
 {% load filters %}
 
 
-<form method="post" action="{% url 'websites:cart' url=website.url %}" id="options_form">
+<form method="post" action="{% url 'websites:cart-add' url=website.url %}" id="options_form">
     {% csrf_token %}
 
     <input type="hidden" name="product" value="{{ product.slug }}" />
@@ -134,7 +134,7 @@
             {% endif %}
 
             {% if option.description %}
-                {{ option.slug|remove_dash }}_desc = {{ option.description }}
+                {{ option.slug|remove_dash }}_desc = "{{ option.description }}"
             {% else %}
                 {{ option.slug|remove_dash }}_desc = ""
             {% endif %}
@@ -262,8 +262,9 @@
 
             {% if option.check_input_type == 'number' %}
 
+                quantity{{ option.pk }} = {{ option.minimum }}
+
                 {% if option.get_real_price %}
-                    quantity{{ option.pk }} = {{ option.minimum }}
                     option_total{{ option.pk }} = {{ option.minimum }} * {{ option.get_real_price }}
                 {% endif %}
 
@@ -294,55 +295,51 @@
 
                 $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
-                change_option_info("{{ option.groups|remove_dash }}",
-                                    "{{ option.title }}", {{ option.slug|remove_dash }}_desc,
-                                    {{ option.slug|remove_dash }}_image_url)
+                    change_option_info("{{ option.groups|remove_dash }}",
+                                        "{{ option.title }}", {{ option.slug|remove_dash }}_desc,
+                                        {{ option.slug|remove_dash }}_image_url)
 
-                    {% if option.minimum < option.maximum  %}
+                    {{ option.groups|remove_dash }}_selected_option -= quantity{{ option.pk }}
 
-                        {{ option.groups|remove_dash }}_selected_option -= quantity{{ option.pk }}
+                    quantity{{ option.pk }} = parseInt($(this).val())
 
-                        quantity{{ option.pk }} = parseInt($(this).val())
+                    if (Number.isInteger(quantity{{ option.pk }})) {
 
-                        if (Number.isInteger(quantity{{ option.pk }})) {
-
-                            if (quantity{{ option.pk }} > {{ option.maximum }}) {
-                                quantity{{ option.pk }} = {{ option.maximum }}
-                                $(this).val(quantity{{ option.pk }})
-                            }
-
-                        } else {
-                            quantity{{ option.pk }} = 0
+                        if (quantity{{ option.pk }} > {{ option.maximum }}) {
+                            quantity{{ option.pk }} = {{ option.maximum }}
+                            $(this).val(quantity{{ option.pk }})
                         }
 
-                        {{ option.groups|remove_dash }}_selected_option += quantity{{ option.pk }}
+                    } else {
+                        quantity{{ option.pk }} = 0
+                    }
 
-                        {% if option.get_real_price %}
+                    {{ option.groups|remove_dash }}_selected_option += quantity{{ option.pk }}
 
-                        total -= {{ option.groups|remove_dash }}_total
-                        {{ option.groups|remove_dash }}_total -= option_total{{ option.pk }}
+                    {% if option.get_real_price %}
 
-                        if (Number.isInteger(quantity{{ option.pk }})) {
+                    total -= {{ option.groups|remove_dash }}_total
+                    {{ option.groups|remove_dash }}_total -= option_total{{ option.pk }}
 
-                            option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
+                    if (Number.isInteger(quantity{{ option.pk }})) {
 
-                        } else {
+                        option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
 
-                            option_total{{ option.pk }} = 0
+                    } else {
 
-                        }
+                        option_total{{ option.pk }} = 0
 
-                        {{ option.groups|remove_dash }}_total += option_total{{ option.pk }}
+                    }
 
-                        {% if option.groups.type_price == '2' %}
-                            {{ option.groups|remove_dash }}_total /= {{ option.groups|remove_dash }}_selected_option
-                        {% endif %}
+                    {{ option.groups|remove_dash }}_total += option_total{{ option.pk }}
 
-                        total += {{ option.groups|remove_dash }}_total
+                    {% if option.groups.type_price == '2' %}
+                        {{ option.groups|remove_dash }}_total /= {{ option.groups|remove_dash }}_selected_option
+                    {% endif %}
 
-                        $("#product_total").text(currency.format(total));
+                    total += {{ option.groups|remove_dash }}_total
 
-                        {% endif %}
+                    $("#product_total").text(currency.format(total));
 
                     {% endif %}
 
@@ -376,7 +373,8 @@
                 }
 
                 if ({{ group.minimum }} > {{ group|remove_dash }}_selected_option) {
-                    alert("In {{ group.title }} group, you must choose a minimum of {{ option.minimum }} options");
+                    console.log({{ group|remove_dash }}_selected_option)
+                    alert("In {{ group.title }} group, you must choose a minimum of {{ group.minimum }} options");
                     e.preventDefault();
                 }
 
