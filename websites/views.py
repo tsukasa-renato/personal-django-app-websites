@@ -77,41 +77,45 @@ def check_request_for_cart(request, context):
                 'quantity': 0
             }
 
+        quantity = 0
+
         if option.check_input_type() == 'radio':
 
             keyword = group
+
+            quantity = 1 if request[keyword] == str(option.pk) else 0
 
         else:
 
             keyword = f'{option.pk}'
 
-        if keyword in request:
+            if keyword in request:
 
-            if option.check_input_type() != 'number':
+                if option.check_input_type() == 'checkbox':
 
-                if request[keyword] != str(option.pk):
-                    return HttpResponseBadRequest("Bad Request")
+                    if request[keyword] != str(option.pk):
+                        return HttpResponseBadRequest("Bad Request")
 
-                quantity = 1
+                    quantity = 1
 
-            else:
+                else:
 
-                quantity = int(request[keyword])
+                    quantity = int(request[keyword])
 
-                if option.minimum > quantity or quantity > option.maximum:
-                    return HttpResponseBadRequest("Bad Request")
+                    if option.minimum > quantity or quantity > option.maximum:
+                        return HttpResponseBadRequest("Bad Request")
 
-            if quantity > 0:
+        if quantity > 0:
 
-                context[group]['options'].append({
-                    'images': option.images.url if option.images else '',
-                    'title': option.title,
-                    'price': str(option.get_real_price()) if option.get_real_price() else '',
-                    'quantity': quantity,
-                })
+            context[group]['options'].append({
+                'images': option.images.url if option.images else '',
+                'title': option.title,
+                'price': str(option.get_real_price()) if option.get_real_price() else '',
+                'quantity': quantity,
+            })
 
-                context[group]['quantity'] += quantity
-                context[group]['total'] += option.get_real_price() * quantity if option.get_real_price() else 0
+            context[group]['quantity'] += quantity
+            context[group]['total'] += option.get_real_price() * quantity if option.get_real_price() else 0
 
         else:
 
@@ -137,6 +141,8 @@ def check_request_for_cart(request, context):
         context[keyword]['total'] = str(context[keyword]['total'])
 
     product['total'] = str(total)
+
+    print(product)
 
     return product
 
@@ -242,6 +248,9 @@ class Cart(View):
             total = Decimal(self.request.session['cart']['total'])
 
         product = check_request_for_cart(self.request.POST, context)
+
+        if 'title' not in product:
+            return HttpResponseBadRequest("Bad Request")
 
         if 'position' in self.request.POST:
 

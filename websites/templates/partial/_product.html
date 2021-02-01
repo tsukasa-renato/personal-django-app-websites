@@ -118,25 +118,25 @@
             else it returns normal price else returns None.*/
 
             {% if option.get_real_price %}
-                content = "{% money_format option.get_real_price website.currency website.language %}";
+                {{ option.slug|remove_dash }}_content = "{% money_format option.get_real_price website.currency website.language %}";
             {% else %}
-                content = "{{ option.title }}";
+                {{ option.slug|remove_dash }}_content = "{{ option.title }}";
             {% endif %}
 
             /*Creating an icon rounded for the option.*/
             {% if option.images %}
-                image = "<img src='{{ option.images.url }}' class='rounded-circle mr-1' " +
-                        "alt='{{ option }}' style='width: 30px;height: 30px;'>";
-                image_url = {{ option.images.url }}
+                {{ option.slug|remove_dash }}_image = "<img src='{{ option.images.url }}' " +
+                        "class='rounded-circle mr-1' alt='{{ option }}' style='width: 30px;height: 30px;'>";
+                {{ option.slug|remove_dash }}_image_url = "{{ option.images.url }}"
             {% else %}
-                image = ""
-                image_url = ""
+                {{ option.slug|remove_dash }}_image = ""
+                {{ option.slug|remove_dash }}_image_url = ""
             {% endif %}
 
             {% if option.description %}
-                desc = {{ option.description }}
+                {{ option.slug|remove_dash }}_desc = {{ option.description }}
             {% else %}
-                desc = ""
+                {{ option.slug|remove_dash }}_desc = ""
             {% endif %}
 
             {% if option.check_input_type == 'radio' %}
@@ -151,8 +151,8 @@
 
                             '<label class="form-check-label btn-primary rounded p-1" ' +
                             'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"> ' +
-                                image +
-                                content +
+                                {{ option.slug|remove_dash }}_image +
+                                {{ option.slug|remove_dash }}_content +
                             '</label> ' +
 
                         '</div>';
@@ -161,13 +161,13 @@
                 $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                     change_option_info("{{ option.groups|remove_dash }}",
-                                    "{{ option.title }}", desc, image_url)
+                                    "{{ option.title }}", {{ option.slug|remove_dash }}_desc,
+                                    {{ option.slug|remove_dash }}_image_url)
 
                     {% if option.get_real_price %}
 
                     total -= {{ option.groups|remove_dash }}_total
 
-                    {{ option.groups|remove_dash }}_selected_option = 1
                     {{ option.groups|remove_dash }}_total = {{ option.get_real_price }}
 
                     total += {{ option.groups|remove_dash }}_total
@@ -176,6 +176,7 @@
 
                     {% endif %}
 
+                    {{ option.groups|remove_dash }}_selected_option = 1
 
                 });
 
@@ -200,8 +201,8 @@
 
                             '<label class="form-check-label btn-primary rounded p-1" ' +
                             'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}"> ' +
-                                image +
-                                content +
+                                {{ option.slug|remove_dash }}_image +
+                                {{ option.slug|remove_dash }}_content +
                             '</label> ' +
 
                         '</div>';
@@ -210,7 +211,8 @@
                 $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                     change_option_info("{{ option.groups|remove_dash }}",
-                                    "{{ option.title }}", desc, image_url)
+                                    "{{ option.title }}", {{ option.slug|remove_dash }}_desc,
+                                    {{ option.slug|remove_dash }}_image_url)
 
                     {% if option.minimum == option.maximum %}
 
@@ -218,18 +220,26 @@
 
                     {% else %}
 
+                        if ($(this).is(":checked")) {
+
+                            {{ option.groups|remove_dash }}_selected_option += 1
+
+                        } else {
+
+                            {{ option.groups|remove_dash }}_selected_option -= 1
+
+                        }
+
                         {% if option.get_real_price %}
 
                             total -= {{ option.groups|remove_dash }}_total
 
                             if ($(this).is(":checked")) {
 
-                                {{ option.groups|remove_dash }}_selected_option += 1
                                 {{ option.groups|remove_dash }}_total += {{ option.get_real_price }};
 
                             } else {
 
-                                {{ option.groups|remove_dash }}_selected_option -= 1
                                 {{ option.groups|remove_dash }}_total -= {{ option.get_real_price }};
 
                             }
@@ -275,8 +285,8 @@
 
                             '<label class="form-control-input btn-primary rounded p-1" ' +
                             'for="{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}">' +
-                                image +
-                                content +
+                                {{ option.slug|remove_dash }}_image +
+                                {{ option.slug|remove_dash }}_content +
                             '</label>' +
 
                         '</div>';
@@ -285,16 +295,12 @@
                 $("#{{ option.groups|remove_dash }}{{ option.slug|remove_dash }}").click(function(){
 
                 change_option_info("{{ option.groups|remove_dash }}",
-                                    "{{ option.title }}", desc, image_url)
+                                    "{{ option.title }}", {{ option.slug|remove_dash }}_desc,
+                                    {{ option.slug|remove_dash }}_image_url)
 
                     {% if option.minimum < option.maximum  %}
 
-                        {% if option.get_real_price %}
-
-                        total -= {{ option.groups|remove_dash }}_total
-
                         {{ option.groups|remove_dash }}_selected_option -= quantity{{ option.pk }}
-                        {{ option.groups|remove_dash }}_total -= option_total{{ option.pk }}
 
                         quantity{{ option.pk }} = parseInt($(this).val())
 
@@ -305,14 +311,27 @@
                                 $(this).val(quantity{{ option.pk }})
                             }
 
-                            option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
-
                         } else {
                             quantity{{ option.pk }} = 0
-                            option_total{{ option.pk }} = 0
                         }
 
                         {{ option.groups|remove_dash }}_selected_option += quantity{{ option.pk }}
+
+                        {% if option.get_real_price %}
+
+                        total -= {{ option.groups|remove_dash }}_total
+                        {{ option.groups|remove_dash }}_total -= option_total{{ option.pk }}
+
+                        if (Number.isInteger(quantity{{ option.pk }})) {
+
+                            option_total{{ option.pk }} = {{ option.get_real_price }} * quantity{{ option.pk }}
+
+                        } else {
+
+                            option_total{{ option.pk }} = 0
+
+                        }
+
                         {{ option.groups|remove_dash }}_total += option_total{{ option.pk }}
 
                         {% if option.groups.type_price == '2' %}
