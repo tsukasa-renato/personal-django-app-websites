@@ -46,19 +46,19 @@
     {% for option in group.options %}
     <div class="row justify-content-center subcart ml-5 mr-5 p-3 border border-white">
         <div class="col-sm text-center">
-            {% if option.model.image %}
-                <img class="card-img-top" src="{{ option.images.url }}" alt="{{ option.images.name }}"
-                 style="max-height:400px;max-width:100%;">
+            {% if option.image %}
+                <img class="img-fluid" src="{{ option.image }}" alt="{{ option.title }}"
+                 style="max-height:200px;">
             {% endif %}
         </div>
-        <div class="col text-center">
-            <h6> {{ option.title }} </h6>
+        <div class="col text-center mt-5">
+            <h5> {{ option.title }} </h5>
             {% if option.price %}
             <p> {% money_format option.price website.currency website.language %} </p>
             {% endif %}
         </div>
-        <div class="col text-center">
-            <h6> Quantity: {{ option.quantity }} </h6>
+        <div class="col text-center mt-5">
+            <h5> Quantity: {{ option.quantity }} </h5>
         </div>
      </div>
     {% endfor %}
@@ -67,7 +67,7 @@
 
 {% endfor %}
 
-<div class="row justify-content-center mt-5 ml-5 mr-5">
+<div class="row justify-content-center m-5">
     <div class="col text-center">
     <h5> Total: {% money_format cart.total website.currency website.language %} </h5>
     </div>
