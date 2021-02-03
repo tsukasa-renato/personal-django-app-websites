@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 
 
@@ -14,6 +15,9 @@ class APIsTest(APITestCase):
         }
 
         User.objects.create_user(**self.credentials)
+
+        self.client = APIClient()  # For windows users
+
         self.client.login(**self.credentials)
 
     def check_information(self, url, data, keys):

@@ -21,7 +21,7 @@
                     <button id="navbar_search" class="btn btn-transparent border-0" type="submit">
 
                         {% if icon.search %}
-                        <img src="{{ icon.search.url }}">
+                        <img src="{{ icon.search.url }}" style="height:32px;width:32px;">
                         {% else %}
                         <img src="{% static 'media/search.png' %}">
                         {% endif %}
@@ -33,7 +33,7 @@
                 <a href="" id="navbar_account" class="nav-link">
 
                     {% if icon.account %}
-                    <img src="{{ icon.account.url }}">
+                    <img src="{{ icon.account.url }}" style="height:32px;width:32px;">
                     {% else %}
                     <img src="{% static 'media/account.png' %}">
                     {% endif %}
@@ -44,7 +44,7 @@
                 <a href="{% url 'websites:cart' url=website.url %}" id="navbar_cart" class="nav-link">
 
                     {% if icon.cart %}
-                    <img src="{{ icon.cart.url }}">
+                    <img src="{{ icon.cart.url }}" style="height:32px;width:32px;">
                     {% else %}
                     <img src="{% static 'media/cart.png' %}">
                     {% endif %}

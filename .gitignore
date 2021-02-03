@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .idea
 media
+websites/tests/Webdriver
 # C extensions
 *.so
 
